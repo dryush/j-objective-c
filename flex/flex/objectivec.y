@@ -16,7 +16,6 @@
 /*ОБЪЯВЛЕНИЕ СТРУКТУР*/
     int int_const;
     float float_const;
-    double double_const;
     char chat_const;
     char* string_const;
     char* id;
@@ -32,7 +31,6 @@
 
 %token <int_const> INT
 %token <float_const> FLOAT
-%token <double_const> DOUBLE
 %token <char_const> CHAR
 %token <string_const> STRING
 %token <id> ID

@@ -13,18 +13,12 @@
 	extern int yyparse(void);
 		
 	void addToBuffer( char* str);
-	void addToBuffer( char* str, int from, int to);
 	void addToBufferOcto( char* str, int line);
 	void addToBufferHex( char* str, int line);
 	void clearBuffer();
 	void endChar(int line);
 	void handleToken(char * name, char * value, int startPos);
-	void handleToken(char * name, char * value, int startPos, int endPos);
-	void handleTokenInt(char * text, int system, int line);
-	void handleTokenFloat(char * text, int line);
-	void handleChar(char * ch, int startPos);
-	void handleTokenKeyword(char * text, int line);
-	void handleTokenOperator(char * text, int line);
+	int handleTokenInt(char * text, int system);
 	void handleError(char * error, int line);
 
 
@@ -70,9 +64,9 @@ ONE_LINE_COMMENT \/\/.*\n
 <MULTILINE_COMMENT>"*"+"/" 		{ BEGIN(INITIAL);}
 <MULTILINE_COMMENT><<EOF>> 		{ BEGIN(INITIAL); handleError("unterminated multiline_comment", start);}
 
-\'					{BEGIN(CHAR); clearBuffer();}
-\"					{BEGIN(STRING); clearBuffer();}
-<CHAR>{CHAR}{CHAR} 	{BEGIN(INITIAL);handleError("More then one char in \'\'", yylineno);}
+\'					{ BEGIN(CHAR); clearBuffer(); }
+\"					{ BEGIN(STRING); clearBuffer(); }
+<CHAR>{CHAR}{CHAR} 	{ BEGIN(INITIAL); handleError("More then one char in \'\'", yylineno); }
 <CHAR,STRING>\\a			{ addToBuffer("\a"); }
 <CHAR,STRING>\\b			{ addToBuffer("\b"); }
 <CHAR,STRING>\\f			{ addToBuffer("\f"); }
@@ -89,91 +83,96 @@ ONE_LINE_COMMENT \/\/.*\n
 <CHAR,STRING>\\x[0-9a-fA-F]+	{ addToBufferHex(yytext, yylineno);}
 <CHAR,STRING>{CHAR}			{ addToBuffer(yytext); }
 <CHAR,STRING>\\x				{ BEGIN(INITIAL);handleError("Expected hexadecimal number ", yylineno);}
-<STRING>\\\n				{ ; /*Ничего*/}
-<CHAR>\n				{ BEGIN(INITIAL);handleError("Expected \' ", yylineno); }
-<STRING>\n		{ BEGIN(INITIAL);handleError("Expected \" ", yylineno); }
-<CHAR>\' 				{BEGIN(INITIAL);endChar(yylineno);}
-<STRING>\"		{ BEGIN(INITIAL);handleToken("string", buffer, yylineno); }
+<STRING>\\\n			{ ; /*Ничего*/}
+<CHAR>\n				{ BEGIN(INITIAL); handleError("Expected \' ", yylineno); }
+<STRING>\n				{ BEGIN(INITIAL); handleError("Expected \" ", yylineno); }
+<CHAR>\' 				{ BEGIN(INITIAL); yylval.char_const=buffer; return CHAR_CONST; }
+<STRING>\"				{ BEGIN(INITIAL); yylval.string_const=buffer; return STRING_CONST; }
 
 
 // Наверное константы, а не названия типов, назвать const_int, const_float, const_string, const_char
 
-"void"		{return VOID;}
-"int"		{return INT;}
-"float"		{return FLOAT;}
-"char"		{return CHAR;}
+"void"		{ return VOID; }
+"int"		{ return INT; }
+"float"		{ return FLOAT; }
+"char"		{ return CHAR; }
 
-"struct"	{return STRUCT;}
-"enum"		{return ENUM;}
+"struct"	{ return STRUCT; }
+"enum"		{ return ENUM; }
 
-"static"	{return STATIC;}
+"static"	{ return STATIC; }
 
-"if"		{return IF;}
-"else"		{return ELSE:}
+"if"		{ return IF; }
+"else"		{ return ELSE; }
 
-"while"		{return WHILE;}
+"while"		{ return WHILE; }
 
-"return"	{return RETURN;}
+"return"	{ return RETURN; }
 
-"extern"			{return EXTERN;}
-"@interface" 		{return @INTERFACE;}
-"@implementation" 	{return @IMPLEMENTATION;}
-"@protocol" 		{return @PROTOCOL;}
-"@end" 				{return @END;}
+"extern"			{ return EXTERN; }
+"@interface" 		{ return @INTERFACE; }
+"@implementation" 	{ return @IMPLEMENTATION; }
+"@protocol" 		{ return @PROTOCOL; }
+"@end" 				{ return @END; }
 
-"@private" 		{return @PRIVATE;}
-"@protected" 	{return @PROTECTED;}
-"@public" 		{return @PUBLIC;}
+"@private" 		{ return @PRIVATE; }
+"@protected" 	{ return @PROTECTED; }
+"@public" 		{ return @PUBLIC; }
 
-"@class" 		{return @CLASS;}
+"@class" 		{ return @CLASS; }
 
-"YES" 			{return YES;}
-"NO" 			{return NO;}
+"YES" 			{ return YES; }
+"NO" 			{ return NO; }
 
-{ID} {return ID;}
+{ID} 		{ yylval.id = yytext; return ID; }
+{INT_10} 	{ yylval.int_const=atoi(yytext); return INT_CONST };
+{INT_16} 	{ yylval.int_const=handleTokenInt(yytext, 16); return INT_CONST }; 
+{INT_8} 	{ yylval.int_const=handleTokenInt(yytext, 8); return INT_CONST };
+{FLOAT}		{ yylval.float_const=atof(yytext); return FLOAT_CONST; }
+
 {ONE_LINE_COMMENT} { }
 
-[0-9]+ 		{return INT};
-
-"("			{return '(';}
-")"			{return ')';}
-
-"="			{return '=';}
-
-"+"			{return '+';}
-"++"		{return INC;}
-"+="		{return ADD_ASSIGN;}
-"-"			{return '-';}
-"--"		{return DEC;}
-"-="		{return SUB_ASSSIGN;}
-"*"			{return '*'; }
-"*="		{return MUL_ASSIGN;}
-"/"			{return '/';}
-"/="		{return DIV_ASSIGN;}
-"%"			{return '%';}
-"%="		{return MOD_ASSIGN;}
 
 
-"=="		{return EQUAL;}
-"<"			{return '<';}
-"<="		{return LESS_OR_EQUAL;}
-">"			{return '>';}
-">="		{return GREATER_OR_EQUAL;}
-"!="		{return NOT_EQUAL;}
-"!"			{return '!';}
+"("			{ return '('; }
+")"			{ return ')'; }
 
-"\|\|"		{return OR;}
-"&&"		{return AND;}
+"="			{ return '='; }
 
-"->"		{return ARROW;}
+"+"			{ return '+'; }
+"++"		{ return INC; }
+"+="		{ return ADD_ASSIGN; }
+"-"			{ return '-'; }
+"--"		{ return DEC; }
+"-="		{ return SUB_ASSSIGN; }
+"*"			{ return '*'; }
+"*="		{ return MUL_ASSIGN; }
+"/"			{ return '/'; }
+"/="		{ return DIV_ASSIGN; }
+"%"			{ return '%'; }
+"%="		{ return MOD_ASSIGN; }
 
-"\["		{return '[';}
-"\]"		{return ']';}
 
-[\@UuL] 	{return STRING_MODIFIER;}
+"=="		{ return EQUAL; }
+"<"			{ return '<'; }
+"<="		{ return LESS_OR_EQUAL; }
+">"			{ return '>'; }
+">="		{ return GREATER_OR_EQUAL; }
+"!="		{ return NOT_EQUAL; }
+"!"			{ return '!'; }
 
-'\.'		{return '.';}
-. 			{handleToken("unknown character", yytext, yylineno); }
+"\|\|"		{ return OR; }
+"&&"		{ return AND; }
+
+"->"		{ return ARROW; }
+
+"\["		{ return '['; }
+"\]"		{ return ']'; }
+
+[\@UuL] 	{ return STRING_MODIFIER; }
+
+'\.'		{ return '.'; }
+. 			{ handleToken("unknown character", yytext, yylineno); }
 %%
 
 void addToBuffer( char* str){
@@ -225,36 +224,15 @@ void endChar(int line){
 		handleToken("char", buffer, line);
 	}
 }
-	
+
 void handleToken(char * name, char * value, int startPos){
 	printf("Founed: %s at line %d \nvalue: %s\n\n", name, startPos, value);
 } 
 
-void handleToken(char * name, char * value, int startPos, int endPos){
-	printf("Founed: %s from line %d to line %d \nvalue: %s\n\n", name, startPos, endPos, value);
-} 
-
-void handleTokenInt(char * text, int system, int line) {
+int handleTokenInt(char * text, int system) {
 	char numstr[40];
 	int num = strtol(text, NULL, system);
-	itoa(num, numstr, 10);
-	handleToken("int number", numstr, line);
-}
-
-void handleTokenFloat(char * text, int line) {
-	printf("float epta : %lf\n",atof(text));
-	
-	char * loc = setlocale(LC_ALL,NULL);
-	setlocale(LC_ALL,"C");
-	setlocale(LC_ALL, loc);
-}
-
-void handleTokenKeyword(char * text, int line){
-	handleToken("keyword", text, line);
-}
-
-void handleTokenOperator(char * text, int line){
-	handleToken("operator", text, line);
+	return num;
 }
 
 void handleError(char * error, int line){
