@@ -1,0 +1,1189 @@
+Found: float number at line 3 
+value: 0.7500000000
+
+Found: float number at line 4 
+value: 15.7500000000
+
+Found: float number at line 5 
+value: 15.7500000000
+
+Found: float number at line 6 
+value: 15.7500000000
+
+Found: operator at line 7 
+value: -
+
+Found: float number at line 7 
+value: 0.0025000000
+
+Found: float number at line 8 
+value: 0.0025000000
+
+Found: float number at line 9 
+value: 0.7500000000
+
+Found: float number at line 10 
+value: 0.7500000000
+
+Found: float number at line 11 
+value: 0.7500000000
+
+Found: float number at line 12 
+value: 0.7500000000
+
+Found: string at line 15 
+value: some string
+
+Found: multiline comment from line 16 to line 16 
+value: 
+
+Found: multiline comment from line 17 to line 20 
+value: 
+
+Found: one_line_comment at line 22 
+value: 
+
+Found: identifier at line 22 
+value: NSString
+
+Found: operator at line 22 
+value: *
+
+Found: identifier at line 22 
+value: str
+
+Found: operator at line 22 
+value: =
+
+Found: string at line 22 
+value: string " with magic * * 
+ \
+
+Found: keyword at line 25 
+value: int
+
+Found: identifier at line 25 
+value: array
+
+Found: operator at line 25 
+value: [
+
+Found: int number at line 25 
+value: 12
+
+Found: operator at line 25 
+value: ]
+
+Found: operator at line 25 
+value: =
+
+Found: delimiter at line 25 
+value: {
+
+Found: int number at line 25 
+value: 1
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 2
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 3
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 4
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 5
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 6
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 7
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 8
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 9
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 10
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 11
+
+Found: delimiter at line 25 
+value: ,
+
+Found: int number at line 25 
+value: 12
+
+Found: delimiter at line 25 
+value: }
+
+Found: delimiter at line 25 
+value: ;
+
+Found: identifier at line 27 
+value: self
+
+Found: operator at line 27 
+value: =
+
+Found: operator at line 27 
+value: [
+
+Found: identifier at line 27 
+value: super
+
+Found: identifier at line 27 
+value: init
+
+Found: operator at line 27 
+value: ]
+
+Found: delimiter at line 27 
+value: ;
+
+Found: keyword at line 28 
+value: if
+
+Found: delimiter at line 28 
+value: (
+
+Found: identifier at line 28 
+value: self
+
+Found: delimiter at line 28 
+value: )
+
+Found: delimiter at line 28 
+value: {
+
+Found: identifier at line 29 
+value: _poolSize
+
+Found: operator at line 29 
+value: =
+
+Found: identifier at line 29 
+value: poolSize
+
+Found: delimiter at line 29 
+value: ;
+
+Found: identifier at line 30 
+value: _bufferedConsumers
+
+Found: operator at line 30 
+value: =
+
+Found: operator at line 30 
+value: [
+
+Found: identifier at line 30 
+value: NSMutableArray
+
+Found: identifier at line 30 
+value: arrayWithCapacity
+
+Found: operator at line 30 
+value: :
+
+Found: identifier at line 30 
+value: poolSize
+
+Found: operator at line 30 
+value: ]
+
+Found: delimiter at line 30 
+value: ;
+
+Found: delimiter at line 31 
+value: }
+
+Found: keyword at line 31 
+value: else
+
+Found: keyword at line 31 
+value: if
+
+Found: delimiter at line 31 
+value: (
+
+Found: constant at line 31 
+value: YES
+
+Found: delimiter at line 31 
+value: )
+
+Found: delimiter at line 31 
+value: {
+
+Found: keyword at line 32 
+value: int
+
+Found: identifier at line 32 
+value: a
+
+Found: delimiter at line 32 
+value: ;
+
+Found: delimiter at line 33 
+value: }
+
+Found: keyword at line 33 
+value: else
+
+Found: delimiter at line 33 
+value: {
+
+Found: keyword at line 34 
+value: int
+
+Found: identifier at line 34 
+value: a
+
+Found: delimiter at line 34 
+value: ;
+
+Found: delimiter at line 35 
+value: }
+
+Found: keyword at line 36 
+value: int
+
+Found: identifier at line 36 
+value: a
+
+Found: operator at line 36 
+value: =
+
+Found: int number at line 36 
+value: 2
+
+Found: delimiter at line 36 
+value: ;
+
+Found: identifier at line 37 
+value: whlie
+
+Found: delimiter at line 37 
+value: (
+
+Found: identifier at line 37 
+value: a
+
+Found: delimiter at line 37 
+value: )
+
+Found: delimiter at line 37 
+value: {
+
+Found: identifier at line 38 
+value: printf
+
+Found: delimiter at line 38 
+value: (
+
+Found: string at line 38 
+value: hehehe:%d
+
+Found: delimiter at line 38 
+value: ,
+
+Found: identifier at line 38 
+value: a
+
+Found: delimiter at line 38 
+value: )
+
+Found: delimiter at line 38 
+value: ;
+
+Found: delimiter at line 39 
+value: }
+
+Found: keyword at line 40 
+value: @interface
+
+Found: identifier at line 40 
+value: SRIOConsumerPool
+
+Found: operator at line 40 
+value: :
+
+Found: identifier at line 40 
+value: NSObject
+
+Found: operator at line 42 
+value: -
+
+Found: delimiter at line 42 
+value: (
+
+Found: identifier at line 42 
+value: instancetype
+
+Found: delimiter at line 42 
+value: )
+
+Found: identifier at line 42 
+value: initWithBufferCapacity
+
+Found: operator at line 42 
+value: :
+
+Found: delimiter at line 42 
+value: (
+
+Found: identifier at line 42 
+value: NSUInteger
+
+Found: delimiter at line 42 
+value: )
+
+Found: identifier at line 42 
+value: poolSize
+
+Found: delimiter at line 42 
+value: ;
+
+Found: operator at line 44 
+value: -
+
+Found: delimiter at line 44 
+value: (
+
+Found: identifier at line 44 
+value: SRIOConsumer
+
+Found: operator at line 44 
+value: *
+
+Found: delimiter at line 44 
+value: )
+
+Found: identifier at line 44 
+value: consumerWithScanner
+
+Found: operator at line 44 
+value: :
+
+Found: delimiter at line 44 
+value: (
+
+Found: identifier at line 44 
+value: stream_scanner
+
+Found: delimiter at line 44 
+value: )
+
+Found: identifier at line 44 
+value: scanner
+
+Found: identifier at line 45 
+value: handler
+
+Found: operator at line 45 
+value: :
+
+Found: delimiter at line 45 
+value: (
+
+Found: identifier at line 45 
+value: data_callback
+
+Found: delimiter at line 45 
+value: )
+
+Found: identifier at line 45 
+value: handler
+
+Found: identifier at line 46 
+value: bytesNeeded
+
+Found: operator at line 46 
+value: :
+
+Found: delimiter at line 46 
+value: (
+
+Found: identifier at line 46 
+value: size_t
+
+Found: delimiter at line 46 
+value: )
+
+Found: identifier at line 46 
+value: bytesNeeded
+
+Found: identifier at line 47 
+value: readToCurrentFrame
+
+Found: operator at line 47 
+value: :
+
+Found: delimiter at line 47 
+value: (
+
+Found: identifier at line 47 
+value: BOOL
+
+Found: delimiter at line 47 
+value: )
+
+Found: identifier at line 47 
+value: readToCurrentFrame
+
+Found: identifier at line 48 
+value: unmaskBytes
+
+Found: operator at line 48 
+value: :
+
+Found: delimiter at line 48 
+value: (
+
+Found: identifier at line 48 
+value: BOOL
+
+Found: delimiter at line 48 
+value: )
+
+Found: identifier at line 48 
+value: unmaskBytes
+
+Found: delimiter at line 48 
+value: ;
+
+Found: operator at line 49 
+value: -
+
+Found: delimiter at line 49 
+value: (
+
+Found: keyword at line 49 
+value: void
+
+Found: delimiter at line 49 
+value: )
+
+Found: identifier at line 49 
+value: returnConsumer
+
+Found: operator at line 49 
+value: :
+
+Found: delimiter at line 49 
+value: (
+
+Found: identifier at line 49 
+value: SRIOConsumer
+
+Found: operator at line 49 
+value: *
+
+Found: delimiter at line 49 
+value: )
+
+Found: identifier at line 49 
+value: consumer
+
+Found: delimiter at line 49 
+value: ;
+
+Found: keyword at line 51 
+value: @end
+
+Found: keyword at line 53 
+value: @implementation
+
+Found: identifier at line 53 
+value: SRIOConsumerPool
+
+Found: delimiter at line 53 
+value: {
+
+Found: identifier at line 54 
+value: NSUInteger
+
+Found: identifier at line 54 
+value: _poolSize
+
+Found: delimiter at line 54 
+value: ;
+
+Found: identifier at line 55 
+value: NSMutableArray
+
+Found: operator at line 55 
+value: <
+
+Found: identifier at line 55 
+value: SRIOConsumer
+
+Found: operator at line 55 
+value: *
+
+Found: operator at line 55 
+value: >
+
+Found: operator at line 55 
+value: *
+
+Found: identifier at line 55 
+value: _bufferedConsumers
+
+Found: delimiter at line 55 
+value: ;
+
+Found: delimiter at line 56 
+value: }
+
+Found: operator at line 58 
+value: -
+
+Found: delimiter at line 58 
+value: (
+
+Found: identifier at line 58 
+value: instancetype
+
+Found: delimiter at line 58 
+value: )
+
+Found: identifier at line 58 
+value: initWithBufferCapacity
+
+Found: operator at line 58 
+value: :
+
+Found: delimiter at line 58 
+value: (
+
+Found: identifier at line 58 
+value: NSUInteger
+
+Found: delimiter at line 58 
+value: )
+
+Found: identifier at line 58 
+value: poolSize
+
+Found: delimiter at line 58 
+value: ;
+
+Found: delimiter at line 59 
+value: {
+
+Found: identifier at line 60 
+value: self
+
+Found: operator at line 60 
+value: =
+
+Found: operator at line 60 
+value: [
+
+Found: identifier at line 60 
+value: super
+
+Found: identifier at line 60 
+value: init
+
+Found: operator at line 60 
+value: ]
+
+Found: delimiter at line 60 
+value: ;
+
+Found: keyword at line 61 
+value: if
+
+Found: delimiter at line 61 
+value: (
+
+Found: identifier at line 61 
+value: self
+
+Found: delimiter at line 61 
+value: )
+
+Found: delimiter at line 61 
+value: {
+
+Found: identifier at line 62 
+value: _poolSize
+
+Found: operator at line 62 
+value: =
+
+Found: identifier at line 62 
+value: poolSize
+
+Found: delimiter at line 62 
+value: ;
+
+Found: identifier at line 63 
+value: _bufferedConsumers
+
+Found: operator at line 63 
+value: =
+
+Found: operator at line 63 
+value: [
+
+Found: identifier at line 63 
+value: NSMutableArray
+
+Found: identifier at line 63 
+value: arrayWithCapacity
+
+Found: operator at line 63 
+value: :
+
+Found: identifier at line 63 
+value: poolSize
+
+Found: operator at line 63 
+value: ]
+
+Found: delimiter at line 63 
+value: ;
+
+Found: delimiter at line 64 
+value: }
+
+Found: keyword at line 65 
+value: int
+
+Found: identifier at line 65 
+value: a
+
+Found: operator at line 65 
+value: =
+
+Found: int number at line 65 
+value: 2
+
+Found: delimiter at line 65 
+value: ;
+
+Found: identifier at line 66 
+value: whlie
+
+Found: delimiter at line 66 
+value: (
+
+Found: identifier at line 66 
+value: a
+
+Found: delimiter at line 66 
+value: )
+
+Found: delimiter at line 66 
+value: {
+
+Found: identifier at line 67 
+value: printf
+
+Found: delimiter at line 67 
+value: (
+
+Found: string at line 67 
+value: hehehe:%d
+
+Found: delimiter at line 67 
+value: ,
+
+Found: identifier at line 67 
+value: a
+
+Found: delimiter at line 67 
+value: )
+
+Found: delimiter at line 67 
+value: ;
+
+Found: delimiter at line 68 
+value: }
+
+Found: keyword at line 69 
+value: return
+
+Found: identifier at line 69 
+value: self
+
+Found: delimiter at line 69 
+value: ;
+
+Found: delimiter at line 70 
+value: }
+
+Found: operator at line 72 
+value: -
+
+Found: delimiter at line 72 
+value: (
+
+Found: identifier at line 72 
+value: instancetype
+
+Found: delimiter at line 72 
+value: )
+
+Found: identifier at line 72 
+value: init
+
+Found: delimiter at line 73 
+value: {
+
+Found: keyword at line 74 
+value: return
+
+Found: operator at line 74 
+value: [
+
+Found: identifier at line 74 
+value: self
+
+Found: identifier at line 74 
+value: initWithBufferCapacity
+
+Found: operator at line 74 
+value: :
+
+Found: int number at line 74 
+value: 8
+
+Found: operator at line 74 
+value: ]
+
+Found: delimiter at line 74 
+value: ;
+
+Found: delimiter at line 75 
+value: }
+
+Found: operator at line 77 
+value: -
+
+Found: delimiter at line 77 
+value: (
+
+Found: identifier at line 77 
+value: SRIOConsumer
+
+Found: operator at line 77 
+value: *
+
+Found: delimiter at line 77 
+value: )
+
+Found: identifier at line 77 
+value: consumerWithScanner
+
+Found: operator at line 77 
+value: :
+
+Found: delimiter at line 77 
+value: (
+
+Found: identifier at line 77 
+value: stream_scanner
+
+Found: delimiter at line 77 
+value: )
+
+Found: identifier at line 77 
+value: scanner
+
+Found: identifier at line 78 
+value: handler
+
+Found: operator at line 78 
+value: :
+
+Found: delimiter at line 78 
+value: (
+
+Found: identifier at line 78 
+value: data_callback
+
+Found: delimiter at line 78 
+value: )
+
+Found: identifier at line 78 
+value: handler
+
+Found: identifier at line 79 
+value: bytesNeeded
+
+Found: operator at line 79 
+value: :
+
+Found: delimiter at line 79 
+value: (
+
+Found: identifier at line 79 
+value: size_t
+
+Found: delimiter at line 79 
+value: )
+
+Found: identifier at line 79 
+value: bytesNeeded
+
+Found: identifier at line 80 
+value: readToCurrentFrame
+
+Found: operator at line 80 
+value: :
+
+Found: delimiter at line 80 
+value: (
+
+Found: identifier at line 80 
+value: BOOL
+
+Found: delimiter at line 80 
+value: )
+
+Found: identifier at line 80 
+value: readToCurrentFrame
+
+Found: identifier at line 81 
+value: unmaskBytes
+
+Found: operator at line 81 
+value: :
+
+Found: delimiter at line 81 
+value: (
+
+Found: identifier at line 81 
+value: BOOL
+
+Found: delimiter at line 81 
+value: )
+
+Found: identifier at line 81 
+value: unmaskBytes
+
+Found: delimiter at line 82 
+value: {
+
+Found: identifier at line 83 
+value: SRIOConsumer
+
+Found: operator at line 83 
+value: *
+
+Found: identifier at line 83 
+value: consumer
+
+Found: operator at line 83 
+value: =
+
+Found: identifier at line 83 
+value: nil
+
+Found: delimiter at line 83 
+value: ;
+
+Found: keyword at line 84 
+value: if
+
+Found: delimiter at line 84 
+value: (
+
+Found: identifier at line 84 
+value: _bufferedConsumers
+
+Found: unknown character at line 84 
+value: .
+
+Found: identifier at line 84 
+value: count
+
+Found: delimiter at line 84 
+value: )
+
+Found: delimiter at line 84 
+value: {
+
+Found: identifier at line 85 
+value: consumer
+
+Found: operator at line 85 
+value: =
+
+Found: operator at line 85 
+value: [
+
+Found: identifier at line 85 
+value: _bufferedConsumers
+
+Found: identifier at line 85 
+value: lastObject
+
+Found: operator at line 85 
+value: ]
+
+Found: delimiter at line 85 
+value: ;
+
+Found: operator at line 86 
+value: [
+
+Found: identifier at line 86 
+value: _bufferedConsumers
+
+Found: identifier at line 86 
+value: removeLastObject
+
+Found: operator at line 86 
+value: ]
+
+Found: delimiter at line 86 
+value: ;
+
+Found: delimiter at line 87 
+value: }
+
+Found: keyword at line 87 
+value: else
+
+Found: delimiter at line 87 
+value: {
+
+Found: identifier at line 88 
+value: consumer
+
+Found: operator at line 88 
+value: =
+
+Found: operator at line 88 
+value: [
+
+Found: operator at line 88 
+value: [
+
+Found: identifier at line 88 
+value: SRIOConsumer
+
+Found: identifier at line 88 
+value: alloc
+
+Found: operator at line 88 
+value: ]
+
+Found: identifier at line 88 
+value: init
+
+Found: operator at line 88 
+value: ]
+
+Found: delimiter at line 88 
+value: ;
+
+Found: delimiter at line 89 
+value: }
+
+Found: operator at line 91 
+value: [
+
+Found: identifier at line 91 
+value: consumer
+
+Found: identifier at line 91 
+value: resetWithScanner
+
+Found: operator at line 91 
+value: :
+
+Found: identifier at line 91 
+value: scanner
+
+Found: identifier at line 92 
+value: handler
+
+Found: operator at line 92 
+value: :
+
+Found: identifier at line 92 
+value: handler
+
+Found: identifier at line 93 
+value: bytesNeeded
+
+Found: operator at line 93 
+value: :
+
+Found: identifier at line 93 
+value: bytesNeeded
+
+Found: identifier at line 94 
+value: readToCurrentFrame
+
+Found: operator at line 94 
+value: :
+
+Found: identifier at line 94 
+value: readToCurrentFrame
+
+Found: identifier at line 95 
+value: unmaskBytes
+
+Found: operator at line 95 
+value: :
+
+Found: identifier at line 95 
+value: unmaskBytes
+
+Found: operator at line 95 
+value: ]
+
+Found: delimiter at line 95 
+value: ;
+
+Found: keyword at line 97 
+value: return
+
+Found: identifier at line 97 
+value: consumer
+
+Found: delimiter at line 97 
+value: ;
+
+Found: delimiter at line 98 
+value: }
+
+Found: operator at line 100 
+value: -
+
+Found: delimiter at line 100 
+value: (
+
+Found: keyword at line 100 
+value: void
+
+Found: delimiter at line 100 
+value: )
+
+Found: identifier at line 100 
+value: returnConsumer
+
+Found: operator at line 100 
+value: :
+
+Found: delimiter at line 100 
+value: (
+
+Found: identifier at line 100 
+value: SRIOConsumer
+
+Found: operator at line 100 
+value: *
+
+Found: delimiter at line 100 
+value: )
+
+Found: identifier at line 100 
+value: consumer
+
+Found: delimiter at line 100 
+value: ;
+
+Found: delimiter at line 101 
+value: {
+
+Found: keyword at line 102 
+value: if
+
+Found: delimiter at line 102 
+value: (
+
+Found: identifier at line 102 
+value: _bufferedConsumers
+
+Found: unknown character at line 102 
+value: .
+
+Found: identifier at line 102 
+value: count
+
+Found: operator at line 102 
+value: <
+
+Found: identifier at line 102 
+value: _poolSize
+
+Found: delimiter at line 102 
+value: )
+
+Found: delimiter at line 102 
+value: {
+
+Found: operator at line 103 
+value: [
+
+Found: identifier at line 103 
+value: _bufferedConsumers
+
+Found: identifier at line 103 
+value: addObject
+
+Found: operator at line 103 
+value: :
+
+Found: identifier at line 103 
+value: consumer
+
+Found: operator at line 103 
+value: ]
+
+Found: delimiter at line 103 
+value: ;
+
+Found: delimiter at line 104 
+value: }
+
+Found: delimiter at line 105 
+value: }
+
+Found: keyword at line 107 
+value: @end
+
