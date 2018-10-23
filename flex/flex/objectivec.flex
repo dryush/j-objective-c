@@ -89,7 +89,7 @@ ONE_LINE_COMMENT \/\/.*\n
 <STRING>\"				{ BEGIN(INITIAL); yylval.string_const=buffer; return STRING_CONST; }
 
 
-// Наверное константы, а не названия типов, назвать const_int, const_float, const_string, const_char
+%{ /* Наверное константы, а не названия типов, назвать const_int, const_float, const_string, const_char */ %}
 
 "void"		{ return VOID; }
 "int"		{ return INT; }
@@ -174,6 +174,7 @@ ONE_LINE_COMMENT \/\/.*\n
 
 '\.'		{ return '.'; }
 . 			{ handleToken("unknown character", yytext, yylineno); }
+
 %%
 
 void addToBuffer( char* str){
