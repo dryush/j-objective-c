@@ -91,7 +91,7 @@ stmt_list_or_empty: stmt_list
 
 stmt: RETURN expr ';' 
 	| RETURN ';'
-	| init_stmt
+	| init_stmt ';'
 	| expr ';' 
 	| if_stmt 
 	| while_stmt
@@ -108,12 +108,12 @@ if_stmt: IF '(' expr ')' stmt
 while_stmt: WHILE '(' expr ')' stmt 
 	;
 	
-init_stmt: ID assign_operator expr ';'
-	| ID assign_operator array_constant ';'
-	| array_elem_call assign_operator expr ';'
-	| type ID '=' expr ';'
-	| type ID '[' INT_CONST ']' '=' array_constant ';' 
-	| type ID '[' INT_CONST ']' ';'
+init_stmt: ID assign_operator expr 
+	| ID assign_operator array_constant 
+	| array_elem_call assign_operator expr 
+	| type ID '=' expr 
+	| array_type '=' array_constant  
+	| array_type 
 	;
 
 assign_operator: '='
