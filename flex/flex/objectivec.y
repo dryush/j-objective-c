@@ -55,7 +55,6 @@
 // СПИСОК ПРИОРИТЕТОВ ОПЕРАЦИЙ
 %left ','
 %right '=' ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN
-%right '?' ':'
 %left OR
 %left AND
 %left EQUAL NOT_EQUAL
@@ -108,11 +107,11 @@ while_stmt
 	;
 init_stmt
 	: ID assign_operator expr ';'
-	| ID '=' array_constant ';'
-	| array_elem_call '=' expr ';'
-	| type_name '=' expr ';'
-	| type_name '[' INT ']' '=' array_constant ';' 
-	| type_name '[' INT ']' ';'
+	| ID assign_operator array_constant ';'
+	| array_elem_call assign_operator expr ';'
+	| type_name ID '=' expr ';'
+	| type_name ID '[' INT_CONST ']' '=' array_constant ';' 
+	| type_name ID '[' INT_CONST ']' ';'
 	;
 assign_operator
 	: '='
@@ -122,12 +121,16 @@ assign_operator
 	| DIV_ASSIGN
 	| MOD_ASSIGN
 	;
-type_name
-	: type ID
+type_name 
+	: type
+	| type '*' %prec POINTER
 	;
-type 
+type
 	: ID
-	| ID '*' %prec POINTER
+	| INT
+	| FLOAT
+	| STRING
+	| CHAR
 	;
 expr
 	: expr '+' expr 
@@ -135,6 +138,7 @@ expr
     | expr '*' expr 
     | expr '/' expr 
 	| expr '<' expr 
+	| expr '=' expr
 	| expr LESS_OR_EQUAL expr 
 	| expr '>' expr 
 	| expr GREATER_OR_EQUAL expr 
@@ -148,10 +152,10 @@ expr
 	| ID INC %prec POSTINC
 	| ID DEC %prec POSTDEC
     | '(' expr ')' 
-    | INT 
-	| FLOAT 
-	| CHAR 
-	| STRING 
+    | INT_CONST 
+	| FLOAT_CONST 
+	| CHAR_CONST
+	| STRING_CONST 
 	| ID 
     | method_call
     | array_elem_call
@@ -165,7 +169,7 @@ enumerator_list
 	;
 enumerator
 	: ID 
-	| ID '=' INT
+	| ID '=' INT_CONST
 	;
 	
 class_invariant_declaration
