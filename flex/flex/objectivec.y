@@ -29,10 +29,10 @@
 
 //%token Название токена, который возвращает FLEX
 
-%token <int_const> INT
-%token <float_const> FLOAT
-%token <char_const> CHAR
-%token <string_const> STRING
+%token <int_const> INT_CONST
+%token <float_const> FLOAT_CONST
+%token <char_const> CHAR_CONST
+%token <string_const> STRING_CONST
 %token <id> ID
 
 %token WHILE
@@ -46,6 +46,11 @@
 %token INC
 %token DEC
 %token ENUM
+%token INT
+%token FLOAT
+%token STRING
+%token CHAR
+%token VOID
 
 // СПИСОК ПРИОРИТЕТОВ ОПЕРАЦИЙ
 %left ','
