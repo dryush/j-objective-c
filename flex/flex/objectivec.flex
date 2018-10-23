@@ -34,7 +34,6 @@ DIGIT	[0-9]
 LETTER	[A-Za-z_]
 CHAR [^\\\'\"\n]
 WS	[ \t\n]
-DELIM	[\(\)\;\{\}\,]
 ID {LETTER}({LETTER}|{DIGIT})*
 
 INT_10    		 ([1-9][0-9]*)|0
@@ -133,10 +132,6 @@ ONE_LINE_COMMENT \/\/.*\n
 {ONE_LINE_COMMENT} { }
 
 
-
-"("			{ return '('; }
-")"			{ return ')'; }
-
 "="			{ return '='; }
 
 "+"			{ return '+'; }
@@ -168,6 +163,12 @@ ONE_LINE_COMMENT \/\/.*\n
 
 "\["		{ return '['; }
 "\]"		{ return ']'; }
+"("			{ return '('; }
+")"			{ return ')'; }
+"{"			{ return '{'; }
+"}"			{ return '}'; }
+";"			{ return ';'; }
+","			{ return ','; }
 
 [\@UuL] 	{ return STRING_MODIFIER; }
 
