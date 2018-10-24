@@ -61,7 +61,8 @@
 	struct Func_call_arg_list_st* func_call_arg_list_st;
 	struct Func_call_st* func_call_st;
 
-
+	struct Array_const_elem_list_st* array_const_elem_list_st;
+	struct Array_elem_call_st* array_elem_call_st;
 }
 
 %error-verbose
@@ -125,6 +126,13 @@
 %type <func_impl_st> func_implementation
 %type <func_call_arg_list_st> func_call_args
 %type <func_call_st> func_call
+
+%type <array_const_elem_list_st> array_elems
+%type <array_const_elem_list_st> array_elems_or_empty
+%type <array_const_elem_list_st> array_constant
+%type <array_elem_call_st> array_elem_call
+
+
 
 
 
@@ -444,18 +452,18 @@ invariant_call: expr ARROW ID
     ;
 	
 /*МАССИВЫ */
-array_elems: expr 
-    | array_elems ',' expr
+array_elems: expr 			{ $$ = createArrayConstElemList($1);}
+    | array_elems ',' expr  { $$ = addToArrayConstElemList($1, $3);}
     ;
 
-array_elems_or_empty: array_elems 
-    | /* empty */
+array_elems_or_empty: array_elems { $$ = $1;}
+    | /* empty */				  { $$ = NULL;}
     ;
 
-array_constant: '{' array_elems_or_empty '}'
+array_constant: '{' array_elems_or_empty '}' { $$ = $2;}
     ;
 
-array_elem_call: expr '[' expr ']'
+array_elem_call: expr '[' expr ']' { $$ = createArrayElemCall($1, $3); }
     ;
 
 /*ФУНКЦИИ */
