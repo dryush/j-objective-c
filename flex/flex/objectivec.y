@@ -24,7 +24,7 @@
     char* id;
     void no_val;
 	
-	struct Statements_List_st *_stmt_list;
+	struct Statements_List_st_st *_stmt_list;
 	struct Statement_st *_stmt;
 	struct Expression_st *_expr;
 	struct While_statement_st *_while_stmt;
@@ -234,32 +234,32 @@ type: default_type
 	| array_type
 	;
 
-expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-    | expr '-' expr 				{ $$ = CreateExpression(SUB, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-    | expr '*' expr 				{ $$ = CreateExpression(MUL, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-    | expr '/' expr 				{ $$ = CreateExpression(DIV, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr '%' expr 				{ $$ = CreateExpression(MOD, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr '=' expr 				{ $$ = CreateExpression(ASSIGN, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr '<' expr 				{ $$ = CreateExpression(LESS, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr LESS_OR_EQUAL expr 		{ $$ = CreateExpression(LESS_OR_EQUAL, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr '>' expr 				{ $$ = CreateExpression(GREATER, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr GREATER_OR_EQUAL expr 	{ $$ = CreateExpression(GREATER_OR_EQUAL, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr EQUAL expr 				{ $$ = CreateExpression(EQUAL, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| expr NOT_EQUAL expr    		{ $$ = CreateExpression(NOT_EQUAL, $1, $3, NULL, NULL, NULL, NULL, NULL, NULL); }
-    | '!' expr						{ $$ = CreateExpression(LOGICAL_NOT, $2, NULL, NULL, NULL, NULL, NULL, NULL, NULL); }
-    | '+' expr %prec UPLUS			{ $$ = CreateExpression(UPLUS, $2, NULL, NULL, NULL, NULL, NULL, NULL, NULL); }
-    | '-' expr %prec UMINUS			{ $$ = CreateExpression(UMINUS, $2, NULL, NULL, NULL, NULL, NULL, NULL, NULL); }
-	| INC ID %prec PREINC			{ $$ = CreateExpression(PREINC, NULL, NULL, $2, NULL, NULL, NULL, NULL, NULL); }
-	| DEC ID %prec PREDEC			{ $$ = CreateExpression(PREDEC, NULL, NULL, $2, NULL, NULL, NULL, NULL, NULL); }
-	| ID INC %prec POSTINC			{ $$ = CreateExpression(POSTINC, NULL, NULL, $1, NULL, NULL, NULL, NULL, NULL); }
-	| ID DEC %prec POSTDEC			{ $$ = CreateExpression(POSTDEC, NULL, NULL, $1, NULL, NULL, NULL, NULL, NULL); }
+expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
+    | expr '-' expr 				{ $$ = CreateExpression(SUB, $1, $3); }
+    | expr '*' expr 				{ $$ = CreateExpression(MUL, $1, $3); }
+    | expr '/' expr 				{ $$ = CreateExpression(DIV, $1, $3); }
+	| expr '%' expr 				{ $$ = CreateExpression(MOD, $1, $3); }
+	| expr '=' expr 				{ $$ = CreateExpression(ASSIGN, $1, $3); }
+	| expr '<' expr 				{ $$ = CreateExpression(LESS, $1, $3); }
+	| expr LESS_OR_EQUAL expr 		{ $$ = CreateExpression(LESS_OR_EQUAL, $1, $3); }
+	| expr '>' expr 				{ $$ = CreateExpression(GREATER, $1, $3); }
+	| expr GREATER_OR_EQUAL expr 	{ $$ = CreateExpression(GREATER_OR_EQUAL, $1, $3); }
+	| expr EQUAL expr 				{ $$ = CreateExpression(EQUAL, $1, $3); }
+	| expr NOT_EQUAL expr    		{ $$ = CreateExpression(NOT_EQUAL, $1, $3); }
+    | '!' expr						{ $$ = CreateExpression(LOGICAL_NOT, $2, NULL); }
+    | '+' expr %prec UPLUS			{ $$ = CreateExpression(UPLUS, $2, NULL); }
+    | '-' expr %prec UMINUS			{ $$ = CreateExpression(UMINUS, $2, NULL); }
+	| INC ID %prec PREINC			{ $$ = CreatePreIncDecExpression(PREINC, $2); }
+	| DEC ID %prec PREDEC			{ $$ = CreatePreIncDecExpression(PREDEC, $2); }
+	| ID INC %prec POSTINC			{ $$ = CreatePostIncDecExpression(POSTINC, $1); }
+	| ID DEC %prec POSTDEC			{ $$ = CreatePostIncDecExpression(POSTDEC, $1); }
     | '(' expr ')' 					{ $$ = $2; }
-	| ID 							{ $$ = CreateExpression(VALUE, NULL, NULL, $1, NULL, NULL, NULL, NULL, NULL); }
-    | INT_CONST 					{ $$ = CreateExpression(VALUE, NULL, NULL, NULL, $1, NULL, NULL, NULL, NULL); }
-	| FLOAT_CONST 					{ $$ = CreateExpression(VALUE, NULL, NULL, NULL, NULL, $1, NULL, NULL, NULL); }
-	| BOOL_CONST					{ $$ = CreateExpression(VALUE, NULL, NULL, NULL, NULL, NULL, $1, NULL, NULL); }
-	| CHAR_CONST					{ $$ = CreateExpression(VALUE, NULL, NULL, NULL, NULL, NULL, NULL, $1, NULL); }
-	| STRING_CONST 					{ $$ = CreateExpression(VALUE, NULL, NULL, NULL, NULL, NULL, NULL, NULL, $1); }
+	| ID 							{ $$ = CreateIDExpression($1); }
+    | INT_CONST 					{ $$ = CreateIntValueExpression($1); }
+	| FLOAT_CONST 					{ $$ = CreateFloatValueExpression($1); }
+	| BOOL_CONST					{ $$ = CreateBoolValueExpression($1); }
+	| CHAR_CONST					{ $$ = CreateCharValueExpression($1); }
+	| STRING_CONST 					{ $$ = CreateStringValueExpression($1); }
     | method_call
     | array_elem_call
     | invariant_call
@@ -493,47 +493,128 @@ func_call: ID '(' func_call_args ')' { $$ = createFuncCall($1, $3); }
 
 
 
-struct Statements_List *AppendStatementToList(struct Statements_List *list, struct Statement *stmt)
+struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt)
 {
-	struct Statements_List *cur = (struct Statements_List *)malloc(sizeof(struct Statements_List));
+	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
 	cur->next =0 ;
 	list->next = cur;
 	cur->stmt = stmt;
 	return cur;
 }
 
-struct Statements_List *CreateStList(struct Statement *stmt)
+struct Statements_List_st *CreateStList(struct Statement_st *stmt)
 {
-	struct Statements_List *cur = (struct Statements_List *)malloc(sizeof(struct Statements_List));
+	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
 	cur->next = 0;
 	cur->stmt = stmt;
 }
 
-struct Statement *CreateStatement(struct Expression *expr, struct While_statement *while_stmt, 
-								  struct If_statement *if_stmt, struct Init_statement *init_stmt, 
-								  struct Statements_List_st* stmts )
+struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
 {
-	struct Statement *cur = (struct Statement *)malloc(sizeof(struct Statement));
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
 	cur->expr = expr;
+	return cur;
+}
+
+struct Statement_st *CreateWhileStatement(struct While_statement_st *while_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
 	cur->while_stmt = while_stmt;
+	return cur;
+}
+
+struct Statement_st *CreateIfStatement(struct If_statement_st *if_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
 	cur->if_stmt = if_stmt;
+	return cur;
+}
+
+struct Statement_st *CreateInitStatement(struct Init_statement_st *init_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
 	cur->init_stmt = init_stmt;
 	return cur;
 }
 
-struct Expression *CreateExpression(OperationType type, struct Expression *left, struct Expression *right,
-									char *identifier, int int_value, float float_value,
-									bool bool_value, char char_value, char *string_value)
+struct Statement_st *CreateCompoundStatement(struct Statements_List_st *stmt_list)
 {
-	struct Expression *cur = (struct Expression *)malloc(sizeof(struct Expression));
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->stmt_list = stmt_list;
+	return cur;
+}
+
+struct Expression_st *CreateExpression(OperationType type, struct Expression_st *left, struct Expression_st *right)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->type = type;
 	cur->left = left;
-	cur_>right = right;
+	cur->right = right;
+	return cur;
+}
+
+struct Expression_st *CreatePreIncDecExpression(OperationType type, char *identifier)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = type;
+	struct Expression_st *right = CreateIDExpression(char *identifier);
+	cur->right = right;
+	return cur;
+}
+
+struct Expression_st *CreatePostIncDecExpression(OperationType type, char *identifier)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = type;
+	struct Expression_st *left = CreateIDExpression(char *identifier);
+	cur->left = left;
+	return cur;
+}
+
+struct Expression_st *CreateIDExpression(char *identifier)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
 	cur->identifier = identifier;
+	return cur;
+}
+
+struct Expression_st *CreateIntValueExpression(int int_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
 	cur->int_value = int_value;
+	return cur;
+}
+
+struct Expression_st *CreateFloatValueExpression(float float_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
 	cur->float_value = float_value;
+	return cur;
+}
+
+struct Expression_st *CreateBoolValueExpression(bool bool_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
 	cur->bool_value = bool_value;
+	return cur;
+}
+
+struct Expression_st *CreateCharValueExpression(char char_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
 	cur->char_value = char_value;
+	return cur;
+}
+
+struct Expression_st *CreateStringValueExpression(char *string_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
 	cur->string_value = string_value;
 	return cur;
 }
