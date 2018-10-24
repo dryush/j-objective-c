@@ -518,4 +518,4 @@ func_call: ID '(' func_call_args ')' { $$ = createFuncCall($1, $3); }
 
 	
 	
-%%%%
+%%
