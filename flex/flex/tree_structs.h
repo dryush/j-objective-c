@@ -425,7 +425,7 @@ struct Class_impl_st
 
 struct Class_impl_st createClassImpl( char * name, struct Class_method_impl_list_st * methods)
 {
-	struct Class_impl_st* st= (struct Class_impl_st*) malloc( sizeof(struct Class_impl_st));
+	struct Class_impl_st* st = (struct Class_impl_st*) malloc( sizeof(struct Class_impl_st));
 	st->name = name;
 	st->methods = methods;
 	return st;

@@ -5,6 +5,7 @@
     ОБЪЯВЛЕНИЕ ПЕРЕМЕННЫХ
     */
     #include <stdio.h>
+	#include "tree_structs.h"
     int yylex() { return getc(stdin); }
     void yyerror(char *s) {
         fprintf (stderr, "%s\n", s);
@@ -22,18 +23,35 @@
     char* id;
     void no_val;
 	
-	struct Statements_List *_stmt_list;
-	struct Statement *_stmt;
-	struct Expression *_expr;
-	struct While_statement *_while_stmt;
-	struct If_statement *_if_stmt;
-	struct Init_statement *_init_stmt;
-	struct Type *_type;
-	struct Return_type *_return_type;
-	struct Array_type *_array_type;
-	struct Enum_declaration *_enum_decl;
-	struct Enumerator_list *_enum_list;
-	struct Enumerator *_enumerator;
+	struct Statements_List_st *_stmt_list;
+	struct Statement_st *_stmt;
+	struct Expression_st *_expr;
+	struct While_statement_st *_while_stmt;
+	struct If_statement_st *_if_stmt;
+	struct Init_statement_st *_init_stmt;
+	struct Type_st *_type;
+	struct Return_type_st *_return_type;
+	struct Array_type_st *_array_type;
+	struct Enum_declaration_st *_enum_decl;
+	struct Enumerator_list_st *_enum_list;
+	struct Enumerator_st *_enumerator;
+
+	enum Field_access_en field_access_en;
+	Class_method_param_declaration_st* class_method_param_declaration_st;
+	Class_method_param_declaration_list_st* class_method_param_declaration_list_st;
+	enum Method_type_en method_type_en;
+	struct Class_method_declaration_st* class_method_declaration_st;
+	struct Class_methods_declaration_list_st* class_methods_declaration_list_st;
+	struct Class_methods_declaration_block_st* class_methods_declaration_block_st;
+	struct Class_methods_declaration_block_list_st* class_methods_declaration_block_list_st;
+	struct Class_invariant_declaration_st* class_invariant_declaration_st;
+	struct Class_invariants_declaration_list_st* class_invariants_declaration_list_st;
+	struct Class_invariants_declaration_block_st* class_invariants_declaration_block_st;
+	struct Class_invariants_declaration_block_list_st* class_invariants_declaration_block_list_st;
+	struct Class_declaration_st* class_declaration_st;
+	struct Class_method_impl_st* class_method_impl_st;
+	struct Class_method_impl_list_st* class_method_impl_list_st;
+	struct Class_impl_st* class_impl_st;
 }
 
 %error-verbose
@@ -51,7 +69,9 @@
 %token <id> ID
 
 %type <_stmt_list> stmt_list
+%type <_stmt_list> stmt_list_or_empty
 %type <_stmt> stmt
+%type <_stmt> compound_stmt
 %type <_expr> expr
 %type <_while_stmt> while_stmt
 %type <_if_stmt> if_stmt
@@ -62,6 +82,29 @@
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
 %type <_enumerator> enumerator
+%type <field_access_en> class_fields_access
+%type <class_invariant_declaration_st> class_invariant_declaration
+%type <class_invariants_declaration_list_st> class_invariants_declarations
+%type <class_invariants_declaration_block_st> class_invariant_declaration_with_access
+%type <class_invariants_declaration_block_list_st> class_invariant_declaration_with_access_list 
+%type <class_invariants_declaration_block_list_st> class_invariants_declaration
+%type <class_method_param_declaration_st> class_method_first_param 
+%type <class_method_param_declaration_st> class_method_other_param_named
+%type <class_method_param_declaration_list_st> class_method_other_params_named
+%type <class_method_param_declaration_list_st> class_method_params_nonamed
+%type <class_method_param_declaration_list_st> class_method_all_params 
+%type <class_method_param_declaration_list_st> class_method_params
+%type <class_method_declaration_st> class_method_declaration
+%type <class_method_declaration_st> class_method
+%type <class_methods_declaration_list_st> class_methods_declaration
+%type <class_methods_declaration_block_st> class_methods_declaration_with_access
+%type <class_methods_declaration_block_list_st> class_methods_declaration_with_access_list
+%type <class_methods_declaration_block_list_st> class_methods_declaration_or_empty
+%type <class_declaration_st> class_declaration
+%type <class_method_impl_st> class_method_implementation
+%type <class_method_impl_list_st> class_methods_implementation
+%type <class_method_impl_list_st> class_methods_implementation_or_empty
+%type <class_impl_st> class_implementation
 
 %token WHILE
 %token IF
@@ -111,20 +154,20 @@ stmt_list: stmt_list stmt { $$ = AppendStatementToList($1, $2); }
     | stmt { $$ = CreateStList($1); }
     ;
 
-stmt_list_or_empty: stmt_list
-    | /* empty */
+stmt_list_or_empty: stmt_list { $$ = $1; }
+    | /* empty */ { $$ = NULL; }
     ;
 
 stmt: RETURN expr ';' 
 	| RETURN ';'
-	| expr ';' 			{ $$ = CreateStatement($1, NULL, NULL, NULL); }
-	| while_stmt 		{ $$ = CreateStatement(NULL, $1, NULL, NULL); }
-	| if_stmt 			{ $$ = CreateStatement(NULL, NULL, $1, NULL); }
-	| init_stmt ';' 	{ $$ = CreateStatement(NULL, NULL, NULL, $1); }
-	| compound_stmt
+	| expr ';' 			{ $$ = CreateStatement($1, NULL, NULL, NULL, NULL); }
+	| while_stmt 		{ $$ = CreateStatement(NULL, $1, NULL, NULL, NULL); }
+	| if_stmt 			{ $$ = CreateStatement(NULL, NULL, $1, NULL, NULL); }
+	| init_stmt ';' 	{ $$ = CreateStatement(NULL, NULL, NULL, $1, NULL); }
+	| compound_stmt		{ $$ = $1; }
     ;
 
-compound_stmt: '{' stmt_list_or_empty '}'
+compound_stmt: '{' stmt_list_or_empty '}' { $$ = CreateStatement(NULL, NULL, NULL, NULL, $2); }
     ;
 
 if_stmt: IF '(' expr ')' stmt 
@@ -249,7 +292,7 @@ class_invariants_declarations: class_invariant_declaration 		{ $$ = createClassI
 
 class_invariant_declaration_with_access:
 	  class_fields_access class_invariants_declarations { $$ = createClassInvariantsDeclarationBlock($1, $2); }
-	| class_invariants_declarations { $$ = createClassInvariantsDeclarationBlock(A_NOT_SET, $2); }
+	| class_invariants_declarations { $$ = createClassInvariantsDeclarationBlock(A_NOT_SET, $1); }
 	;
 
 class_invariant_declaration_with_access_list: 
@@ -257,8 +300,8 @@ class_invariant_declaration_with_access_list:
 	| class_invariant_declaration_with_access_list class_invariant_declaration_with_access { $$ = addToClassInvariantsDeclarationBlockList($1, $2); }
 	;
 
-class_invariants_declaration: '{' '}' 	{ $$ = NULL }
-    | '{' class_invariant_declaration_with_access_list '}' { $$ = $2 }
+class_invariants_declaration: '{' '}' 	{ $$ = NULL; }
+    | '{' class_invariant_declaration_with_access_list '}' { $$ = $2; }
 	;
 
 class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclaration( NULL, $2, $4 );}
@@ -281,12 +324,12 @@ class_method_params_nonamed: class_method_first_param { $$ = createClassMethodPa
 	
 
 class_method_all_params: class_method_first_param class_method_other_params_named { $$ = addToFrontClassMethodParamDeclarationList($2, $1); }
-	| class_method_params_nonamed {$$ = $1}
+	| class_method_params_nonamed {$$ = $1; }
 	;
 	
 /*Список параметров метода может быть пустым */
-class_method_params: class_method_all_params {$$ = $1}
-	| /*Пусто*/	{$$ = NULL}
+class_method_params: class_method_all_params {$$ = $1; }
+	| /*Пусто*/	{$$ = NULL; }
 	;
 	
 /*Объявление метода без завершающей ';', чтоб переиспользовать в реализации метода */
@@ -303,7 +346,7 @@ class_method: '-' '(' type ')' ID ':' class_method_params { $$ = createMethodDec
     | '+' '(' type ')' ID { $$ = createMethodDeclaration(STATIC, $3, $5, NULL);}
     ;
 
-class_method_declaration: class_method ';' { $$ = $1}
+class_method_declaration: class_method ';' { $$ = $1; }
     ;
 	
 /*Список методов может быть пустым */
@@ -321,13 +364,12 @@ class_methods_declaration_with_access_list: class_methods_declaration_with_acces
 	| class_methods_declaration_with_access_list class_methods_declaration_with_access { $$ = addToClassMethodsDeclarationBlockList( $1, $2); }
 	;
 
-
-class_methods_declaration_or_empty: class_methods_declaration_with_access_list { $$ = $1}
-    | /* empty */	{$$ = NULL }
+class_methods_declaration_or_empty: class_methods_declaration_with_access_list { $$ = $1; }
+    | /* empty */	{$$ = NULL; }
     ;
 
 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, $4, $5, $6); }
-	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, $5, $6); }
+	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, $3, $4); }
     ;
 
 class_method_implementation: class_method compound_stmt { $$ = createClassMethodImpl($1, $2); }
@@ -338,8 +380,8 @@ class_methods_implementation: class_method_implementation { $$ = createClassMeth
     | class_methods_implementation class_method_implementation { $$ = addToClassMethodImplList($1, $2); }
     ;
 	
-class_methods_implementation_or_empty: class_methods_implementation {$$ = $1}
-    | /* empty */	{$$ = NULL}
+class_methods_implementation_or_empty: class_methods_implementation {$$ = $1; }
+    | /* empty */	{$$ = NULL; }
     ;
 
 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END {} { $$ = createClassImpl($2, $3); }
@@ -446,7 +488,8 @@ struct Statements_List *CreateStList(struct Statement *stmt)
 }
 
 struct Statement *CreateStatement(struct Expression *expr, struct While_statement *while_stmt, 
-								  struct If_statement *if_stmt, struct Init_statement *init_stmt)
+								  struct If_statement *if_stmt, struct Init_statement *init_stmt, 
+								  struct Statements_List_st* stmts )
 {
 	struct Statement *cur = (struct Statement *)malloc(sizeof(struct Statement));
 	cur->expr = expr;
