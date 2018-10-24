@@ -25,7 +25,7 @@ enum OperationType
 	PREINC,
 	POSTINC,
 	PREDEC,
-	POSTDEC
+	POSTDEC,
 	VALUE
 };
 
@@ -128,5 +128,72 @@ struct Enumerator
 {
 	char *identifier;
 	int value;
+};
+
+/* КЛАССЫ */
+enum Field_access_en{
+	A_PUBLIC,
+	A_PROTECTED,
+	A_PRIVATE
+};
+
+struct Class_method_param_st
+{
+	char* name;
+	struct Type* type;
+};
+
+struct Class_method_param_list_st {
+	struct Class_method_param_st* param;
+	struct Class_method_param_list_st* next;
+};
+
+
+struct Class_method_declaration_st 
+{
+	char* name;
+	struct Class_method_param_list_st* params;
+};
+
+struct Class_methods_declaration_list_st
+{
+	struct Class_method_declaration_st* method;
+	struct Class_methods_declaration_list_st* next;
+};
+
+struct Class_methods_declaration_block_st
+{
+	enum Field_access_en access;
+	struct Class_methods_declaration_list_st* list;
+};
+
+struct Class_methods_declaration_block_list_st
+{
+	struct Class_methods_declaration_block_st* list;
+	struct Class_methods_declaration_block_list_st* next;
+};
+
+struct Class_invariant_declaration_st
+{
+	char* name;
+	struct Type* type;
+};
+
+struct Class_invariants_declaration_list_st
+{
+	struct Class_invariant_declaration_st* invariant;
+	struct Class_invariants_declaration_list_st* next;
+};
+
+struct Class_invariants_declaration_block_st
+{
+	Field_access_en access;
+	struct Class_invariants_declaration_list_st* list;
+};
+
+struct Class_declaration_st
+{
+	struct Class_methods_declaration_block_list_st* methods_declaraion_list;
+	struct Class_invariants_declaration_block_st* invariants_declaration_list;
 };
 #endif
