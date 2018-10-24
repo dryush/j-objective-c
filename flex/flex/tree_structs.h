@@ -44,11 +44,31 @@ struct Program_st
 	struct Statements_List_st *stmt_list;
 };
 
+
+
 struct Statements_List_st
 {
 	struct Statement_st *stmt;
 	struct Statements_List_st *next;
 };
+
+struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt)
+{
+	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
+	cur->next =0 ;
+	list->next = cur;
+	cur->stmt = stmt;
+	return cur;
+}
+
+struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
+{
+	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
+	cur->next = 0;
+	cur->stmt = stmt;
+}
+
+
 
 struct Statement_st
 {
@@ -58,6 +78,43 @@ struct Statement_st
 	struct Init_statement_st *init_stmt;
 	struct Statements_List_st* stmt_list;
 };
+
+struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->expr = expr;
+	return cur;
+}
+
+struct Statement_st *CreateWhileStatement(struct While_statement_st *while_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->while_stmt = while_stmt;
+	return cur;
+}
+
+struct Statement_st *CreateIfStatement(struct If_statement_st *if_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->if_stmt = if_stmt;
+	return cur;
+}
+
+struct Statement_st *CreateInitStatement(struct Init_statement_st *init_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->init_stmt = init_stmt;
+	return cur;
+}
+
+struct Statement_st *CreateCompoundStatement(struct Statements_List_st *stmt_list)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->stmt_list = stmt_list;
+	return cur;
+}
+
+
 
 struct Expression_st
 {
@@ -72,11 +129,98 @@ struct Expression_st
 	char *string_value;
 };
 
+struct Expression_st *CreateExpression(OperationType type, struct Expression_st *left, struct Expression_st *right)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = type;
+	cur->left = left;
+	cur->right = right;
+	return cur;
+}
+
+struct Expression_st *CreatePreIncDecExpression(OperationType type, char *identifier)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = type;
+	struct Expression_st *right = CreateIDExpression(char *identifier);
+	cur->right = right;
+	return cur;
+}
+
+struct Expression_st *CreatePostIncDecExpression(OperationType type, char *identifier)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = type;
+	struct Expression_st *left = CreateIDExpression(char *identifier);
+	cur->left = left;
+	return cur;
+}
+
+struct Expression_st *CreateIDExpression(char *identifier)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
+	cur->identifier = identifier;
+	return cur;
+}
+
+struct Expression_st *CreateIntValueExpression(int int_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
+	cur->int_value = int_value;
+	return cur;
+}
+
+struct Expression_st *CreateFloatValueExpression(float float_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
+	cur->float_value = float_value;
+	return cur;
+}
+
+struct Expression_st *CreateBoolValueExpression(bool bool_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
+	cur->bool_value = bool_value;
+	return cur;
+}
+
+struct Expression_st *CreateCharValueExpression(char char_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
+	cur->char_value = char_value;
+	return cur;
+}
+
+struct Expression_st *CreateStringValueExpression(char *string_value)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->type = VALUE;
+	cur->string_value = string_value;
+	return cur;
+}
+
+
+
 struct While_statement_st
 {
 	struct Expression_st *condition;
 	struct Statements_List_st *stmt_list;
 };
+
+struct While_statement_st *CreateWhile(struct Expression_st *condition, struct Statements_List_st *stmt_list)
+{
+	struct While_statement_st *cur = (struct While_statement_st *)malloc(sizeof(struct While_statement_st));
+	cur->condition = condition;
+	cur->stmt_list = stmt_list;
+	return cur;
+}
+
+
 
 struct If_statement_st
 {
@@ -84,14 +228,50 @@ struct If_statement_st
 	struct Statements_List_st *truth_stmt_list, *wrong_stmt_list;
 };
 
+struct If_statement_st *CreateIf(struct Expression_st *condition, struct Statements_List_st *truth_stmt_list,
+								 struct Statements_List_st *wrong_stmt_list)
+{
+	struct If_statement_st *cur = (struct If_statement_st *)malloc(sizeof(struct If_statement_st));
+	cur->condition = condition;
+	cur->truth_stmt_list = truth_stmt_list;
+	cur->wrong_stmt_list = wrong_stmt_list;
+	return cur;
+}
+
+
+
 struct Init_statement_st
 {
 	struct Type_st *type;
-	char *variable;
-	OperationType type;
+	char *identifier;
+	OperationType assign_type;
 	struct Expression_st *expr;
 	struct Array_constant *array_constant;
 };
+
+struct Init_statement_st *CreateInitID(struct Type_st *type, char *identifier, struct Expression_st *expr)
+{
+	struct Init_statement_st *cur = (struct Init_statement_st *)malloc(sizeof(struct Init_statement_st));
+	cur->type = type;
+	cur->identifier = identifier;
+	if (expr != NULL)
+	{
+		cur->assign_type = ASSIGN;
+		cur->expr = expr;
+	}
+	return cur;
+}
+
+struct Init_statement_st *CreateAssignID(char *identifier, OperationType assignType, struct Expression_st *expr)
+{
+	struct Init_statement_st *cur = (struct Init_statement_st *)malloc(sizeof(struct Init_statement_st));
+	cur->identifier = identifier;
+	cur->assignType = assignType;
+	cur->expr = expr;
+	return cur;
+}
+
+
 
 struct Type_st
 {

@@ -181,7 +181,7 @@ prog: extern_code
     ;
 
 stmt_list: stmt_list stmt { $$ = AppendStatementToList($1, $2); }
-    | stmt { $$ = CreateStList($1); }
+    | stmt { $$ = CreateStatementList($1); }
     ;
 
 stmt_list_or_empty: stmt_list { $$ = $1; }
@@ -190,33 +190,30 @@ stmt_list_or_empty: stmt_list { $$ = $1; }
 
 stmt: RETURN expr ';' 
 	| RETURN ';'
-	| expr ';' 			{ $$ = CreateStatement($1, NULL, NULL, NULL, NULL); }
-	| while_stmt 		{ $$ = CreateStatement(NULL, $1, NULL, NULL, NULL); }
-	| if_stmt 			{ $$ = CreateStatement(NULL, NULL, $1, NULL, NULL); }
-	| init_stmt ';' 	{ $$ = CreateStatement(NULL, NULL, NULL, $1, NULL); }
-	| compound_stmt		{ $$ = $1; }
+	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
+	| while_stmt 		{ $$ = CreateWhileStatement($1); }
+	| if_stmt 			{ $$ = CreateIfStatement($1); }
+	| init_stmt ';' 	{ $$ = CreateInitStatement($1); }
+	| compound_stmt		{ $$ = CreateCompoundStatement($1); }
     ;
 
-compound_stmt: '{' stmt_list_or_empty '}' { $$ = CreateStatement(NULL, NULL, NULL, NULL, $2); }
+compound_stmt: '{' stmt_list_or_empty '}' { $$ = $2; }
     ;
 
-if_stmt: IF '(' expr ')' stmt 
-    | IF '(' expr ')' stmt ELSE stmt 
+if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIf($3,$5,NULL); }
+    | IF '(' expr ')' stmt ELSE stmt 	{ $$ = CreateIf($3,$5,$7); }
     ;
 	
-while_stmt: WHILE '(' expr ')' stmt 
+while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhile($3,$5); }
 	;
 	
-init_stmt: ID assign_operator expr 
-	| ID assign_operator array_constant 
+init_stmt: ID assign_operator expr 			{ $$ = CreateAssignID($1, $2, $3); } 
 	| array_elem_call assign_operator expr 
-	| type ID '=' expr 
-	| array_type '=' array_constant  
-	| array_type 
+	| type ID '=' expr 						{ $$ = CreateInitID($1, $2, $4); }
+	| type ID								{ $$ = CreateInitID($1, $2, NULL); }  
 	;
 
-assign_operator: '='
-	| ADD_ASSIGN
+assign_operator: ADD_ASSIGN
 	| SUB_ASSIGN
 	| MUL_ASSIGN
 	| DIV_ASSIGN
@@ -240,6 +237,7 @@ array_type: default_type '*' %prec POINTER
 type: default_type
 	| custom_type
 	| array_type
+	| /* empty */
 	;
 
 expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
@@ -272,6 +270,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
     | array_elem_call
     | invariant_call
 	| func_call
+	| array_constant
     ;
 
 enum_declaration: ENUM ID '{' enumerator_list '}'
@@ -498,131 +497,3 @@ func_call: ID '(' func_call_args ')' { $$ = createFuncCall($1, $3); }
 	
 	
 %%
-
-
-
-struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt)
-{
-	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
-	cur->next =0 ;
-	list->next = cur;
-	cur->stmt = stmt;
-	return cur;
-}
-
-struct Statements_List_st *CreateStList(struct Statement_st *stmt)
-{
-	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
-	cur->next = 0;
-	cur->stmt = stmt;
-}
-
-struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->expr = expr;
-	return cur;
-}
-
-struct Statement_st *CreateWhileStatement(struct While_statement_st *while_stmt)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->while_stmt = while_stmt;
-	return cur;
-}
-
-struct Statement_st *CreateIfStatement(struct If_statement_st *if_stmt)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->if_stmt = if_stmt;
-	return cur;
-}
-
-struct Statement_st *CreateInitStatement(struct Init_statement_st *init_stmt)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->init_stmt = init_stmt;
-	return cur;
-}
-
-struct Statement_st *CreateCompoundStatement(struct Statements_List_st *stmt_list)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->stmt_list = stmt_list;
-	return cur;
-}
-
-struct Expression_st *CreateExpression(OperationType type, struct Expression_st *left, struct Expression_st *right)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = type;
-	cur->left = left;
-	cur->right = right;
-	return cur;
-}
-
-struct Expression_st *CreatePreIncDecExpression(OperationType type, char *identifier)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = type;
-	struct Expression_st *right = CreateIDExpression(char *identifier);
-	cur->right = right;
-	return cur;
-}
-
-struct Expression_st *CreatePostIncDecExpression(OperationType type, char *identifier)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = type;
-	struct Expression_st *left = CreateIDExpression(char *identifier);
-	cur->left = left;
-	return cur;
-}
-
-struct Expression_st *CreateIDExpression(char *identifier)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
-	cur->identifier = identifier;
-	return cur;
-}
-
-struct Expression_st *CreateIntValueExpression(int int_value)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
-	cur->int_value = int_value;
-	return cur;
-}
-
-struct Expression_st *CreateFloatValueExpression(float float_value)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
-	cur->float_value = float_value;
-	return cur;
-}
-
-struct Expression_st *CreateBoolValueExpression(bool bool_value)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
-	cur->bool_value = bool_value;
-	return cur;
-}
-
-struct Expression_st *CreateCharValueExpression(char char_value)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
-	cur->char_value = char_value;
-	return cur;
-}
-
-struct Expression_st *CreateStringValueExpression(char *string_value)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
-	cur->string_value = string_value;
-	return cur;
-}
