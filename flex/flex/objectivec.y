@@ -7,6 +7,8 @@
     #include <stdio.h>
 	#include "tree_structs.h"
 	#include "tree_structs_func.h"
+	#include "tree_structs_array.h"
+	#include "tree_structs_class.h"
     int yylex() { return getc(stdin); }
     void yyerror(char *s) {
         fprintf (stderr, "%s\n", s);
@@ -19,10 +21,11 @@
     int int_const;
     float float_const;
     char char_const;
-	bool bool_const;
+	/*bool bool_const; */
+	char bool_const; /*В Си нет bool*/
     char* string_const;
     char* id;
-    void no_val;
+    /*void no_val; */ /*Сомнительно*/
 	
 	struct Statements_List_st_st *_stmt_list;
 	struct Statement_st *_stmt;
@@ -38,8 +41,8 @@
 	struct Enumerator_st *_enumerator;
 
 	enum Field_access_en field_access_en;
-	Class_method_param_declaration_st* class_method_param_declaration_st;
-	Class_method_param_declaration_list_st* class_method_param_declaration_list_st;
+	struct Class_method_param_declaration_st* class_method_param_declaration_st;
+	struct Class_method_param_declaration_list_st* class_method_param_declaration_list_st;
 	enum Method_type_en method_type_en;
 	struct Class_method_declaration_st* class_method_declaration_st;
 	struct Class_methods_declaration_list_st* class_methods_declaration_list_st;
@@ -54,6 +57,12 @@
 	struct Class_method_impl_list_st* class_method_impl_list_st;
 	struct Class_impl_st* class_impl_st;
 
+	struct Invariant_call_st* invariant_call_st;
+
+	struct Method_call_arg_st* method_call_arg_st;
+	struct Method_call_arg_list_st* method_call_arg_list_st;
+	struct Method_call_st* method_call_st;
+
 	struct Func_arg_st* func_arg_st;
 	struct Func_arg_list_st* func_arg_list_st;
 	struct Func_declaration_st* func_declaration_st;
@@ -63,6 +72,9 @@
 
 	struct Array_const_elem_list_st* array_const_elem_list_st;
 	struct Array_elem_call_st* array_elem_call_st;
+
+	struct Extern_code_st* extern_code_st;
+	struct Program_st* program_st;
 }
 
 %error-verbose
@@ -118,6 +130,8 @@
 %type <class_method_impl_list_st> class_methods_implementation_or_empty
 %type <class_impl_st> class_implementation
 
+%type <invariant_call_st> invariant_call
+
 %type <func_arg_st> func_arg
 %type <func_arg_list_st> func_args
 %type <func_arg_list_st> func_args_or_empty
@@ -132,8 +146,16 @@
 %type <array_const_elem_list_st> array_constant
 %type <array_elem_call_st> array_elem_call
 
+%type <method_call_arg_st> method_call_noname_arg
+%type <method_call_arg_st> method_call_name_arg
+%type <method_call_arg_list_st> method_call_noname_args
+%type <method_call_arg_list_st> method_call_name_args
+%type <method_call_arg_list_st> method_call_args
+%type <method_call_arg_list_st> method_call_args_or_empty
+%type <method_call_st> method_call
 
-
+%type <extern_code_st> extern_code
+%type <program_st> prog
 
 
 %token WHILE
@@ -169,15 +191,15 @@
  
 %%
 // ТУТ ПРАВИЛА
-extern_code: func_declaration 
-	| func_implementation
-    | class_declaration 
-	| class_implementation
-	| enum_declaration
+extern_code: func_declaration 	{ $$ = createExternCode($1, NULL, NULL, NULL, NULL);}
+	| func_implementation		{ $$ = createExternCode(NULL, $1, NULL, NULL, NULL);}
+    | class_declaration 		{ $$ = createExternCode(NULL, NULL, $1, NULL, NULL);}
+	| class_implementation 		{ $$ = createExternCode(NULL, NULL, NULL, $1, NULL);}
+	| enum_declaration			{ $$ = createExternCode(NULL, NULL, NULL, NULL, $1);}
 	;
 	
-prog: extern_code 
-    | prog extern_code 
+prog: extern_code 				{ $$ = createProgram($1);}
+    | prog extern_code 			{ $$ =addToProgram($1, $2);}
     ;
 
 stmt_list: stmt_list stmt { $$ = AppendStatementToList($1, $2); }
@@ -418,36 +440,36 @@ class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty EN
 	
 /*ВЫЗОВ МЕТОДА*/
 /*Аргументы могут быть именованными и нет, первый аргумент вегда без имени */
-method_call_noname_arg: ':' expr
+method_call_noname_arg: ':' expr	{ $$ = createMethodCallArg(NULL, $2);}
     ;  
 
-method_call_name_arg: ID ':' expr
+method_call_name_arg: ID ':' expr { $$ = createMethodCallArg($1,$3);}
     ;
 
-method_call_noname_args: method_call_noname_arg
-    | method_call_noname_args method_call_noname_arg
+method_call_noname_args: method_call_noname_arg			{ $$ = createMethodCallArgList($1); }
+    | method_call_noname_args method_call_noname_arg	{ $$ = addToCreateMethodCallArgList($1, $2);}
     ;
 
-method_call_name_args: method_call_name_arg
-    | method_call_name_args method_call_name_arg
+method_call_name_args: method_call_name_arg				{ $$ = createMethodCallArgList($1); }
+    | method_call_name_args method_call_name_arg		{ $$ = addToCreateMethodCallArgList($1, $2);}
     ;
 
 /*Список аргументов может быть пустым */
-method_call_args: method_call_noname_arg method_call_name_args
-    | method_call_noname_args
+method_call_args: method_call_noname_arg method_call_name_args	{ $$ = addToFrontMethodCallArgList($2, $1);}
+    | method_call_noname_args		{ $$ = $1; }
     ;
 
-method_call_args_or_empty: method_call_args
-    | /*empty*/
+method_call_args_or_empty: method_call_args { $$ = $1;}
+    | /*empty*/	{ $$ = NULL; }
     ;
 
 
 /* [receiver methodWithFirstArgument: 10 andSecondArgument: 20]; */
-method_call: '['ID ID method_call_args_or_empty']'
+method_call: '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall($2, $3, $5);}
     ;
 
 /*ОБРАЩЕНИЕ К ПОЛЮ*/
-invariant_call: expr ARROW ID
+invariant_call: expr ARROW ID { $$ = createInvariantCall($1, $3);}
     ;
 	
 /*МАССИВЫ */
@@ -496,4 +518,4 @@ func_call: ID '(' func_call_args ')' { $$ = createFuncCall($1, $3); }
 
 	
 	
-%%
+%%%%
