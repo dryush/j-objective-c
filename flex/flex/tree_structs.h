@@ -41,7 +41,7 @@ enum DefaultType
 
 struct Program_st
 {
-	struct Statements_List_st *stmts;
+	struct Statements_List_st *stmt_list;
 };
 
 struct Statements_List_st
@@ -56,7 +56,7 @@ struct Statement_st
 	struct While_statement *while_stmt;
 	struct If_statement_st *if_stmt;
 	struct Init_statement_st *init_stmt;
-	struct Statements_List_st* stmts;
+	struct Statements_List_st* stmt_list;
 };
 
 struct Expression_st
