@@ -42,7 +42,7 @@
 %token ELSE
 %token END
 %token EXTERN
-%token IMPLEMENTATION, INTERFACE, PUBLIC, PROTECTED, PRIVATE
+%token IMPLEMENTATION INTERFACE PUBLIC PROTECTED PRIVATE
 %token RETURN
 %token INC
 %token DEC
@@ -131,17 +131,15 @@ default_type:  INT
 	| BOOL
 	;
 
-return_type: default_type
-	| default_type '*' %prec POINTER
-	| ID 
-	| ID '*' %prec POINTER
+custom_type: ID '*' %prec POINTER
 	;
 
-array_type: default_type ID '[' INT_CONST ']'
-	| ID ID '[' INT_CONST ']'
+array_type: default_type '*' %prec POINTER
+	| custom_type '*' %prec POINTER 
 	;
 	
-type: return_type
+type: default_type
+	| custom_type
 	| array_type
 	;
 
@@ -252,8 +250,7 @@ class_method_params_nonamed: class_method_first_param
 	;
 	
 
-class_method_all_params: class_method_first_param
-    | class_method_first_param class_method_other_params_named
+class_method_all_params: class_method_first_param class_method_other_params_named
 	| class_method_params_nonamed
 	;
 	
@@ -286,9 +283,8 @@ class_methods_declaration: class_method_declaration
     ;
 
 
-class_methods_declaration_with_access: 
-	class_fields_access class_method_declaration
-	| class_method_declaration
+class_methods_declaration_with_access:  class_methods_declaration 
+	| class_fields_access class_methods_declaration
 	;
 
 class_methods_declaration_with_access_list: class_methods_declaration_with_access
@@ -335,7 +331,7 @@ method_call_name_args: method_call_name_arg
     ;
 
 /*Список аргументов может быть пустым */
-method_call_args: method_call_noname_args method_call_name_arg
+method_call_args: method_call_noname_arg method_call_name_args
     | method_call_noname_args
     ;
 
