@@ -39,30 +39,30 @@ enum DefaultType
 	BOOL
 };
 
-struct Program
+struct Program_st
 {
-	struct Statements_List *stmts;
+	struct Statements_List_st *stmts;
 };
 
-struct Statements_List
+struct Statements_List_st
 {
-	struct Statement *stmt;
-	struct Statements_List *next;
+	struct Statement_st *stmt;
+	struct Statements_List_st *next;
 };
 
-struct Statement
+struct Statement_st
 {
-	struct Expression *expr;
+	struct Expression_st *expr;
 	struct While_statement *while_stmt;
-	struct If_statement *if_stmt;
-	struct Init_statement *init_stmt;
+	struct _st *if_stmt;
+	struct Init_statement_st *init_stmt;
 };
 
-struct Expression
+struct Expression_st
 {
 	OperationType type;
-	struct Expression *left;
-	struct Expression *right;
+	struct Expression_st *left;
+	struct Expression_st *right;
 	char *identifier;
 	int int_value;
 	float float_value;
@@ -71,67 +71,68 @@ struct Expression
 	char *string_value;
 };
 
-struct While_statement
+struct While_statement_st
 {
-	struct Expression *condition;
-	struct Statements_List *stmt_list;
+	struct Expression_st *condition;
+	struct Statements_List_st *stmt_list;
 };
 
-struct If_statement
+struct If_statement_st
 {
-	struct Expression *condition;
-	struct Statements_List *truth_stmt_list, *wrong_stmt_list;
+	struct Expression_st *condition;
+	struct Statements_List_st *truth_stmt_list, *wrong_stmt_list;
 };
 
-struct Init_statement
+struct Init_statement_st
 {
-	struct Type *type;
+	struct Type_st *type;
 	char *variable;
 	OperationType type;
-	struct Expression *expr;
+	struct Expression_st *expr;
 	struct Array_constant *array_constant;
 };
 
-struct Type
+struct Type_st
 {
-	struct Return_type *return_type;
-	struct Array_type *arrayt_type;
+	struct Return_type_st *return_type;
+	struct Array_type_st *arrayt_type;
 };
 
-struct Return_type
+struct Return_type_st
 {
 	DefaultType default_type;
 	char *type_name;
 	bool isPointer;
 };
 
-struct Array_type
+struct Array_type_st
 {
 	DefaultType default_type;
 	char *type_name, *array_name;
 	int size;
 };
 
-struct Enum_declaration
+struct Enum_declaration_st
 {
 	char *identifier;
-	struct Enumerator_list *enumerator_list;
+	struct Enumerator_list_st *enumerator_list;
 };
 
-struct Enumerator_list
+struct Enumerator_list_st
 {
-	struct Enumerator *enumerator;
-	struct Enumerator_list *enumerator_list;
+	struct Enumerator_st *enumerator_st;
+	struct Enumerator_list_st *enumerator_list;
 };
 
-struct Enumerator
+struct Enumerator_st
 {
 	char *identifier;
 	int value;
 };
 
 /* КЛАССЫ */
-enum Field_access_en{
+enum Field_access_en
+{
 	A_PUBLIC,
 	A_PROTECTED,
 	A_PRIVATE
@@ -143,10 +144,12 @@ struct Class_method_param_declaration_st
 	char* innerName;
 	/* Имя, которое используется для ппередачи метода в параметр */
 	char* outerName;
-	struct Type* type;
+	struct Type_st* type;
 };
 
-struct Class_method_param_declaration_st* createClassMethodParamDeclaration(char* innerName, char* outerName, struct Type* type){
+
+struct Class_method_param_declaration_st* createClassMethodParamDeclaration(char* innerName, char* outerName, struct Type_st* type)
+{
 	struct Class_method_param_declaration_st* st = ( struct Class_method_param_declaration_st*) malloc( sizeof( struct Class_method_param_declaration_st));
 	st->innerName = innerName;
 	st->outerName = outerName;
@@ -154,7 +157,8 @@ struct Class_method_param_declaration_st* createClassMethodParamDeclaration(char
 	return st;
 };
 
-struct Class_method_param_declaration_list_st {
+struct Class_method_param_declaration_list_st 
+{
 	struct Class_method_param_declaration_st* param;
 	struct Class_method_param_declaration_list_st* next;
 };
@@ -257,10 +261,10 @@ struct Class_methods_declaration_block_list_st* addToClassMethodsDeclarationBloc
 struct Class_invariant_declaration_st
 {
 	char* name;
-	struct Type* type;
+	struct Type_st* type;
 };
 
-struct Class_invariant_declaration_st* createClassInvariantDeclaration(char * name, struct Type* type)
+struct Class_invariant_declaration_st* createClassInvariantDeclaration(char * name, struct Type_st* type)
 {
 	struct Class_invariant_declaration_st* st = (struct Class_invariant_declaration_st*) malloc( sizeof(struct Class_invariant_declaration_st));
 	st->name = name;
