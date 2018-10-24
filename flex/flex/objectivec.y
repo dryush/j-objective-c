@@ -587,7 +587,7 @@ struct Expression_st *CreatePreIncDecExpression(OperationType type, char *identi
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->type = type;
-	struct Expression_st *right = CreateIDExpression(char *identifier);
+	struct Expression_st *right = CreateIDExpression(identifier);
 	cur->right = right;
 	return cur;
 }
@@ -596,12 +596,12 @@ struct Expression_st *CreatePostIncDecExpression(OperationType type, char *ident
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->type = type;
-	struct Expression_st *left = CreateIDExpression(char *identifier);
+	struct Expression_st *left = CreateIDExpression(identifier);
 	cur->left = left;
 	return cur;
 }
 
-struct Expression_st *CreateIDExpression(char *identifier)
+struct Expression_st *CreateIDExpression(identifier)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->type = VALUE;
