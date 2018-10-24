@@ -6,6 +6,7 @@
     */
     #include <stdio.h>
 	#include "tree_structs.h"
+	#include "tree_structs_func.h"
     int yylex() { return getc(stdin); }
     void yyerror(char *s) {
         fprintf (stderr, "%s\n", s);
@@ -52,6 +53,15 @@
 	struct Class_method_impl_st* class_method_impl_st;
 	struct Class_method_impl_list_st* class_method_impl_list_st;
 	struct Class_impl_st* class_impl_st;
+
+	struct Func_arg_st* func_arg_st;
+	struct Func_arg_list_st* func_arg_list_st;
+	struct Func_declaration_st* func_declaration_st;
+	struct Func_impl_st* func_impl_st;
+	struct Func_call_arg_list_st* func_call_arg_list_st;
+	struct Func_call_st* func_call_st;
+
+
 }
 
 %error-verbose
@@ -82,6 +92,7 @@
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
 %type <_enumerator> enumerator
+
 %type <field_access_en> class_fields_access
 %type <class_invariant_declaration_st> class_invariant_declaration
 %type <class_invariants_declaration_list_st> class_invariants_declarations
@@ -105,6 +116,17 @@
 %type <class_method_impl_list_st> class_methods_implementation
 %type <class_method_impl_list_st> class_methods_implementation_or_empty
 %type <class_impl_st> class_implementation
+
+%type <func_arg_st> func_arg
+%type <func_arg_list_st> func_args
+%type <func_arg_list_st> func_args_or_empty
+%type <func_declaration_st> func_header
+%type <func_declaration_st> func_declaration
+%type <func_impl_st> func_implementation
+%type <func_call_arg_list_st> func_call_args
+%type <func_call_st> func_call
+
+
 
 %token WHILE
 %token IF
@@ -437,32 +459,32 @@ array_elem_call: expr '[' expr ']'
     ;
 
 /*ФУНКЦИИ */
-func_arg: type ID
+func_arg: type ID { $$ =  createFuncArg($1, $2);}
     ;
 
-func_args: func_arg
-    | func_args func_arg
+func_args: func_arg 		{ $$ = createFuncArgList($1); }
+    | func_args func_arg	{ $$ = addToFuncArgList($1, $2); }
     ;
 
-func_args_or_empty: func_args
-    | /* empty */
+func_args_or_empty: func_args	{ $$ = $1; }
+    | /* empty */				{ $$ = NULL; }
     ;
 
-func_header: type ID '(' func_args_or_empty ')'
+func_header: type ID '(' func_args_or_empty ')' { $$ = createFuncDeclaration($1, $2, $4); }
     ;
 
-func_declaration: func_header ';'
+func_declaration: func_header ';' { $$ = $1; }
     ;
 
-func_implementation: func_header compound_stmt
+func_implementation: func_header compound_stmt { $$ = createFuncImpl($1, $2);}
     ;
 
-func_call_args: expr
-	| func_call_args ',' expr
+func_call_args: expr		{ $$ = createFuncCallArgsList($1);}
+	| func_call_args ',' expr { $$ = addToFuncCallArgList($1, $3);}
 	;
 
-func_call: ID '(' func_call_args ')'
-	| ID '(' ')'
+func_call: ID '(' func_call_args ')' { $$ = createFuncCall($1, $3); }
+	| ID '(' ')'	{ $$ = createFuncCall($1, NULL); }
 	;
 
 	
