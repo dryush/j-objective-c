@@ -57,7 +57,7 @@
 %type <_if_stmt> if_stmt
 %type <_init_stmt> init_stmt
 %type <_type> type
-%type <_return_type> return
+%type <_return_type> RETURN
 %type <_array_type> array_type
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
