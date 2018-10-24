@@ -235,56 +235,58 @@ enumerator: ID
 
 */
 
-class_fields_access: PUBLIC PROTECTED PRIVATE
+class_fields_access: PUBLIC { $$ = A_PUBLIC; } 
+	| PROTECTED { $$ = A_PROTECTED; }
+	| PRIVATE	{ $$ = A_PRIVATE; }
 	;
 
-class_invariant_declaration: type ID ';'
+class_invariant_declaration: type ID ';' { $$ = createClassInvariantDeclaration($1, $2); }
 	;
 
-class_invariants_declarations: class_invariant_declaration 
-    | class_invariants_declarations class_invariant_declaration
+class_invariants_declarations: class_invariant_declaration 		{ $$ = createClassInvariantsDeclarationList($1); }
+    | class_invariants_declarations class_invariant_declaration	{ $$ = addToClassInvariantsDeclarationList($1, $2); }
 	;
 
 class_invariant_declaration_with_access:
-	  class_fields_access class_invariants_declarations 
-	| class_invariants_declarations
+	  class_fields_access class_invariants_declarations { $$ = createClassInvariantsDeclarationBlock($1, $2); }
+	| class_invariants_declarations { $$ = createClassInvariantsDeclarationBlock(A_NOT_SET, $2); }
 	;
 
 class_invariant_declaration_with_access_list: 
-	  class_invariant_declaration_with_access
-	| class_invariant_declaration_with_access_list class_invariant_declaration_with_access
+	  class_invariant_declaration_with_access { $$ = createClassInvariantsDeclarationBlockList($1); }
+	| class_invariant_declaration_with_access_list class_invariant_declaration_with_access { $$ = addToClassInvariantsDeclarationBlockList($1, $2); }
 	;
 
-class_invariants_declaration: '{' '}'
-    | '{' class_invariant_declaration_with_access_list '}'
+class_invariants_declaration: '{' '}' 	{ $$ = NULL }
+    | '{' class_invariant_declaration_with_access_list '}' { $$ = $2 }
 	;
 
-class_method_first_param: '(' type ')' ID
+class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclaration( NULL, $2, $4 );}
 	;
 	
 /*Параметры, начиная со второго могут либо все объявляться с именем 
 	Либо все без имени, подобно первому аргументу
 */
 
-class_method_other_param_named: ID ':' '(' type ')' ID 
+class_method_other_param_named: ID ':' '(' type ')' ID { $$ = createClassMethodParamDeclaration($1, $4, $6); }
 	;
 
-class_method_other_params_named: class_method_other_params_named
-	| class_method_other_params_named class_method_other_param_named
+class_method_other_params_named: class_method_other_param_named  { $$ = createClassMethodParamDeclarationList($1); }
+	| class_method_other_params_named class_method_other_param_named { $$ = addToClassMethodParamDeclarationList($1, $2); }
 	;
 
-class_method_params_nonamed: class_method_first_param
-	| class_method_params_nonamed class_method_first_param
+class_method_params_nonamed: class_method_first_param { $$ = createClassMethodParamDeclarationList($1); }
+	| class_method_params_nonamed class_method_first_param { $$ = addToClassMethodParamDeclarationList($1, $2); }
 	;
 	
 
-class_method_all_params: class_method_first_param class_method_other_params_named
-	| class_method_params_nonamed
+class_method_all_params: class_method_first_param class_method_other_params_named { $$ = addToFrontClassMethodParamDeclarationList($2, $1); }
+	| class_method_params_nonamed {$$ = $1}
 	;
 	
 /*Список параметров метода может быть пустым */
-class_method_params: class_method_all_params
-	| /*Пусто*/
+class_method_params: class_method_all_params {$$ = $1}
+	| /*Пусто*/	{$$ = NULL}
 	;
 	
 /*Объявление метода без завершающей ';', чтоб переиспользовать в реализации метода */
@@ -295,51 +297,52 @@ class_method_params: class_method_all_params
 … ]
 */
 
-class_method: '-' '(' type ')' ID ':' class_method_params
-    | '+' '(' type ')' ID ':' class_method_params
-    | '-' '(' type ')' ID 
-    | '+' '(' type ')' ID 
+class_method: '-' '(' type ')' ID ':' class_method_params { $$ = createMethodDeclaration(NON_STATIC, $3, $5, $7);}
+    | '+' '(' type ')' ID ':' class_method_params { $$ = createMethodDeclaration(STATIC, $3, $5, $7);}
+    | '-' '(' type ')' ID { $$ = createMethodDeclaration(NON_STATIC, $3, $5, NULL);}
+    | '+' '(' type ')' ID { $$ = createMethodDeclaration(STATIC, $3, $5, NULL);}
     ;
 
-class_method_declaration: class_method ';'
-    ;
-	
-/*Список методов может быть пустым */
-
-class_methods_declaration: class_method_declaration
-    | class_methods_declaration class_method_declaration
-    ;
-
-
-class_methods_declaration_with_access:  class_methods_declaration 
-	| class_fields_access class_methods_declaration
-	;
-
-class_methods_declaration_with_access_list: class_methods_declaration_with_access
-	| class_methods_declaration_with_access_list class_methods_declaration_with_access
-	;
-
-
-class_methods_declaration_or_empty: class_methods_declaration_with_access_list
-    | /* empty */
-    ;
-
-class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
-    ;
-
-class_method_implementation: class_method compound_stmt
+class_method_declaration: class_method ';' { $$ = $1}
     ;
 	
 /*Список методов может быть пустым */
-class_methods_implementation: class_method_implementation
-    | class_methods_implementation class_method_implementation
-    ;
-	
-class_methods_implementation_or_empty: class_methods_implementation
-    | /* empty */
+
+class_methods_declaration: class_method_declaration 		{ $$ = createMethodsDeclarationList( $1); }
+    | class_methods_declaration class_method_declaration	{ $$ = addToMethodsDeclarationList( $1, $2); }
     ;
 
-class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END
+
+class_methods_declaration_with_access:  class_methods_declaration { $$ = createClassMethodsDeclarationBlock(A_NOT_SET, $1); }
+	| class_fields_access class_methods_declaration { $$ = createClassMethodsDeclarationBlock( $1, $2); }
+	;
+
+class_methods_declaration_with_access_list: class_methods_declaration_with_access { $$ = createClassMethodsDeclarationBlockList( $1); }
+	| class_methods_declaration_with_access_list class_methods_declaration_with_access { $$ = addToClassMethodsDeclarationBlockList( $1, $2); }
+	;
+
+
+class_methods_declaration_or_empty: class_methods_declaration_with_access_list { $$ = $1}
+    | /* empty */	{$$ = NULL }
+    ;
+
+class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, $4, $5, $6); }
+	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, $5, $6); }
+    ;
+
+class_method_implementation: class_method compound_stmt { $$ = createClassMethodImpl($1, $2); }
+    ;
+	
+/*Список методов может быть пустым */
+class_methods_implementation: class_method_implementation { $$ = createClassMethodImplList($1); }
+    | class_methods_implementation class_method_implementation { $$ = addToClassMethodImplList($1, $2); }
+    ;
+	
+class_methods_implementation_or_empty: class_methods_implementation {$$ = $1}
+    | /* empty */	{$$ = NULL}
+    ;
+
+class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END {} { $$ = createClassImpl($2, $3); }
 	;
 	
 /*ВЫЗОВ МЕТОДА*/
