@@ -137,23 +137,60 @@ enum Field_access_en{
 	A_PRIVATE
 };
 
-struct Class_method_param_st
+struct Class_method_param_declaration_st
 {
-	char* name;
+	/* Имя, которое будут использоваться внутри метода*/
+	char* innerName;
+	/* Имя, которое используется для ппередачи метода в параметр */
+	char* outerName;
 	struct Type* type;
 };
 
-struct Class_method_param_list_st {
-	struct Class_method_param_st* param;
-	struct Class_method_param_list_st* next;
+struct Class_method_param_declaration_st* createClassMethodParamDeclaration(char* innerName, char* outerName, struct Type* type){
+	struct Class_method_param_declaration_st* st = ( struct Class_method_param_declaration_st*) malloc( sizeof( struct Class_method_param_declaration_st));
+	st->innerName = innerName;
+	st->outerName = outerName;
+	st->type = type;
+	return st;
 };
 
+struct Class_method_param_declaration_list_st {
+	struct Class_method_param_declaration_st* param;
+	struct Class_method_param_declaration_list_st* next;
+};
+
+struct Class_method_param_declaration_list_st* createClassMethodParamDeclarationList( 
+  struct Class_method_param_declaration_st* param )
+{
+	 struct  Class_method_param_declaration_list_st* st = (struct  Class_method_param_declaration_list_st*) malloc( sizeof(struct  Class_method_param_declaration_list_st));
+	 st->param = param;
+	 st->next = NULL;
+	 return st;
+ }
+
+struct Class_method_param_declaration_list_st* addToClassMethodParamDeclarationList(
+  struct Class_method_param_declaration_list_st* root, struct Class_method_param_declaration_st* param )
+{
+	struct Class_method_param_declaration_list_st* last = root;
+	while ( last->next != NULL )
+	 	last = last->next;
+	last->next = createClassMethodParamDeclarationList(param); 
+	return root;
+ }
 
 struct Class_method_declaration_st 
 {
 	char* name;
-	struct Class_method_param_list_st* params;
+	struct Class_method_param_declaration_list_st* params;
 };
+
+struct Class_method_declaration_st* createMethodDeclaration(char* name, struct Class_method_param_declaration_list_st* params){
+	struct Class_method_declaration_st* st = (struct Class_method_declaration_st*) malloc (sizeof(struct Class_method_declaration_st));
+	st->name = name;
+	st->params = params;
+	return st;
+}
+
 
 struct Class_methods_declaration_list_st
 {
@@ -161,11 +198,38 @@ struct Class_methods_declaration_list_st
 	struct Class_methods_declaration_list_st* next;
 };
 
+struct Class_methods_declaration_list_st* createMethodsDeclarationList( struct Class_method_declaration_st* method )
+{
+	struct Class_methods_declaration_list_st* st = (struct Class_methods_declaration_list_st*) malloc(sizeof(struct Class_methods_declaration_list_st));
+	st->method = method;
+	st->next = NULL;
+	return st;
+}
+
+struct Class_methods_declaration_list_st* addToMethodsDeclarationList( 
+  struct Class_methods_declaration_list_st* root, struct Class_method_declaration_st* method )
+{
+	struct Class_methods_declaration_list_st* last = root;
+	while( last->next != NULL)
+		last = last->next;
+	last->next = createMethodsDeclarationList(method);
+	return root;
+}
+
 struct Class_methods_declaration_block_st
 {
 	enum Field_access_en access;
 	struct Class_methods_declaration_list_st* list;
 };
+
+struct Class_methods_declaration_block_st* createClassMethodsDeclarationBlock(
+  Field_access_en access, struct Class_methods_declaration_list_st* list)
+{
+	struct Class_methods_declaration_block_st* st = (struct Class_methods_declaration_block_st*) malloc (sizeof(struct Class_methods_declaration_block_st));
+	st->access = access;
+	st->list = list;
+	return st;
+}
 
 struct Class_methods_declaration_block_list_st
 {
@@ -173,11 +237,36 @@ struct Class_methods_declaration_block_list_st
 	struct Class_methods_declaration_block_list_st* next;
 };
 
+struct Class_methods_declaration_block_list_st* createClassMethodsDeclarationBlockList(
+  struct Class_methods_declaration_block_st* list )
+{
+	struct Class_methods_declaration_block_list_st* st = (struct Class_methods_declaration_block_list_st*) malloc( sizeof(struct Class_methods_declaration_block_list_st));
+	st->list = list;
+	st->next = NULL;
+}
+
+struct Class_methods_declaration_block_list_st* addToClassMethodsDeclarationBlockList(
+  struct Class_methods_declaration_block_list_st* root, struct Class_methods_declaration_block_st* list )
+{
+	struct Class_methods_declaration_block_list_st* last = root;
+	while( last->next != NULL )
+		last = last->next;
+	last->next = createClassMethodsDeclarationBlockList(list);
+}
+
 struct Class_invariant_declaration_st
 {
 	char* name;
 	struct Type* type;
 };
+
+struct Class_invariant_declaration_st* createClassInvariantDeclaration(char * name, struct Type* type)
+{
+	struct Class_invariant_declaration_st* st = (struct Class_invariant_declaration_st*) malloc( sizeof(struct Class_invariant_declaration_st));
+	st->name = name;
+	st->type = type;
+	return st;
+}
 
 struct Class_invariants_declaration_list_st
 {
@@ -185,15 +274,52 @@ struct Class_invariants_declaration_list_st
 	struct Class_invariants_declaration_list_st* next;
 };
 
+struct Class_invariants_declaration_list_st* createClassInvariantsDeclarationList(
+  struct Class_invariant_declaration_st* invariant)
+{
+	struct Class_invariants_declaration_list_st* st = (struct Class_invariants_declaration_list_st*) malloc(sizeof(struct Class_invariants_declaration_list_st*));
+	st->invariant = invariant;
+	st->next = NULL;
+}
+
+struct Class_invariants_declaration_list_st* addToClassInvariantsDeclarationList(
+  struct Class_invariants_declaration_list_st* root, struct Class_invariant_declaration_st* invariant)
+{
+	struct Class_invariants_declaration_list_st* last = root;
+	while( last->next != NULL)
+		last = last->next;
+	last->next = createClassInvariantsDeclarationList(invariant);
+	return root;
+}
+
 struct Class_invariants_declaration_block_st
 {
 	Field_access_en access;
 	struct Class_invariants_declaration_list_st* list;
 };
 
+struct Class_invariants_declaration_block_st* createClassInvariantsDeclarationBlock(
+  Field_access_en access, struct Class_invariants_declaration_list_st* list )
+{
+	struct Class_invariants_declaration_block_st* st = (struct Class_invariants_declaration_block_st*) malloc(sizeof(struct Class_invariants_declaration_block_st));
+	st->access = access;
+	st->list = list;
+}
+
 struct Class_declaration_st
 {
 	struct Class_methods_declaration_block_list_st* methods_declaraion_list;
 	struct Class_invariants_declaration_block_st* invariants_declaration_list;
 };
+
+struct Class_declaration_st* createClassDeclaration(
+  struct Class_methods_declaration_block_list_st* methods_declaraion_list,
+  struct Class_invariants_declaration_block_st* invariants_declaration_list )
+{
+	struct Class_declaration_st* st = (struct Class_declaration_st*)malloc(sizeof(struct Class_declaration_st));
+	st->methods_declaraion_list = methods_declaraion_list;
+	st->invariants_declaration_list = invariants_declaration_list;
+	return st;
+};
+
 #endif
