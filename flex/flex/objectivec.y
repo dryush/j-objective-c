@@ -21,10 +21,11 @@
     int int_const;
     float float_const;
     char char_const;
-	bool bool_const;
+	/*bool bool_const; */
+	char bool_const; /*В Си нет bool*/
     char* string_const;
     char* id;
-    void no_val;
+    /*void no_val; */ /*Сомнительно*/
 	
 	struct Statements_List_st_st *_stmt_list;
 	struct Statement_st *_stmt;
@@ -40,8 +41,8 @@
 	struct Enumerator_st *_enumerator;
 
 	enum Field_access_en field_access_en;
-	Class_method_param_declaration_st* class_method_param_declaration_st;
-	Class_method_param_declaration_list_st* class_method_param_declaration_list_st;
+	struct Class_method_param_declaration_st* class_method_param_declaration_st;
+	struct Class_method_param_declaration_list_st* class_method_param_declaration_list_st;
 	enum Method_type_en method_type_en;
 	struct Class_method_declaration_st* class_method_declaration_st;
 	struct Class_methods_declaration_list_st* class_methods_declaration_list_st;
@@ -58,9 +59,9 @@
 
 	struct Invariant_call_st* invariant_call_st;
 
-	struct Method_call_arg_st method_call_arg_st;
-	struct Method_call_arg_list_st method_call_arg_list_st;
-	struct Method_call_st method_call_st;
+	struct Method_call_arg_st* method_call_arg_st;
+	struct Method_call_arg_list_st* method_call_arg_list_st;
+	struct Method_call_st* method_call_st;
 
 	struct Func_arg_st* func_arg_st;
 	struct Func_arg_list_st* func_arg_list_st;
@@ -71,6 +72,9 @@
 
 	struct Array_const_elem_list_st* array_const_elem_list_st;
 	struct Array_elem_call_st* array_elem_call_st;
+
+	struct Extern_code_st* extern_code_st;
+	struct Program_st* program_st;
 }
 
 %error-verbose
@@ -150,8 +154,8 @@
 %type <method_call_arg_list_st> method_call_args_or_empty
 %type <method_call_st> method_call
 
-
-
+%type <extern_code_st> extern_code
+%type <program_st> prog
 
 
 %token WHILE
@@ -187,15 +191,15 @@
  
 %%
 // ТУТ ПРАВИЛА
-extern_code: func_declaration 
-	| func_implementation
-    | class_declaration 
-	| class_implementation
-	| enum_declaration
+extern_code: func_declaration 	{ $$ = createExternCode($1, NULL, NULL, NULL, NULL);}
+	| func_implementation		{ $$ = createExternCode(NULL, $1, NULL, NULL, NULL);}
+    | class_declaration 		{ $$ = createExternCode(NULL, NULL, $1, NULL, NULL);}
+	| class_implementation 		{ $$ = createExternCode(NULL, NULL, NULL, $1, NULL);}
+	| enum_declaration			{ $$ = createExternCode(NULL, NULL, NULL, NULL, $1);}
 	;
 	
-prog: extern_code 
-    | prog extern_code 
+prog: extern_code 				{ $$ = createProgram($1);}
+    | prog extern_code 			{ $$ =addToProgram($1, $2);}
     ;
 
 stmt_list: stmt_list stmt { $$ = AppendStatementToList($1, $2); }
@@ -466,7 +470,7 @@ method_call: '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall(
     ;
 
 /*ОБРАЩЕНИЕ К ПОЛЮ*/
-invariant_call: expr ARROW ID { && = createInvariantCall($1, $3);}
+invariant_call: expr ARROW ID { $$ = createInvariantCall($1, $3);}
     ;
 	
 /*МАССИВЫ */
