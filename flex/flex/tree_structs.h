@@ -26,6 +26,7 @@ enum OperationType
 	POSTINC,
 	PREDEC,
 	POSTDEC
+	VALUE
 };
 
 enum DefaultType
@@ -60,14 +61,14 @@ struct Statement
 struct Expression
 {
 	OperationType type;
+	struct Expression *left;
+	struct Expression *right;
+	char *identifier;
 	int int_value;
 	float float_value;
 	bool bool_value;
 	char char_value;
 	char *string_value;
-	char *identifier;
-	struct Expression *left;
-	struct Expression *right;
 };
 
 struct While_statement
