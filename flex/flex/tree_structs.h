@@ -58,7 +58,7 @@ struct Statement_st
 
 struct Expression_st
 {
-	OperationType type;
+	enum OperationType type;
 	struct Expression_st *left;
 	struct Expression_st *right;
 	char *identifier;

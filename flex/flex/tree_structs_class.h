@@ -71,12 +71,12 @@ enum Method_type_en{
 struct Class_method_declaration_st 
 {
 	char* name;
-	Type_st* returnType;
-	Method_type_en methodType;
+	struct Type_st* returnType;
+	enum Method_type_en methodType;
 	struct Class_method_param_declaration_list_st* params;
 };
 
-struct Class_method_declaration_st* createMethodDeclaration(Method_type_en methodType, struct Type_st* returnType, char* name, struct Class_method_param_declaration_list_st* params){
+struct Class_method_declaration_st* createMethodDeclaration(enum Method_type_en methodType, struct Type_st* returnType, char* name, struct Class_method_param_declaration_list_st* params){
 	struct Class_method_declaration_st* st = (struct Class_method_declaration_st*) malloc (sizeof(struct Class_method_declaration_st));
 	st->methodType = methodType;
 	st->returnType = returnType;
@@ -117,7 +117,7 @@ struct Class_methods_declaration_block_st
 };
 
 struct Class_methods_declaration_block_st* createClassMethodsDeclarationBlock(
-  Field_access_en access, struct Class_methods_declaration_list_st* list)
+  enum Field_access_en access, struct Class_methods_declaration_list_st* list)
 {
 	struct Class_methods_declaration_block_st* st = (struct Class_methods_declaration_block_st*) malloc (sizeof(struct Class_methods_declaration_block_st));
 	st->access = access;
@@ -188,12 +188,12 @@ struct Class_invariants_declaration_list_st* addToClassInvariantsDeclarationList
 
 struct Class_invariants_declaration_block_st
 {
-	Field_access_en access;
+	enum Field_access_en access;
 	struct Class_invariants_declaration_list_st* list;
 };
 
 struct Class_invariants_declaration_block_st* createClassInvariantsDeclarationBlock(
-  Field_access_en access, struct Class_invariants_declaration_list_st* list )
+  enum Field_access_en access, struct Class_invariants_declaration_list_st* list )
 {
 	struct Class_invariants_declaration_block_st* st = (struct Class_invariants_declaration_block_st*) malloc(sizeof(struct Class_invariants_declaration_block_st));
 	st->access = access;
@@ -247,15 +247,15 @@ struct Class_declaration_st* createClassDeclaration(
 
 struct Class_method_impl_st {
 	char* name;
-	Type_st* returnType;
-	Method_type_en methodType;
-	Statement_st* body;
+	struct Type_st* returnType;
+	enum Method_type_en methodType;
+	struct Statement_st* body;
 	struct Class_method_param_declaration_list_st* params;
 
 };
 
 struct Class_method_impl_st* createClassMethodImpl(
-  struct Class_method_declaration_st* decl, Statement_st* stmt)
+  struct Class_method_declaration_st* decl, struct Statement_st* stmt)
 {
 	struct Class_method_impl_st* st = (struct Class_method_impl_st*) malloc( sizeof(struct Class_method_impl_st));
 	st->name = decl->name;
