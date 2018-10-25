@@ -234,7 +234,7 @@ while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhile($3,$5); }
 init_stmt:
 	| type ID '=' expr 			/*Может к чёрту?*/			{ $$ = CreateInitID($1, $2, $4); }
 	| type ID								{ $$ = CreateInitID($1, $2, NULL); }
-	| type ID '[' INT_CONST ']' /*Массивы*/  
+	| type ID '[' INT_CONST ']' ';'/*Массивы*/  
 	;
 
 	
