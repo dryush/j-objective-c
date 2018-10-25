@@ -9,10 +9,13 @@
 	#include "tree_structs_func.h"
 	#include "tree_structs_array.h"
 	#include "tree_structs_class.h"
-    int yylex() { return getc(stdin); }
+    
+	int yylex() { return getc(stdin); }
     void yyerror(char *s) {
         fprintf (stderr, "%s\n", s);
     }
+
+	extern Program_st root;
 %}
 
 %union {
@@ -63,19 +66,19 @@
 	struct Method_call_arg_list_st* method_call_arg_list_st;
 	struct Method_call_st* method_call_st;
 
+	struct Expr_list_st* expr_list_st;
+
 	struct Func_arg_st* func_arg_st;
 	struct Func_arg_list_st* func_arg_list_st;
 	struct Func_declaration_st* func_declaration_st;
 	struct Func_impl_st* func_impl_st;
-	struct Func_call_arg_list_st* func_call_arg_list_st;
 	struct Func_call_st* func_call_st;
 
-	struct Array_const_elem_list_st* array_const_elem_list_st;
 	struct Array_elem_call_st* array_elem_call_st;
 
 	struct Extern_code_st* extern_code_st;
 	struct Program_st* program_st;
-}
+};
 
 %error-verbose
 
@@ -101,7 +104,6 @@
 %type <_init_stmt> init_stmt
 %type <_type> type
 %type <_return_type> RETURN
-%type <_array_type> array_type
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
 %type <_enumerator> enumerator
@@ -138,12 +140,12 @@
 %type <func_declaration_st> func_header
 %type <func_declaration_st> func_declaration
 %type <func_impl_st> func_implementation
-%type <func_call_arg_list_st> func_call_args
 %type <func_call_st> func_call
 
-%type <array_const_elem_list_st> array_elems
-%type <array_const_elem_list_st> array_elems_or_empty
-%type <array_const_elem_list_st> array_constant
+%type <expr_list_st> expr_list
+
+%type <expr_list_st> array_elems_or_empty
+%type <expr_list_st> array_constant
 %type <array_elem_call_st> array_elem_call
 
 %type <method_call_arg_st> method_call_noname_arg
@@ -198,8 +200,8 @@ extern_code: func_declaration 	{ $$ = createExternCode($1, NULL, NULL, NULL, NUL
 	| enum_declaration			{ $$ = createExternCode(NULL, NULL, NULL, NULL, $1);}
 	;
 	
-prog: extern_code 				{ $$ = createProgram($1);}
-    | prog extern_code 			{ $$ =addToProgram($1, $2);}
+prog: extern_code 				{ root = createProgram($1);}
+    | prog extern_code 			{ root = addToProgram(root, $2);}
     ;
 
 stmt_list: stmt_list stmt { $$ = AppendStatementToList($1, $2); }
@@ -229,18 +231,12 @@ if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIf($3,$5,NULL); }
 while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhile($3,$5); }
 	;
 	
-init_stmt: ID assign_operator expr 			
-	| array_elem_call assign_operator expr 
-	| type ID '=' expr 						{ $$ = CreateInitID($1, $2, $4); }
-	| type ID								{ $$ = CreateInitID($1, $2, NULL); }  
+init_stmt:
+	| type ID '=' expr 			/*Может к чёрту?*/			{ $$ = CreateInitID($1, $2, $4); }
+	| type ID								{ $$ = CreateInitID($1, $2, NULL); }
+	| type ID '[' INT_CONST ']' /*Массивы*/  
 	;
 
-assign_operator: ADD_ASSIGN
-	| SUB_ASSIGN
-	| MUL_ASSIGN
-	| DIV_ASSIGN
-	| MOD_ASSIGN
-	;
 	
 default_type:  INT
 	| FLOAT
@@ -252,14 +248,8 @@ default_type:  INT
 custom_type: ID '*' %prec POINTER
 	;
 
-array_type: default_type '*' %prec POINTER
-	| custom_type '*' %prec POINTER 
-	;
-	
 type: default_type
 	| custom_type
-	| array_type
-	| /* empty */
 	;
 
 expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
@@ -472,12 +462,14 @@ method_call: '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall(
 invariant_call: expr ARROW ID { $$ = createInvariantCall($1, $3);}
     ;
 	
-/*МАССИВЫ */
-array_elems: expr 			{ $$ = createArrayConstElemList($1);}
-    | array_elems ',' expr  { $$ = addToArrayConstElemList($1, $3);}
+
+expr_list: expr 			{ $$ = createExprList($1);}
+    | expr_list ',' expr  { $$ = addToExprList($1, $3);}
     ;
 
-array_elems_or_empty: array_elems { $$ = $1;}
+/*МАССИВЫ */
+
+array_elems_or_empty: expr_list { $$ = $1;}
     | /* empty */				  { $$ = NULL;}
     ;
 
@@ -508,11 +500,7 @@ func_declaration: func_header ';' { $$ = $1; }
 func_implementation: func_header compound_stmt { $$ = createFuncImpl($1, $2);}
     ;
 
-func_call_args: expr		{ $$ = createFuncCallArgsList($1);}
-	| func_call_args ',' expr { $$ = addToFuncCallArgList($1, $3);}
-	;
-
-func_call: ID '(' func_call_args ')' { $$ = createFuncCall($1, $3); }
+func_call: ID '(' expr_list ')' { $$ = createFuncCall($1, $3); }
 	| ID '(' ')'	{ $$ = createFuncCall($1, NULL); }
 	;
 

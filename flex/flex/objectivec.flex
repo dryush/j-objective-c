@@ -6,8 +6,6 @@
     #include <string.h>
     #include <conio.h>
     #include <locale.h>
-	
-	#include "tree_structs.h"
 
 	extern int yyparse(void);
 		
@@ -84,8 +82,8 @@ ONE_LINE_COMMENT \/\/.*\n
 <STRING>\\\n			{ ; /*Ничего*/}
 <CHAR>\n				{ BEGIN(INITIAL); handleError("Expected \' ", yylineno); }
 <STRING>\n				{ BEGIN(INITIAL); handleError("Expected \" ", yylineno); }
-<CHAR>\' 				{ BEGIN(INITIAL); yylval.char_const=buffer; return CHAR_CONST; }
-<STRING>\"				{ BEGIN(INITIAL); yylval.string_const=buffer; return STRING_CONST; }
+<CHAR>\' 				{ BEGIN(INITIAL); yylval.char_const=buffer[0]; return CHAR_CONST; }
+<STRING>\"				{ BEGIN(INITIAL); strcpy(yylval.string_const,buffer); return STRING_CONST; }
 
 
 %{ /* Наверное константы, а не названия типов, назвать const_int, const_float, const_string, const_char */ %}
