@@ -229,7 +229,7 @@ if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIf($3,$5,NULL); }
 while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhile($3,$5); }
 	;
 	
-init_stmt: ID assign_operator expr 			{ $$ = CreateAssignID($1, $2, $3); } 
+init_stmt: ID assign_operator expr 			
 	| array_elem_call assign_operator expr 
 	| type ID '=' expr 						{ $$ = CreateInitID($1, $2, $4); }
 	| type ID								{ $$ = CreateInitID($1, $2, NULL); }  
@@ -298,7 +298,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
 enum_declaration: ENUM ID '{' enumerator_list '}' { $$ = CreateEnumDeclaration($2, $4); }
 	;
 
-enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1, $2); }
+enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1, $3); }
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
