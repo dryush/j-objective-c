@@ -295,15 +295,15 @@ expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
 	| array_constant
     ;
 
-enum_declaration: ENUM ID '{' enumerator_list '}'
+enum_declaration: ENUM ID '{' enumerator_list '}' { $$ = CreateEnumDeclaration($2, $4); }
 	;
 
-enumerator_list: enumerator_list ',' enumerator
-	| enumerator
+enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1, $2); }
+	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
 enumerator: ID 
-	| ID '=' INT_CONST
+	| ID '=' INT_CONST {$$ = CreateEnumerator($1, $3); }
 	;
 	
 	

@@ -63,6 +63,7 @@ struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
 	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
 	cur->next = 0;
 	cur->stmt = stmt;
+	return cur;
 }
 
 
@@ -296,17 +297,56 @@ struct Enum_declaration_st
 	struct Enumerator_list_st *enumerator_list;
 };
 
+struct Enum_declaration_st *CreateEnumDeclaration(char *identifier, struct Enumerator_list_st *enumerator_list)
+{
+	struct Enum_declaration_st *cur = (struct Enum_declaration_st *)malloc(sizeof(struct Enum_declaration_st));
+	cur->identifier = identifier;
+	cur->enumerator_list = enumerator_list;
+	return cur;
+}
+
+
+
 struct Enumerator_list_st
 {
-	struct Enumerator_st *enumerator_st;
-	struct Enumerator_list_st *enumerator_list;
+	struct Enumerator_st *enumerator;
+	struct Enumerator_list_st *next;
 };
+
+struct Enumerator_list_st *AppendEnumeratorToList(struct Enumerator_list_st *list, struct Enumerator_st *enumerator)
+{
+	struct Enumerator_list_st *cur = (struct Enumerator_list_st *)malloc(sizeof(struct Enumerator_list_st));
+	cur->next = 0;
+	list->next = cur;
+	cur->enumerator = enumerator;
+	return cur;
+}
+
+struct Enumerator_list_st *CreateEnumeratorList(struct Enumerator_st *enumerator)
+{
+	struct Enumerator_list_st *cur = (struct Enumerator_list_st *)malloc(sizeof(struct Enumerator_list_st));
+	cur->next = 0;
+	cur->enumerator = enumerator;
+	return cur;
+}
+
+
 
 struct Enumerator_st
 {
 	char *identifier;
 	int value;
 };
+
+struct Enumerator_st *CreateEnumenator(char *identifier, int value)
+{
+	struct Enumerator_st *cur = (struct Enumerator_st *)malloc(sizeof(struct Enumerator_st));
+	cur->identifier = identifier;
+	cur->value = value;
+	return cur;
+}
+
+
 
 #include "tree_structs_class.h"
 #include "tree_structs_func.h"
