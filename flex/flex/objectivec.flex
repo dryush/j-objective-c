@@ -7,9 +7,8 @@
     #include <conio.h>
     #include <locale.h>
 	
-	#include "objectivec_tab.h"
 	#include "tree_structs.h"
-	#include "tree_print.h"
+
 	extern int yyparse(void);
 		
 	void addToBuffer( char* str);
@@ -109,16 +108,15 @@ ONE_LINE_COMMENT \/\/.*\n
 "return"	{ return RETURN; }
 
 "extern"			{ return EXTERN; }
-"@interface" 		{ return @INTERFACE; }
-"@implementation" 	{ return @IMPLEMENTATION; }
-"@protocol" 		{ return @PROTOCOL; }
-"@end" 				{ return @END; }
+"@interface" 		{ return INTERFACE; }
+"@implementation" 	{ return IMPLEMENTATION; }
+"@end" 				{ return END; }
 
-"@private" 		{ return @PRIVATE; }
-"@protected" 	{ return @PROTECTED; }
-"@public" 		{ return @PUBLIC; }
+"@private" 		{ return PRIVATE; }
+"@protected" 	{ return PROTECTED; }
+"@public" 		{ return PUBLIC; }
 
-"@class" 		{ return @CLASS; }
+"@class" 		{ return CLASS; }
 
 "YES" 			{ return YES; }
 "NO" 			{ return NO; }
@@ -240,17 +238,3 @@ int handleTokenInt(char * text, int system) {
 void handleError(char * error, int line){
 	printf("Error at line %d: %s\n\n",line, error);
 } 
-
-// МБ тоже убрать
-void main(int argc, char *argv[])
-{
-    if(argc>1)
-    {
-	freopen("output.txt", "w", stdout);    	
-	yyin=fopen(argv[1],"r");
-    }
-    yyparse();
-    tree_print();
-    getch();
-}
-
