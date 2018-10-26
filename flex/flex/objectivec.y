@@ -161,14 +161,13 @@
 
 
 %token WHILE
+%token DO
 %token IF
 %token ELSE
 %token END
 %token EXTERN
 %token IMPLEMENTATION INTERFACE PUBLIC PROTECTED PRIVATE
 %token RETURN
-%token INC
-%token DEC
 %token ENUM
 %token INT
 %token FLOAT
@@ -179,15 +178,15 @@
 
 // СПИСОК ПРИОРИТЕТОВ ОПЕРАЦИЙ
 %left ','
-%right '=' ADD_ASSIGN SUB_ASSIGN MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN
+%right '='
 %left OR
 %left AND
 %left EQUAL NOT_EQUAL
 %left '<' LESS_OR_EQUAL '>' GREATER_OR_EQUAL
 %left '-' '+'
 %left '*' '/' '%'
-%right PREINC PREDEC UMINUS UPLUS '!' POINTER 
-%left POSTINC POSTDEC '.' ARROW
+%right UMINUS UPLUS '!' POINTER 
+%left '.' ARROW
 %left '['
 %nonassoc ')' ']'
  
@@ -217,7 +216,7 @@ stmt: RETURN expr ';'
 	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
 	| while_stmt 		{ $$ = CreateWhileStatement($1); }
 	| if_stmt 			{ $$ = CreateIfStatement($1); }
-	| init_stmt ';' 	{ $$ = CreateInitStatement($1); }
+	| var_decl 			{ $$ = CreateInitStatement($1); }
 	| compound_stmt		{ $$ = CreateCompoundStatement($1); }
     ;
 
@@ -231,10 +230,9 @@ if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIf($3,$5,NULL); }
 while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhile($3,$5); }
 	;
 	
-init_stmt:
-	| type ID '=' expr 			/*Может к чёрту?*/			{ $$ = CreateInitID($1, $2, $4); }
-	| type ID								{ $$ = CreateInitID($1, $2, NULL); }
-	| type ID '[' INT_CONST ']' ';'/*Массивы*/  
+var_decl: type ID '=' expr ';'			{ $$ = CreateInitID($1, $2, $4); }
+	| type ID ';'						{ $$ = CreateInitID($1, $2, NULL); }
+	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  
 	;
 
 	
@@ -245,11 +243,8 @@ default_type:  INT
 	| BOOL
 	;
 
-custom_type: ID '*' %prec POINTER
-	;
-
 type: default_type
-	| custom_type
+	| ID '*'
 	;
 
 expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
@@ -264,13 +259,11 @@ expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
 	| expr GREATER_OR_EQUAL expr 	{ $$ = CreateExpression(GREATER_OR_EQUAL, $1, $3); }
 	| expr EQUAL expr 				{ $$ = CreateExpression(EQUAL, $1, $3); }
 	| expr NOT_EQUAL expr    		{ $$ = CreateExpression(NOT_EQUAL, $1, $3); }
+	| expr AND expr					{ $$ = CreateExpression(AND, $1, $3); }
+	| expr OR expr					{ $$ = CreateExpression(OR, $1, $3); }
     | '!' expr						{ $$ = CreateExpression(LOGICAL_NOT, $2, NULL); }
     | '+' expr %prec UPLUS			{ $$ = CreateExpression(UPLUS, $2, NULL); }
     | '-' expr %prec UMINUS			{ $$ = CreateExpression(UMINUS, $2, NULL); }
-	| INC ID %prec PREINC			{ $$ = CreatePreIncDecExpression(PREINC, $2); }
-	| DEC ID %prec PREDEC			{ $$ = CreatePreIncDecExpression(PREDEC, $2); }
-	| ID INC %prec POSTINC			{ $$ = CreatePostIncDecExpression(POSTINC, $1); }
-	| ID DEC %prec POSTDEC			{ $$ = CreatePostIncDecExpression(POSTDEC, $1); }
     | '(' expr ')' 					{ $$ = $2; }
 	| ID 							{ $$ = CreateIDExpression($1); }
     | INT_CONST 					{ $$ = CreateIntValueExpression($1); }

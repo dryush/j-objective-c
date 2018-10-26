@@ -102,6 +102,7 @@ ONE_LINE_COMMENT \/\/.*\n
 "else"		{ return ELSE; }
 
 "while"		{ return WHILE; }
+"do"		{ return DO; }
 
 "return"	{ return RETURN; }
 
@@ -131,17 +132,10 @@ ONE_LINE_COMMENT \/\/.*\n
 "="			{ return '='; }
 
 "+"			{ return '+'; }
-"++"		{ return INC; }
-"+="		{ return ADD_ASSIGN; }
 "-"			{ return '-'; }
-"--"		{ return DEC; }
-"-="		{ return SUB_ASSSIGN; }
 "*"			{ return '*'; }
-"*="		{ return MUL_ASSIGN; }
 "/"			{ return '/'; }
-"/="		{ return DIV_ASSIGN; }
 "%"			{ return '%'; }
-"%="		{ return MOD_ASSIGN; }
 
 
 "=="		{ return EQUAL; }
