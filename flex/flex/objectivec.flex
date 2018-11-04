@@ -93,10 +93,7 @@ ONE_LINE_COMMENT \/\/.*\n
 "float"		{ return FLOAT; }
 "char"		{ return CHAR; }
 
-"struct"	{ return STRUCT; }
 "enum"		{ return ENUM; }
-
-"static"	{ return STATIC; }
 
 "if"		{ return IF; }
 "else"		{ return ELSE; }
@@ -106,7 +103,6 @@ ONE_LINE_COMMENT \/\/.*\n
 
 "return"	{ return RETURN; }
 
-"extern"			{ return EXTERN; }
 "@interface" 		{ return INTERFACE; }
 "@implementation" 	{ return IMPLEMENTATION; }
 "@end" 				{ return END; }
@@ -115,15 +111,13 @@ ONE_LINE_COMMENT \/\/.*\n
 "@protected" 	{ return PROTECTED; }
 "@public" 		{ return PUBLIC; }
 
-"@class" 		{ return CLASS; }
-
-"YES" 			{ return YES; }
-"NO" 			{ return NO; }
+"YES" 			{ yylval.bool_const = 1; return BOOL_CONST; }
+"NO" 			{ yylval.bool_const = 0; return BOOL_CONST; }
 
 {ID} 		{ yylval.id = yytext; return ID; }
-{INT_10} 	{ yylval.int_const=atoi(yytext); return INT_CONST };
-{INT_16} 	{ yylval.int_const=handleTokenInt(yytext, 16); return INT_CONST }; 
-{INT_8} 	{ yylval.int_const=handleTokenInt(yytext, 8); return INT_CONST };
+{INT_10} 	{ yylval.int_const=atoi(yytext); return INT_CONST; };
+{INT_16} 	{ yylval.int_const=handleTokenInt(yytext, 16); return INT_CONST; }; 
+{INT_8} 	{ yylval.int_const=handleTokenInt(yytext, 8); return INT_CONST; };
 {FLOAT}		{ yylval.float_const=atof(yytext); return FLOAT_CONST; }
 
 {ONE_LINE_COMMENT} { }
@@ -159,8 +153,6 @@ ONE_LINE_COMMENT \/\/.*\n
 "}"			{ return '}'; }
 ";"			{ return ';'; }
 ","			{ return ','; }
-
-[\@UuL] 	{ return STRING_MODIFIER; }
 
 '\.'		{ return '.'; }
 . 			{ handleToken("unknown character", yytext, yylineno); }
