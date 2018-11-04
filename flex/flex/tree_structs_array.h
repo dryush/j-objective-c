@@ -26,16 +26,10 @@ struct Expr_list_st* addToExprList(
     return root;
 }
 
-struct Array_elem_call_st
-{
-    struct Expression_st * array;
-    struct Expression_st * index;
-};
-
-struct Array_elem_call_st* createArrayElemCall(
+struct Expression_st* createArrayElemCall(
   struct Expression_st* array, struct Expression_st* index )
 {
-    struct Array_elem_call_st* st = (struct Array_elem_call_st*)malloc(sizeof(struct Array_elem_call_st));
+    struct Expression_st* st = (struct Expression_st*)malloc(sizeof(struct Expression_st));
     st->array = array;
     st->index = index;
     return st;

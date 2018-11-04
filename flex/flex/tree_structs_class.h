@@ -302,18 +302,12 @@ struct Class_impl_st* createClassImpl( char * name, struct Class_method_impl_lis
 	return st;
 }
 
-struct Invariant_call_st
+struct Expression_st* createInvariantCall(
+  struct Expression_st* object, char * name )
 {
-    struct Expression_st* invariant;
-    char * name; 
-}; 
-
-struct Invariant_call_st* createInvariantCall(
-  struct Expression_st* invariant, char * name )
-{
-    struct Invariant_call_st* st = (struct Invariant_call_st*) malloc(sizeof(struct Invariant_call_st));
-    st->name = name;
-    st->invariant = invariant;
+    struct Expression_st* st = (struct Expression_st*) malloc(sizeof(struct Expression_st));
+    st->identifier = name;
+    st->object = object;
     return st;
 }
 
@@ -365,20 +359,13 @@ struct Method_call_arg_list_st* addToFrontMethodCallArgList(
 	return newRoot;
 }
 
-struct Method_call_st 
-{
-	struct Expression_st * object;
-	char * name;
-	struct Method_call_arg_list_st* args;
-};
-
-struct Method_call_st* createMethodCall( 
+struct Expression_st* createMethodCall( 
   struct Expression_st * object, char * name,
   struct Method_call_arg_list_st* args)
 {
-	struct Method_call_st * st = (struct Method_call_st*) malloc(sizeof(struct Method_call_st));
-	st->args = args;
-	st->name = name;
+	struct Expression_st * st = (struct Expression_st*) malloc(sizeof(struct Expression_st));
+	st->func_args = args;
+	st->identifier = name;
 	st->object = object;
 	return st;
 }

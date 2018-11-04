@@ -1,6 +1,9 @@
 #ifndef SIMPLE_TREE_STRUCTS
 #define SIMPLE_TREE_STRUCTS
 
+#include "tree_structs_class.h"
+#include "tree_structs_func.h"
+
 enum OperationType 
 {
 	ADD,
@@ -29,6 +32,13 @@ enum OperationType
 	POSTDEC,
 	VALUE
 };
+
+enum ExprType {
+	OPERATION,
+	METHOD_CALL,
+	FUNC_CALL,
+	ARRAY_ELEM_CALL
+}
 
 enum DefaultType
 {
@@ -116,39 +126,51 @@ struct Statement_st *CreateCompoundStatement(struct Statements_List_st *stmt_lis
 
 struct Expression_st
 {
-	enum OperationType type;
+	enum ExprType exprType;
+	enum OperationType operationType;
 	struct Expression_st *left;
 	struct Expression_st *right;
-	char *identifier;
+	char *identifier; /* имя / имя функции / имя вызываемого поля / имя вызываемого метода */
 	int int_value;
 	float float_value;
 	char bool_value;
 	char char_value;
 	char *string_value;
+	/* Вызов метода */
+    struct Expression_st* object; /* объект у которого вызывается поле или метод */
+	struct Method_call_arg_list_st* method_args;
+	/* Вызов функции*/
+    struct Func_call_arg_list_st* func_args;
+	/* Вызов элемента массива*/
+	struct Expression_st* array;
+	struct Expression_st* index;
 };
 
-struct Expression_st *CreateExpression(OperationType type, struct Expression_st *left, struct Expression_st *right)
+struct Expression_st *CreateExpression(OperationType operationType, struct Expression_st *left, struct Expression_st *right)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = type;
+	cur->exprType = OPERATION;
+	cur->operationType = operationType;
 	cur->left = left;
 	cur->right = right;
 	return cur;
 }
 
-struct Expression_st *CreatePreIncDecExpression(OperationType type, char *identifier)
+struct Expression_st *CreatePreIncDecExpression(OperationType operationType, char *identifier)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = type;
+	cur->exprType = OPERATION;
+	cur->operationType = operationType;
 	struct Expression_st *right = CreateIDExpression(char *identifier);
 	cur->right = right;
 	return cur;
 }
 
-struct Expression_st *CreatePostIncDecExpression(OperationType type, char *identifier)
+struct Expression_st *CreatePostIncDecExpression(OperationType operationType, char *identifier)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = type;
+	cur->exprType = OPERATION;
+	cur->operationType = operationType;
 	struct Expression_st *left = CreateIDExpression(char *identifier);
 	cur->left = left;
 	return cur;
@@ -157,7 +179,8 @@ struct Expression_st *CreatePostIncDecExpression(OperationType type, char *ident
 struct Expression_st *CreateIDExpression(char *identifier)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
+	cur->exprType = OPERATION;
+	cur->operationType = VALUE;
 	cur->identifier = identifier;
 	return cur;
 }
@@ -165,7 +188,8 @@ struct Expression_st *CreateIDExpression(char *identifier)
 struct Expression_st *CreateIntValueExpression(int int_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
+	cur->exprType = OPERATION;
+	cur->operationType = VALUE;
 	cur->int_value = int_value;
 	return cur;
 }
@@ -173,7 +197,8 @@ struct Expression_st *CreateIntValueExpression(int int_value)
 struct Expression_st *CreateFloatValueExpression(float float_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
+	cur->exprType = OPERATION;
+	cur->operationType = VALUE;
 	cur->float_value = float_value;
 	return cur;
 }
@@ -181,7 +206,8 @@ struct Expression_st *CreateFloatValueExpression(float float_value)
 struct Expression_st *CreateBoolValueExpression(bool bool_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
+	cur->exprType = OPERATION;
+	cur->operationType = VALUE;
 	cur->bool_value = bool_value;
 	return cur;
 }
@@ -189,7 +215,8 @@ struct Expression_st *CreateBoolValueExpression(bool bool_value)
 struct Expression_st *CreateCharValueExpression(char char_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
+	cur->exprType = OPERATION;
+	cur->operationType = VALUE;
 	cur->char_value = char_value;
 	return cur;
 }
@@ -197,7 +224,8 @@ struct Expression_st *CreateCharValueExpression(char char_value)
 struct Expression_st *CreateStringValueExpression(char *string_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->type = VALUE;
+	cur->exprType = OPERATION;
+	cur->operationType = VALUE;
 	cur->string_value = string_value;
 	return cur;
 }
@@ -346,10 +374,6 @@ struct Enumerator_st *CreateEnumenator(char *identifier, int value)
 	return cur;
 }
 
-
-
-#include "tree_structs_class.h"
-#include "tree_structs_func.h"
 
 struct Extern_code_st
 {

@@ -98,16 +98,12 @@ struct Func_call_arg_list_st* addToFuncCallArgList(
     return root;
 }
 
-struct Func_call_st
-{
-    char * name;
-    struct Func_call_arg_list_st * args;
-};
 
-struct Func_call_st* createFuncCall( char* name, struct Func_call_arg_list_st* args)
+struct Expression_st* createFuncCall( char* name, struct Func_call_arg_list_st* args)
 {
-    struct Func_call_st* st = (struct Func_call_st*) malloc ( sizeof(struct Func_call_st));
-    st->name = name;
-    st->args = args;
+    struct Expression_st* st = (struct Expression_st*) malloc ( sizeof(struct Expression_st));
+    st->exprType = FUNC_CALL;
+    st->identifier = name;
+    st->func_args = args;
     return st;
 }

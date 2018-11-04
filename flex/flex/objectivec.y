@@ -132,7 +132,6 @@
 %type <class_method_impl_list_st> class_methods_implementation_or_empty
 %type <class_impl_st> class_implementation
 
-%type <invariant_call_st> invariant_call
 
 %type <func_arg_st> func_arg
 %type <func_arg_list_st> func_args
@@ -140,12 +139,10 @@
 %type <func_declaration_st> func_header
 %type <func_declaration_st> func_declaration
 %type <func_impl_st> func_implementation
-%type <func_call_st> func_call
 
 %type <expr_list_st> expr_list
 
 %type <expr_list_st> array_elems_or_empty
-%type <array_elem_call_st> array_elem_call
 
 %type <method_call_arg_st> method_call_noname_arg
 %type <method_call_arg_st> method_call_name_arg
@@ -153,7 +150,6 @@
 %type <method_call_arg_list_st> method_call_name_args
 %type <method_call_arg_list_st> method_call_args
 %type <method_call_arg_list_st> method_call_args_or_empty
-%type <method_call_st> method_call
 
 %type <extern_code_st> extern_code
 %type <program_st> prog
