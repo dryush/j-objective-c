@@ -145,7 +145,6 @@
 %type <expr_list_st> expr_list
 
 %type <expr_list_st> array_elems_or_empty
-%type <expr_list_st> array_constant
 %type <array_elem_call_st> array_elem_call
 
 %type <method_call_arg_st> method_call_noname_arg
@@ -253,6 +252,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
     | expr '/' expr 				{ $$ = CreateExpression(DIV, $1, $3); }
 	| expr '%' expr 				{ $$ = CreateExpression(MOD, $1, $3); }
 	| expr '=' expr 				{ $$ = CreateExpression(ASSIGN, $1, $3); }
+	| expr '=' '{' array_elems_or_empty '}' { $$ = $2;} /*Присвоение константы массива*/
 	| expr '<' expr 				{ $$ = CreateExpression(LESS, $1, $3); }
 	| expr LESS_OR_EQUAL expr 		{ $$ = CreateExpression(LESS_OR_EQUAL, $1, $3); }
 	| expr '>' expr 				{ $$ = CreateExpression(GREATER, $1, $3); }
@@ -271,11 +271,12 @@ expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
 	| BOOL_CONST					{ $$ = CreateBoolValueExpression($1); }
 	| CHAR_CONST					{ $$ = CreateCharValueExpression($1); }
 	| STRING_CONST 					{ $$ = CreateStringValueExpression($1); }
-    | method_call
-    | array_elem_call
-    | invariant_call
-	| func_call
-	| array_constant
+	/* [receiver methodWithFirstArgument: 10 andSecondArgument: 20]; */
+	| '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall($2, $3, $5);} /*Вызов метода*/
+    | expr '[' expr ']' { $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
+    | expr ARROW ID { $$ = createInvariantCall($1, $3);} /* Обращение к полю */
+	| ID '(' expr_list ')' { $$ = createFuncCall($1, $3); } /* Вызов функции */
+	| ID '(' ')'	{ $$ = createFuncCall($1, NULL); } /* Вызов функции */
     ;
 
 enum_declaration: ENUM ID '{' enumerator_list '}' { $$ = CreateEnumDeclaration($2, $4); }
@@ -447,15 +448,6 @@ method_call_args_or_empty: method_call_args { $$ = $1;}
     ;
 
 
-/* [receiver methodWithFirstArgument: 10 andSecondArgument: 20]; */
-method_call: '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall($2, $3, $5);}
-    ;
-
-/*ОБРАЩЕНИЕ К ПОЛЮ*/
-invariant_call: expr ARROW ID { $$ = createInvariantCall($1, $3);}
-    ;
-	
-
 expr_list: expr 			{ $$ = createExprList($1);}
     | expr_list ',' expr  { $$ = addToExprList($1, $3);}
     ;
@@ -466,11 +458,6 @@ array_elems_or_empty: expr_list { $$ = $1;}
     | /* empty */				  { $$ = NULL;}
     ;
 
-array_constant: '{' array_elems_or_empty '}' { $$ = $2;}
-    ;
-
-array_elem_call: expr '[' expr ']' { $$ = createArrayElemCall($1, $3); }
-    ;
 
 /*ФУНКЦИИ */
 func_arg: type ID { $$ =  createFuncArg($1, $2);}
@@ -493,9 +480,6 @@ func_declaration: func_header ';' { $$ = $1; }
 func_implementation: func_header compound_stmt { $$ = createFuncImpl($1, $2);}
     ;
 
-func_call: ID '(' expr_list ')' { $$ = createFuncCall($1, $3); }
-	| ID '(' ')'	{ $$ = createFuncCall($1, NULL); }
-	;
 
 	
 	
