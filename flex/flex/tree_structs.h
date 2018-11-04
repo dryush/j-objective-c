@@ -12,6 +12,7 @@ enum OperationType
 	DIV,
 	MOD,
 	ASSIGN,
+	ASSIGN_ARRAY,
 	ADD_ASSIGN,
 	SUB_ASSIGN,
 	MUL_ASSIGN,
@@ -108,10 +109,20 @@ struct Statement_st *CreateIfStatement(struct If_statement_st *if_stmt)
 	return cur;
 }
 
-struct Statement_st *CreateInitStatement(struct Init_statement_st *init_stmt)
+struct Statement_st *CreateInitStatement(struct Init_statement_st* init_stmt)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
 	cur->init_stmt = init_stmt;
+	return cur;
+}
+
+struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems)
+{
+	struct Expression_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->exprType = OPERATION;
+	cur->operationType = ASSIGN_ARRAY;
+	cur->left = left;
+	cur->arrayElems = elems;
 	return cur;
 }
 
@@ -130,6 +141,7 @@ struct Expression_st
 	enum OperationType operationType;
 	struct Expression_st *left;
 	struct Expression_st *right;
+	struct Expr_list_st *arrayElems;
 	char *identifier; /* имя / имя функции / имя вызываемого поля / имя вызываемого метода */
 	int int_value;
 	float float_value;

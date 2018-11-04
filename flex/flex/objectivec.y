@@ -101,12 +101,13 @@
 %type <_expr> expr
 %type <_while_stmt> while_stmt
 %type <_if_stmt> if_stmt
-%type <_init_stmt> init_stmt
 %type <_type> type
 %type <_return_type> RETURN
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
 %type <_enumerator> enumerator
+
+%type <Statement_st> var_decl
 
 %type <field_access_en> class_fields_access
 %type <class_invariant_declaration_st> class_invariant_declaration
@@ -248,7 +249,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
     | expr '/' expr 				{ $$ = CreateExpression(DIV, $1, $3); }
 	| expr '%' expr 				{ $$ = CreateExpression(MOD, $1, $3); }
 	| expr '=' expr 				{ $$ = CreateExpression(ASSIGN, $1, $3); }
-	| expr '=' '{' array_elems_or_empty '}' { $$ = $2;} /*Присвоение константы массива*/
+	| expr '=' '{' array_elems_or_empty '}' { $$ = CreateArrayInitStatement($1, $4);} /*Присвоение константы массива*/
 	| expr '<' expr 				{ $$ = CreateExpression(LESS, $1, $3); }
 	| expr LESS_OR_EQUAL expr 		{ $$ = CreateExpression(LESS_OR_EQUAL, $1, $3); }
 	| expr '>' expr 				{ $$ = CreateExpression(GREATER, $1, $3); }
