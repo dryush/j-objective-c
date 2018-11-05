@@ -614,7 +614,7 @@ char *yytext;
     #include <string.h>
     #include <conio.h>
     #include <locale.h>
-
+	#include "objectivec.tab.h"
 		
 	void addToBuffer( char* str);
 	void addToBufferOcto( char* str, int line);

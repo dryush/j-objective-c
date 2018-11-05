@@ -60,16 +60,16 @@ Grammar
    22         | type ID ';'
    23         | type ID '[' INT_CONST ']' ';'
 
-   24 default_type: INT
-   25             | FLOAT
-   26             | STRING
-   27             | CHAR
-   28             | BOOL
-   29             | VOID
+   24 type: default_type
+   25     | ID '*'
+   26     | ID
 
-   30 type: default_type
-   31     | ID '*'
-   32     | ID
+   27 default_type: INT
+   28             | FLOAT
+   29             | STRING
+   30             | CHAR
+   31             | BOOL
+   32             | VOID
 
    33 expr: expr '+' expr
    34     | expr '-' expr
@@ -222,7 +222,7 @@ $end (0) 0
 '%' (37) 37
 '(' (40) 18 19 20 51 61 62 80 81 90 91 92 93 131
 ')' (41) 18 19 20 51 61 62 80 81 90 91 92 93 131
-'*' (42) 31 35
+'*' (42) 25 35
 '+' (43) 33 49 91 93
 ',' (44) 64 123
 '-' (45) 34 50 90 92
@@ -243,7 +243,7 @@ FLOAT_CONST (259) 54
 CHAR_CONST (260) 56
 BOOL_CONST (261) 55
 STRING_CONST (262) 57
-ID (263) 21 22 23 31 32 52 58 60 61 62 63 66 67 71 80 81 90 91 92 93
+ID (263) 21 22 23 25 26 52 58 60 61 62 63 66 67 71 80 81 90 91 92 93
     103 104 111 113 126 131
 WHILE (264) 20
 DO (265)
@@ -258,12 +258,12 @@ PROTECTED (273) 69
 PRIVATE (274) 70
 RETURN (275) 10 11
 ENUM (276) 63
-INT (277) 24
-FLOAT (278) 25
-STRING (279) 26
-CHAR (280) 27
-BOOL (281) 28
-VOID (282) 29
+INT (277) 27
+FLOAT (278) 28
+STRING (279) 29
+CHAR (280) 30
+BOOL (281) 31
+VOID (282) 32
 OR (283) 47
 AND (284) 46
 NOT_EQUAL (285) 45
@@ -296,11 +296,11 @@ while_stmt (64)
     on left: 20, on right: 13
 var_decl (65)
     on left: 21 22 23, on right: 15
-default_type (66)
-    on left: 24 25 26 27 28 29, on right: 30
-type (67)
-    on left: 30 31 32, on right: 21 22 23 71 80 81 90 91 92 93 126
+type (66)
+    on left: 24 25 26, on right: 21 22 23 71 80 81 90 91 92 93 126
     131
+default_type (67)
+    on left: 27 28 29 30 31 32, on right: 24
 expr (68)
     on left: 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50
     51 52 53 54 55 56 57 58 59 60 61 62, on right: 10 12 18 19 20 21
@@ -406,8 +406,8 @@ State 0
     VOID            shift, and go to state 10
 
     extern_code           go to state 11
-    default_type          go to state 12
-    type                  go to state 13
+    type                  go to state 12
+    default_type          go to state 13
     enum_declaration      go to state 14
     class_declaration     go to state 15
     class_implementation  go to state 16
@@ -418,12 +418,12 @@ State 0
 
 State 1
 
-   31 type: ID . '*'
-   32     | ID .
+   25 type: ID . '*'
+   26     | ID .
 
     '*'  shift, and go to state 20
 
-    $default  reduce using rule 32 (type)
+    $default  reduce using rule 26 (type)
 
 
 State 2
@@ -450,44 +450,44 @@ State 4
 
 State 5
 
-   24 default_type: INT .
-
-    $default  reduce using rule 24 (default_type)
-
-
-State 6
-
-   25 default_type: FLOAT .
-
-    $default  reduce using rule 25 (default_type)
-
-
-State 7
-
-   26 default_type: STRING .
-
-    $default  reduce using rule 26 (default_type)
-
-
-State 8
-
-   27 default_type: CHAR .
+   27 default_type: INT .
 
     $default  reduce using rule 27 (default_type)
 
 
-State 9
+State 6
 
-   28 default_type: BOOL .
+   28 default_type: FLOAT .
 
     $default  reduce using rule 28 (default_type)
 
 
-State 10
+State 7
 
-   29 default_type: VOID .
+   29 default_type: STRING .
 
     $default  reduce using rule 29 (default_type)
+
+
+State 8
+
+   30 default_type: CHAR .
+
+    $default  reduce using rule 30 (default_type)
+
+
+State 9
+
+   31 default_type: BOOL .
+
+    $default  reduce using rule 31 (default_type)
+
+
+State 10
+
+   32 default_type: VOID .
+
+    $default  reduce using rule 32 (default_type)
 
 
 State 11
@@ -499,16 +499,16 @@ State 11
 
 State 12
 
-   30 type: default_type .
+  131 func_header: type . ID '(' func_args_or_empty ')'
 
-    $default  reduce using rule 30 (type)
+    ID  shift, and go to state 25
 
 
 State 13
 
-  131 func_header: type . ID '(' func_args_or_empty ')'
+   24 type: default_type .
 
-    ID  shift, and go to state 25
+    $default  reduce using rule 24 (type)
 
 
 State 14
@@ -559,9 +559,9 @@ State 19
 
 State 20
 
-   31 type: ID '*' .
+   25 type: ID '*' .
 
-    $default  reduce using rule 31 (type)
+    $default  reduce using rule 25 (type)
 
 
 State 21
@@ -653,8 +653,8 @@ State 27
     if_stmt             go to state 58
     while_stmt          go to state 59
     var_decl            go to state 60
-    default_type        go to state 12
     type                go to state 61
+    default_type        go to state 13
     expr                go to state 62
 
 
@@ -735,8 +735,8 @@ State 35
     VOID       shift, and go to state 10
     '}'        shift, and go to state 71
 
-    default_type                                  go to state 12
     type                                          go to state 72
+    default_type                                  go to state 13
     class_fields_access                           go to state 73
     class_invariant_declaration                   go to state 74
     class_invariants_declarations                 go to state 75
@@ -796,8 +796,8 @@ State 39
 
     $default  reduce using rule 130 (func_args_or_empty)
 
-    default_type        go to state 12
     type                go to state 89
+    default_type        go to state 13
     func_arg            go to state 90
     func_args           go to state 91
     func_args_or_empty  go to state 92
@@ -840,8 +840,8 @@ State 44
 
 State 45
 
-   31 type: ID . '*'
-   32     | ID .
+   25 type: ID . '*'
+   26     | ID .
    52 expr: ID .
    61     | ID . '(' expr_list ')'
    62     | ID . '(' ')'
@@ -849,7 +849,7 @@ State 45
     '*'  shift, and go to state 20
     '('  shift, and go to state 93
 
-    ID        reduce using rule 32 (type)
+    ID        reduce using rule 26 (type)
     '*'       [reduce using rule 52 (expr)]
     $default  reduce using rule 52 (expr)
 
@@ -1019,8 +1019,8 @@ State 54
     if_stmt        go to state 58
     while_stmt     go to state 59
     var_decl       go to state 60
-    default_type   go to state 12
     type           go to state 61
+    default_type   go to state 13
     expr           go to state 62
 
 
@@ -1128,8 +1128,8 @@ State 63
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    default_type  go to state 12
     type          go to state 124
+    default_type  go to state 13
 
 
 State 64
@@ -1145,8 +1145,8 @@ State 64
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    default_type  go to state 12
     type          go to state 125
+    default_type  go to state 13
 
 
 State 65
@@ -1219,8 +1219,8 @@ State 73
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    default_type                   go to state 12
     type                           go to state 72
+    default_type                   go to state 13
     class_invariant_declaration    go to state 74
     class_invariants_declarations  go to state 128
 
@@ -1254,8 +1254,8 @@ State 75
     VOID      [reduce using rule 75 (class_invariant_declaration_with_access)]
     $default  reduce using rule 75 (class_invariant_declaration_with_access)
 
-    default_type                 go to state 12
     type                         go to state 72
+    default_type                 go to state 13
     class_invariant_declaration  go to state 129
 
 
@@ -1283,8 +1283,8 @@ State 77
     VOID       shift, and go to state 10
     '}'        shift, and go to state 130
 
-    default_type                             go to state 12
     type                                     go to state 72
+    default_type                             go to state 13
     class_fields_access                      go to state 73
     class_invariant_declaration              go to state 74
     class_invariants_declarations            go to state 75
@@ -1431,8 +1431,8 @@ State 91
 
     $default  reduce using rule 129 (func_args_or_empty)
 
-    default_type  go to state 12
     type          go to state 89
+    default_type  go to state 13
     func_arg      go to state 142
 
 
@@ -2101,8 +2101,8 @@ State 128
     VOID      [reduce using rule 74 (class_invariant_declaration_with_access)]
     $default  reduce using rule 74 (class_invariant_declaration_with_access)
 
-    default_type                 go to state 12
     type                         go to state 72
+    default_type                 go to state 13
     class_invariant_declaration  go to state 129
 
 
@@ -3058,8 +3058,8 @@ State 180
     if_stmt        go to state 58
     while_stmt     go to state 59
     var_decl       go to state 60
-    default_type   go to state 12
     type           go to state 61
+    default_type   go to state 13
     expr           go to state 62
 
 
@@ -3095,8 +3095,8 @@ State 181
     if_stmt        go to state 58
     while_stmt     go to state 59
     var_decl       go to state 60
-    default_type   go to state 12
     type           go to state 61
+    default_type   go to state 13
     expr           go to state 62
 
 
@@ -3409,8 +3409,8 @@ State 204
     if_stmt        go to state 58
     while_stmt     go to state 59
     var_decl       go to state 60
-    default_type   go to state 12
     type           go to state 61
+    default_type   go to state 13
     expr           go to state 62
 
 
@@ -3514,8 +3514,8 @@ State 212
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    default_type  go to state 12
     type          go to state 221
+    default_type  go to state 13
 
 
 State 213
@@ -3718,8 +3718,8 @@ State 231
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    default_type  go to state 12
     type          go to state 232
+    default_type  go to state 13
 
 
 State 232

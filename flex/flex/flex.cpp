@@ -1,4 +1,4 @@
-// flex.cpp: определяет точку входа для консольного приложения.
+// flex.cpp: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 //
 
 #include "stdafx.h"
@@ -17,6 +17,6 @@ void _tmain(int argc, _TCHAR* argv[])
 	char * l = setlocale(LC_ALL, NULL);
 	freopen("output.txt", "w", stdout);
 	yyin = fopen("test.m", "r");
-	yylex();
+	yyparse();
 }
 
