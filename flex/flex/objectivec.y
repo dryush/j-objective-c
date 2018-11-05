@@ -201,42 +201,41 @@ stmt_list_or_empty: stmt_list { $$ = $1; }
     | /* empty */ { $$ = NULL; }
     ;
 
-stmt: RETURN expr ';' 	{ $$ = createReturnStatement($2);}
-	| RETURN ';'		{ $$ = createReturnStatement(NULL);}
+stmt: RETURN expr ';' 	{ $$ = CreateReturnStatement($2);}
+	| RETURN ';'		{ $$ = CreateReturnStatement(NULL);}
 	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
-	| while_stmt 		{ $$ = CreateWhileStatement($1); }
-	| if_stmt 			{ $$ = CreateIfStatement($1); }
-	| var_decl 			{ /*$$ = CreateInitStatement($1); */}
-	| compound_stmt		{ /*$$ = CreateCompoundStatement($1);*/ }
+	| while_stmt 		{ $$ = $1; }
+	| if_stmt 			{ $$ = $1; }
+	| var_decl 			{ $$ = $1; }
+	| compound_stmt		{ $$ = $1; }
     ;
 
-compound_stmt: '{' stmt_list_or_empty '}' { /* $$ = $2; */}
+compound_stmt: '{' stmt_list_or_empty '}' { $$ = $2; }
     ;
 
-if_stmt: IF '(' expr ')' stmt 			{ /*$$ = CreateIf($3,$5,NULL); */}
-    | IF '(' expr ')' stmt ELSE stmt 	{ /*$$ = CreateIf($3,$5,$7); */}
+if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIfStatement($3, $5, NULL); }
+    | IF '(' expr ')' stmt ELSE stmt 	{ $$ = CreateIfStatement($3, $5, $7); }
     ;
 	
-while_stmt: WHILE '(' expr ')' stmt 	{ /* $$ = CreateWhile($3,$5); */}
+while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhileStatement($3, $5); }
 	;
 	
-var_decl: type ID '=' expr ';'			{ /*$$ = CreateInitID($1, $2, $4); */}
-	| type ID ';'						{ /*$$ = CreateInitID($1, $2, NULL); */}
+var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
+	| type ID ';'						{ $$ = CreateVarDeclWithInit($1, $2, NULL); }
 	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  {;}
 	;
 
-	
+type: default_type { $$ = $1; } 
+	| ID '*' { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
+	| ID { createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
+	;
+
 default_type:  INT { $$ = createType(TYPE_INT, NULL, NULL);}
 	| FLOAT { $$ = createType(TYPE_FLOAT, NULL, NULL);}
 	| STRING { $$ = createType(TYPE_STRING, NULL, NULL);}
 	| CHAR { $$ = createType(TYPE_CHAR, NULL, NULL);}
 	| BOOL { $$ = createType(TYPE_BOOL, NULL, NULL);}
 	| VOID { $$ = createType(TYPE_VOID, NULL, NULL);}
-	;
-
-type: default_type { $$ = $1; } 
-	| ID '*' { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
-	| ID { createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
 	;
 
 expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
@@ -279,8 +278,8 @@ enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
-enumerator: ID { /*$$ = CreateEnumerator($1, -1);*/ }
-	| ID '=' INT_CONST { /*$$ = CreateEnumerator($1, $3);*/ }
+enumerator: ID { $$ = CreateEnumerator($1, -1); }
+	| ID '=' INT_CONST { $$ = CreateEnumerator($1, $3); }
 	;
 	
 	
