@@ -164,13 +164,11 @@ ONE_LINE_COMMENT \/\/.*\n
 %%
 
 void addToBuffer( char* str){
-	//printf("Buf founded: %s\n",str);
 	strcat(buffer, str);
 }
 
 void addToBufferOcto( char* str, int line){
 	int num = strtol(str, NULL, 8);
-	//printf("Oct founded: %d", num);
 	if ( num > 255){
 		handleError("too big number for char", line);
 	}
@@ -187,7 +185,6 @@ void addToBufferHex( char* str, int line){
 	strcpy(buf, str);
 	buf[0] = '0';
 	int num = strtol(buf, NULL, 16);
-	//printf("Hex founded: %d from str: %s handled str: %s\n", num, str,buf);
 	if ( num > 255){
 		handleError("too big number for char", line);
 	}
@@ -204,7 +201,6 @@ void clearBuffer(){
 	buffer[0] = 0;
 }
 
-// Глянуть, что убрать
 void endChar(int line){
 	if ( strlen(buffer) == 0){
 		handleError("Empty char",line);

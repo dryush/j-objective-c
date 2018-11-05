@@ -35,7 +35,7 @@ struct Class_method_param_declaration_st* createClassMethodParamDeclaration( cha
 	st->outerName = outerName;
     st->val_type = valtype;
 	return st;
-};
+}
 
 struct Class_method_param_declaration_list_st 
 {
@@ -46,11 +46,11 @@ struct Class_method_param_declaration_list_st
 struct Class_method_param_declaration_list_st* createClassMethodParamDeclarationList( 
   struct Class_method_param_declaration_st* param )
 {
-	 struct  Class_method_param_declaration_list_st* st = (struct  Class_method_param_declaration_list_st*) malloc( sizeof(struct  Class_method_param_declaration_list_st));
-	 st->param = param;
-	 st->next = NULL;
-	 return st;
- }
+	struct  Class_method_param_declaration_list_st* st = (struct  Class_method_param_declaration_list_st*) malloc( sizeof(struct  Class_method_param_declaration_list_st));
+	st->param = param;
+	st->next = NULL;
+	return st;
+}
 
 struct Class_method_param_declaration_list_st* addToClassMethodParamDeclarationList(
   struct Class_method_param_declaration_list_st* root, struct Class_method_param_declaration_st* param )

@@ -4,12 +4,6 @@
 
 #include <stdlib.h>
 
-struct Expr_list_st
-{
-    struct Expression_st * expr;
-    struct Expr_list_st * next;
-};
-
 struct Expr_list_st* createExprList( struct Expression_st* elem)
 {
     struct Expr_list_st* st = (struct Expr_list_st*) malloc(sizeof(struct Expr_list_st));

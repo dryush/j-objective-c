@@ -81,9 +81,6 @@
     <ClInclude Include="objectivec.tab.h" />
     <ClInclude Include="struct_print.h" />
     <ClInclude Include="tree_structs.h" />
-    <ClInclude Include="tree_structs_array.h" />
-    <ClInclude Include="tree_structs_class.h" />
-    <ClInclude Include="tree_structs_func.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lex.yy.c" />

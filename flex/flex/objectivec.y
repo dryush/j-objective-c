@@ -6,13 +6,12 @@
     */
     #include <stdio.h>
 	#include "tree_structs.h"
-	#include "tree_structs_func.h"
-	#include "tree_structs_array.h"
-	#include "tree_structs_class.h"
     
     void yyerror( const char *s) {
         fprintf (stderr, "%s\n", s);
     }
+	
+	extern int yylex(void);
 
 	extern struct Program_st root;
 %}
@@ -204,20 +203,20 @@ stmt_list_or_empty: stmt_list { $$ = $1; }
 stmt: RETURN expr ';' 	{ $$ = CreateReturnStatement($2);}
 	| RETURN ';'		{ $$ = CreateReturnStatement(NULL);}
 	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
-	| while_stmt 		{ $$ = $1; }
-	| if_stmt 			{ $$ = $1; }
+	| while_stmt 		{ /* $$ = $1; */ }
+	| if_stmt 			{ /* $$ = $1; */ }
 	| var_decl 			{ $$ = $1; }
 	| compound_stmt		{ $$ = $1; }
     ;
 
-compound_stmt: '{' stmt_list_or_empty '}' { $$ = $2; }
+compound_stmt: '{' stmt_list_or_empty '}' { /* $$ = $2; */}
     ;
 
-if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIfStatement($3, $5, NULL); }
-    | IF '(' expr ')' stmt ELSE stmt 	{ $$ = CreateIfStatement($3, $5, $7); }
+if_stmt: IF '(' expr ')' stmt 			{ /* $$ = CreateIfStatement($3, $5, NULL); */ }
+    | IF '(' expr ')' stmt ELSE stmt 	{ /* $$ = CreateIfStatement($3, $5, $7); */}
     ;
 	
-while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhileStatement($3, $5); }
+while_stmt: WHILE '(' expr ')' stmt 	{ /* $$ = CreateWhileStatement($3, $5); */ }
 	;
 	
 var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
@@ -278,8 +277,8 @@ enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
-enumerator: ID { $$ = CreateEnumerator($1, -1); }
-	| ID '=' INT_CONST { $$ = CreateEnumerator($1, $3); }
+enumerator: ID { /* $$ = CreateEnumerator($1, -1); */ }
+	| ID '=' INT_CONST {  /* $$ = CreateEnumerator($1, $3); */ }
 	;
 	
 	
