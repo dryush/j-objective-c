@@ -1,4 +1,4 @@
-﻿Build started 05.11.2018 14:14:35.
+﻿Build started 05.11.2018 14:24:24.
      1>Project "C:\Users\User\Desktop\fflex\j-objective-c\flex\flex\flex.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Debug\flex.unsuccessfulbuild".
@@ -41,4 +41,4 @@
 
 Build FAILED.
 
-Time Elapsed 00:00:02.20
+Time Elapsed 00:00:02.76

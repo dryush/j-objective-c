@@ -207,7 +207,7 @@ stmt_list_or_empty: stmt_list { $$ = $1; }
     ;
 
 stmt: RETURN expr ';' 	{ $$ = createReturnStatement($2);}
-	| RETURN ';'		{ $$ = createReturnStatement(NULL;}
+	| RETURN ';'		{ $$ = createReturnStatement(NULL);}
 	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
 	| while_stmt 		{ $$ = CreateWhileStatement($1); }
 	| if_stmt 			{ $$ = CreateIfStatement($1); }
@@ -236,11 +236,11 @@ default_type:  INT { $$ = createType(TYPE_INT, NULL, NULL);}
 	| STRING { $$ = createType(TYPE_STRING, NULL, NULL);}
 	| CHAR { $$ = createType(TYPE_CHAR, NULL, NULL);}
 	| BOOL { $$ = createType(TYPE_BOOL, NULL, NULL);}
-	| VOID { $$ = { $$ = createType(TYPE_VOID, NULL, NULL);}}
+	| VOID { $$ = createType(TYPE_VOID, NULL, NULL);}
 	;
 
 type: default_type { $$ = $1; } 
-	| ID '*' { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL); }
+	| ID '*' { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
 	| ID { createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
 	;
 

@@ -1800,7 +1800,7 @@ yyreduce:
   case 12:
 /* Line 1792 of yacc.c  */
 #line 210 "objectivec.y"
-    { (yyval._stmt) = createReturnStatement(NULL;}
+    { (yyval._stmt) = createReturnStatement(NULL);}
     break;
 
   case 13:
@@ -1908,7 +1908,7 @@ yyreduce:
   case 30:
 /* Line 1792 of yacc.c  */
 #line 239 "objectivec.y"
-    { (yyval._type) = { (yyval._type) = createType(TYPE_VOID, NULL, NULL);}}
+    { (yyval._type) = createType(TYPE_VOID, NULL, NULL);}
     break;
 
   case 31:
@@ -1920,7 +1920,7 @@ yyreduce:
   case 32:
 /* Line 1792 of yacc.c  */
 #line 243 "objectivec.y"
-    { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, (yyvsp[(1) - (2)].id), NULL); }
+    { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, (yyvsp[(1) - (2)].id), NULL)); }
     break;
 
   case 33:
