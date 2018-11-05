@@ -1,4 +1,4 @@
-﻿Build started 05.11.2018 20:25:04.
+﻿Build started 05.11.2018 20:43:07.
      1>Project "C:\Users\User\Desktop\fflex\j-objective-c\flex\flex\flex.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Debug\flex.unsuccessfulbuild".
@@ -14,21 +14,30 @@
        ClCompile:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt lex.yy.c objectivec.tab.c
          objectivec.tab.c
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(104): error C2143: syntax error : missing ';' before 'type'
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(105): error C2065: 'r' : undeclared identifier
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(105): warning C4047: '=' : 'Expression_st *' differs in levels of indirection from 'int'
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(114): error C2143: syntax error : missing ';' before 'type'
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(115): error C2065: 'left' : undeclared identifier
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(115): warning C4047: '=' : 'Expression_st *' differs in levels of indirection from 'int'
      1>objectivec.tab.c(1657): warning C4013: 'yylex' undefined; assuming extern returning int
+     1>objectivec.y(207): warning C4133: '=' : incompatible types - from 'While_statement_st *' to 'Statement_st *'
+     1>objectivec.y(208): warning C4133: '=' : incompatible types - from 'If_statement_st *' to 'Statement_st *'
+     1>objectivec.y(213): warning C4133: '=' : incompatible types - from 'Statements_List_st *' to 'Statement_st *'
+     1>objectivec.y(216): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(216): warning C4133: '=' : incompatible types - from 'Statement_st *' to 'If_statement_st *'
+     1>objectivec.y(217): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(217): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(217): warning C4133: '=' : incompatible types - from 'Statement_st *' to 'If_statement_st *'
+     1>objectivec.y(220): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(220): warning C4133: '=' : incompatible types - from 'Statement_st *' to 'While_statement_st *'
+     1>objectivec.y(281): warning C4013: 'CreateEnumerator' undefined; assuming extern returning int
+     1>objectivec.y(281): warning C4047: '=' : 'Enumerator_st *' differs in levels of indirection from 'int'
+     1>objectivec.y(282): warning C4047: '=' : 'Enumerator_st *' differs in levels of indirection from 'int'
          lex.yy.c
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(104): error C2143: syntax error : missing ';' before 'type'
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(105): error C2065: 'r' : undeclared identifier
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(105): warning C4047: '=' : 'Expression_st *' differs in levels of indirection from 'int'
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(114): error C2143: syntax error : missing ';' before 'type'
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(115): error C2065: 'left' : undeclared identifier
-     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\tree_structs.h(115): warning C4047: '=' : 'Expression_st *' differs in levels of indirection from 'int'
+     1>objectivec.flex(90): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
      1>objectivec.flex(125): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>objectivec.flex(168): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
+     1>objectivec.flex(181): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
+     1>objectivec.flex(187): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
      1>objectivec.flex(189): error C2143: syntax error : missing ';' before 'type'
      1>objectivec.flex(191): error C2065: 'num' : undeclared identifier
      1>objectivec.flex(196): error C2065: 'num' : undeclared identifier
@@ -38,4 +47,4 @@
 
 Build FAILED.
 
-Time Elapsed 00:00:00.94
+Time Elapsed 00:00:00.65

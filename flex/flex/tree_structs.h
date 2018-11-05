@@ -163,21 +163,10 @@ enum StatementType
 	STMT_LIST,
 	STMT_RETURN
 };
-enum VarType
-{
-	TYPE_VOID,
-	TYPE_INT,
-	TYPE_FLOAT,
-	TYPE_CHAR,
-	TYPE_STRING,
-	TYPE_BOOL,
-	TYPE_CUSTOM,
-	TYPE_POINTER,
-};
 
 struct Statement_st
 {
-	enum StatementType type;
+	enum StatementType stmt_type;
 	struct Expression_st *expr; // в expr, return, var_decl
 	struct Expression_st *condition; // while, if
 	struct Statements_List_st *truth_stmt_list; // while, if, compound
@@ -207,7 +196,7 @@ struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
 struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statements_List_st *stmt_list)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_WHILE;
+	cur->stmt_type = STMT_WHILE;
 	cur->condition = condition;
 	cur->truth_stmt_list = stmt_list;
 	return cur;
@@ -217,17 +206,17 @@ struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct S
 								 	   struct Statements_List_st *wrong_stmt_list)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_IF;
+	cur->stmt_type = STMT_IF;
 	cur->condition = condition;
 	cur->truth_stmt_list = truth_stmt_list;
 	cur->wrong_stmt_list = wrong_stmt_list;
 	return cur;
 }
 
-struct Statement_st *CreateVarDeclWithInit(Type_st *var_type, char *identifier, Expression_st *expr)
+struct Statement_st* CreateVarDeclWithInit(struct Type_st *var_type, char *identifier, struct Expression_st *expr)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_VAR_DECL;
+    cur->stmt_type = STMT_VAR_DECL;
 	cur->var_type = var_type;
 	cur->identifier = identifier;
 	cur->expr = expr;
@@ -246,7 +235,7 @@ struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struc
 
 struct Type_st
 {
-	enum VarType type;
+	enum VarType var_type;
 	char* name; /* Если свой тип*/
 	struct Type_st* childType; /*Массив чего или указатель на что*/
 };

@@ -227,11 +227,13 @@ void handleError(char * error, int line){
 	printf("Error at line %d: %s\n\n",line, error);
 } 
 
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     
 	setlocale(LC_ALL, "russian");
 	char * l = setlocale(LC_ALL, NULL);
 	freopen("output.txt", "w", stdout);
 	yyin = fopen("test.m", "r");
 	yyparse();
+
+	return 0;
 }
