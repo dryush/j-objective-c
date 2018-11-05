@@ -6,7 +6,15 @@
     */
     #include <stdio.h>
 	#include "tree_structs.h"
+<<<<<<< HEAD
     
+=======
+	#include "tree_structs_func.h"
+	#include "tree_structs_array.h"
+	#include "tree_structs_class.h"
+    #define YYSTYPE
+
+>>>>>>> master
     void yyerror( const char *s) {
         fprintf (stderr, "%s\n", s);
     }
@@ -27,9 +35,6 @@
 	struct Statements_List_st *_stmt_list;
 	struct Statement_st *_stmt;
 	struct Expression_st *_expr;
-	struct While_statement_st *_while_stmt;
-	struct If_statement_st *_if_stmt;
-	struct Init_statement_st *_init_stmt;
 	struct Type_st *_type;
 	struct Array_type_st *_array_type;
 	struct Enum_declaration_st *_enum_decl;

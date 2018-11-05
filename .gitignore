@@ -10,3 +10,12 @@ flex/flex.opensdf
 flex/flex/objectivec.output
 flex/flex.sdf
 flex/flex.suo
+flex/flex.sdf
+flex/flex/Debug/cl.command.1.tlog
+flex/flex/Debug/CL.read.1.tlog
+flex/flex/Debug/CL.write.1.tlog
+flex/flex/Debug/flex.log
+flex/flex/Debug/flex.write.1.tlog
+flex/flex/Debug/vc100.idb
+flex/flex/Debug/vc100.pdb
+*.tlog
