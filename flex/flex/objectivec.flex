@@ -7,7 +7,6 @@
     #include <conio.h>
     #include <locale.h>
 
-	extern int yyparse(void);
 		
 	void addToBuffer( char* str);
 	void addToBufferOcto( char* str, int line);
@@ -29,7 +28,7 @@
 
 DIGIT	[0-9]
 LETTER	[A-Za-z_]
-CHAR [^\\\'\"\n]
+CHAR_ [^\\\'\"\n]
 WS	[ \t\n]
 ID {LETTER}({LETTER}|{DIGIT})*
 
@@ -41,9 +40,9 @@ EXPONENT         		 (({DIGIT}*|{FLOAT})[eE][+-]?{DIGIT}+)
 
 ONE_LINE_COMMENT \/\/.*\n
 
-%x STRING
+%x STRING_
 %x MULTILINE_COMMENT
-%x CHAR
+%x CHAR_
 %x OCTO_CHAR
 
 
@@ -60,30 +59,30 @@ ONE_LINE_COMMENT \/\/.*\n
 <MULTILINE_COMMENT>"*"+"/" 		{ BEGIN(INITIAL);}
 <MULTILINE_COMMENT><<EOF>> 		{ BEGIN(INITIAL); handleError("unterminated multiline_comment", start);}
 
-\'					{ BEGIN(CHAR); clearBuffer(); }
-\"					{ BEGIN(STRING); clearBuffer(); }
-<CHAR>{CHAR}{CHAR} 	{ BEGIN(INITIAL); handleError("More then one char in \'\'", yylineno); }
-<CHAR,STRING>\\a			{ addToBuffer("\a"); }
-<CHAR,STRING>\\b			{ addToBuffer("\b"); }
-<CHAR,STRING>\\f			{ addToBuffer("\f"); }
-<CHAR,STRING>\\n			{ addToBuffer("\n"); }
-<CHAR,STRING>\\r			{ addToBuffer("\r"); }
-<CHAR,STRING>\\t			{ addToBuffer("\t"); }
-<CHAR,STRING>\\v			{ addToBuffer("\v"); }
-<CHAR,STRING>\\\"			{ addToBuffer("\""); }
-<CHAR,STRING>\\\'			{ addToBuffer("\'"); }
-<CHAR,STRING>\\\?			{ addToBuffer("\?"); }
-<CHAR,STRING>\\\\			{ addToBuffer("\\"); }
-<CHAR,STRING>\\0				{ addToBuffer("\0"); }
-<CHAR,STRING>\\[0-7]{1,3}		{ addToBufferOcto(yytext+1, yylineno); }
-<CHAR,STRING>\\x[0-9a-fA-F]+	{ addToBufferHex(yytext, yylineno);}
-<CHAR,STRING>{CHAR}			{ addToBuffer(yytext); }
-<CHAR,STRING>\\x				{ BEGIN(INITIAL);handleError("Expected hexadecimal number ", yylineno);}
-<STRING>\\\n			{ ; /*Ничего*/}
-<CHAR>\n				{ BEGIN(INITIAL); handleError("Expected \' ", yylineno); }
-<STRING>\n				{ BEGIN(INITIAL); handleError("Expected \" ", yylineno); }
-<CHAR>\' 				{ BEGIN(INITIAL); yylval.char_const=buffer[0]; return CHAR_CONST; }
-<STRING>\"				{ BEGIN(INITIAL); strcpy(yylval.string_const,buffer); return STRING_CONST; }
+\'					{ BEGIN(CHAR_); clearBuffer(); }
+\"					{ BEGIN(STRING_); clearBuffer(); }
+<CHAR_>{CHAR_}{CHAR_} 	{ BEGIN(INITIAL); handleError("More then one char in \'\'", yylineno); }
+<CHAR_,STRING_>\\a			{ addToBuffer("\a"); }
+<CHAR_,STRING_>\\b			{ addToBuffer("\b"); }
+<CHAR_,STRING_>\\f			{ addToBuffer("\f"); }
+<CHAR_,STRING_>\\n			{ addToBuffer("\n"); }
+<CHAR_,STRING_>\\r			{ addToBuffer("\r"); }
+<CHAR_,STRING_>\\t			{ addToBuffer("\t"); }
+<CHAR_,STRING_>\\v			{ addToBuffer("\v"); }
+<CHAR_,STRING_>\\\"			{ addToBuffer("\""); }
+<CHAR_,STRING_>\\\'			{ addToBuffer("\'"); }
+<CHAR_,STRING_>\\\?			{ addToBuffer("\?"); }
+<CHAR_,STRING_>\\\\			{ addToBuffer("\\"); }
+<CHAR_,STRING_>\\0				{ addToBuffer("\0"); }
+<CHAR_,STRING_>\\[0-7]{1,3}		{ addToBufferOcto(yytext+1, yylineno); }
+<CHAR_,STRING_>\\x[0-9a-fA-F]+	{ addToBufferHex(yytext, yylineno);}
+<CHAR_,STRING_>{CHAR_}			{ addToBuffer(yytext); }
+<CHAR_,STRING_>\\x				{ BEGIN(INITIAL);handleError("Expected hexadecimal number ", yylineno);}
+<STRING_>\\\n			{ ; /*Ничего*/}
+<CHAR_>\n				{ BEGIN(INITIAL); handleError("Expected \' ", yylineno); }
+<STRING_>\n				{ BEGIN(INITIAL); handleError("Expected \" ", yylineno); }
+<CHAR_>\' 				{ BEGIN(INITIAL); yylval.char_const=buffer[0]; return CHAR_CONST; }
+<STRING_>\"				{ BEGIN(INITIAL); strcpy(yylval.string_const,buffer); return STRING_CONST; }
 
 
 %{ /* Наверное константы, а не названия типов, назвать const_int, const_float, const_string, const_char */ %}
@@ -91,7 +90,7 @@ ONE_LINE_COMMENT \/\/.*\n
 "void"		{ return VOID; }
 "int"		{ return INT; }
 "float"		{ return FLOAT; }
-"char"		{ return CHAR; }
+"char"		{ return CHAR_; }
 
 "enum"		{ return ENUM; }
 

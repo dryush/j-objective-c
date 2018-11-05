@@ -15,7 +15,7 @@
         fprintf (stderr, "%s\n", s);
     }
 
-	extern Program_st root;
+	extern struct Program_st root;
 %}
 
 %union {
@@ -37,7 +37,6 @@
 	struct If_statement_st *_if_stmt;
 	struct Init_statement_st *_init_stmt;
 	struct Type_st *_type;
-	struct Return_type_st *_return_type;
 	struct Array_type_st *_array_type;
 	struct Enum_declaration_st *_enum_decl;
 	struct Enumerator_list_st *_enum_list;
@@ -102,12 +101,12 @@
 %type <_while_stmt> while_stmt
 %type <_if_stmt> if_stmt
 %type <_type> type
-%type <_return_type> RETURN
+%type <_type> default_type
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
 %type <_enumerator> enumerator
 
-%type <Statement_st> var_decl
+%type <_stmt> var_decl
 
 %type <field_access_en> class_fields_access
 %type <class_invariant_declaration_st> class_invariant_declaration
@@ -207,8 +206,8 @@ stmt_list_or_empty: stmt_list { $$ = $1; }
     | /* empty */ { $$ = NULL; }
     ;
 
-stmt: RETURN expr ';' 
-	| RETURN ';'
+stmt: RETURN expr ';' 	{ $$ = createReturnStatement($2);}
+	| RETURN ';'		{ $$ = createReturnStatement(NULL;}
 	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
 	| while_stmt 		{ $$ = CreateWhileStatement($1); }
 	| if_stmt 			{ $$ = CreateIfStatement($1); }
@@ -228,39 +227,41 @@ while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhile($3,$5); }
 	
 var_decl: type ID '=' expr ';'			{ $$ = CreateInitID($1, $2, $4); }
 	| type ID ';'						{ $$ = CreateInitID($1, $2, NULL); }
-	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  
+	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  {;}
 	;
 
 	
-default_type:  INT
-	| FLOAT
-	| STRING
-	| CHAR
-	| BOOL
+default_type:  INT { $$ = createType(TYPE_INT, NULL, NULL);}
+	| FLOAT { $$ = createType(TYPE_FLOAT, NULL, NULL);}
+	| STRING { $$ = createType(TYPE_STRING, NULL, NULL);}
+	| CHAR { $$ = createType(TYPE_CHAR, NULL, NULL);}
+	| BOOL { $$ = createType(TYPE_BOOL, NULL, NULL);}
+	| VOID { $$ = { $$ = createType(TYPE_VOID, NULL, NULL);}}
 	;
 
-type: default_type
-	| ID '*'
+type: default_type { $$ = $1; } 
+	| ID '*' { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL); }
+	| ID { createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
 	;
 
-expr: expr '+' expr 				{ $$ = CreateExpression(ADD, $1, $3); }
-    | expr '-' expr 				{ $$ = CreateExpression(SUB, $1, $3); }
-    | expr '*' expr 				{ $$ = CreateExpression(MUL, $1, $3); }
-    | expr '/' expr 				{ $$ = CreateExpression(DIV, $1, $3); }
-	| expr '%' expr 				{ $$ = CreateExpression(MOD, $1, $3); }
-	| expr '=' expr 				{ $$ = CreateExpression(ASSIGN, $1, $3); }
+expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
+    | expr '-' expr 				{ $$ = CreateExpression(OP_SUB, $1, $3); }
+    | expr '*' expr 				{ $$ = CreateExpression(OP_MUL, $1, $3); }
+    | expr '/' expr 				{ $$ = CreateExpression(OP_DIV, $1, $3); }
+	| expr '%' expr 				{ $$ = CreateExpression(OP_MOD, $1, $3); }
+	| expr '=' expr 				{ $$ = CreateExpression(OP_ASSIGN, $1, $3); }
 	| expr '=' '{' array_elems_or_empty '}' { $$ = CreateArrayInitStatement($1, $4);} /*Присвоение константы массива*/
-	| expr '<' expr 				{ $$ = CreateExpression(LESS, $1, $3); }
-	| expr LESS_OR_EQUAL expr 		{ $$ = CreateExpression(LESS_OR_EQUAL, $1, $3); }
-	| expr '>' expr 				{ $$ = CreateExpression(GREATER, $1, $3); }
-	| expr GREATER_OR_EQUAL expr 	{ $$ = CreateExpression(GREATER_OR_EQUAL, $1, $3); }
-	| expr EQUAL expr 				{ $$ = CreateExpression(EQUAL, $1, $3); }
-	| expr NOT_EQUAL expr    		{ $$ = CreateExpression(NOT_EQUAL, $1, $3); }
-	| expr AND expr					{ $$ = CreateExpression(AND, $1, $3); }
-	| expr OR expr					{ $$ = CreateExpression(OR, $1, $3); }
-    | '!' expr						{ $$ = CreateExpression(LOGICAL_NOT, $2, NULL); }
-    | '+' expr %prec UPLUS			{ $$ = CreateExpression(UPLUS, $2, NULL); }
-    | '-' expr %prec UMINUS			{ $$ = CreateExpression(UMINUS, $2, NULL); }
+	| expr '<' expr 				{ $$ = CreateExpression(OP_LESS, $1, $3); }
+	| expr LESS_OR_EQUAL expr 		{ $$ = CreateExpression(OP_LESS_OR_EQUAL, $1, $3); }
+	| expr '>' expr 				{ $$ = CreateExpression(OP_GREATER, $1, $3); }
+	| expr GREATER_OR_EQUAL expr 	{ $$ = CreateExpression(OP_GREATER_OR_EQUAL, $1, $3); }
+	| expr EQUAL expr 				{ $$ = CreateExpression(OP_EQUAL, $1, $3); }
+	| expr NOT_EQUAL expr    		{ $$ = CreateExpression(OP_NOT_EQUAL, $1, $3); }
+	| expr AND expr					{ $$ = CreateExpression(OP_AND, $1, $3); }
+	| expr OR expr					{ $$ = CreateExpression(OP_OR, $1, $3); }
+    | '!' expr						{ $$ = CreateExpression(OP_LOGICAL_NOT, $2, NULL); }
+    | '+' expr %prec UPLUS			{ $$ = CreateExpression(OP_UPLUS, $2, NULL); }
+    | '-' expr %prec UMINUS			{ $$ = CreateExpression(OP_UMINUS, $2, NULL); }
     | '(' expr ')' 					{ $$ = $2; }
 	| ID 							{ $$ = CreateIDExpression($1); }
     | INT_CONST 					{ $$ = CreateIntValueExpression($1); }
@@ -283,7 +284,7 @@ enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
-enumerator: ID 
+enumerator: ID {$$ = CreateEnumerator($1, -1); }
 	| ID '=' INT_CONST {$$ = CreateEnumerator($1, $3); }
 	;
 	

@@ -1,43 +1,44 @@
-﻿Build started 11.10.2018 13:59:07.
-     1>Project "C:\Users\User\Desktop\flex last\flex\flex\flex.vcxproj" on node 2 (build target(s)).
+﻿Build started 05.11.2018 14:14:35.
+     1>Project "C:\Users\User\Desktop\fflex\j-objective-c\flex\flex\flex.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "Debug\flex.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "Debug\flex.unsuccessfulbuild".
        PreBuildEvent:
-         flex.bat
+         bison.bat
          :VCEnd
-         objectivec.flex:164: warning, rule cannot be matched
+     1>objectivec.y : warning : 1 nonterminal useless in grammar
+     1>objectivec.y : warning : 2 rules useless in grammar
+         objectivec.y:155.20-23: warning: nonterminal useless in grammar: prog
+         objectivec.y:197.7-76: warning: rule useless in grammar: prog: extern_code
+         objectivec.y:198.7-73: warning: rule useless in grammar: prog: prog extern_code
+         objectivec.y: conflicts: 20 shift/reduce
        ClCompile:
          All outputs are up-to-date.
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\flex.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt flex.cpp
          flex.cpp
-     1>c:\users\user\desktop\flex last\flex\flex\objectivec.flex(224): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
-     1>c:\users\user\desktop\flex last\flex\flex\objectivec.flex(236): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
-     1>c:\users\user\desktop\flex last\flex\flex\objectivec.flex(242): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\objectivec.flex(85): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
-     1>c:\users\user\desktop\flex last\flex\flex\objectivec.flex(253): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\objectivec.flex(120): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\objectivec.flex(163): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
-     1>c:\users\user\desktop\flex last\flex\flex\objectivec.flex(281): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _itoa. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdlib.h(867) : see declaration of 'itoa'
-     1>c:\users\user\desktop\flex last\flex\flex\objectivec.flex(291): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(371) : see declaration of 'sprintf'
-     1>c:\users\user\desktop\flex last\flex\flex\flex.cpp(14): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\objectivec.flex(176): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\objectivec.flex(182): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\objectivec.flex(193): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\objectivec.flex(216): warning C4101: 'numstr' : unreferenced local variable
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\flex.cpp(18): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(249) : see declaration of 'freopen'
-     1>c:\users\user\desktop\flex last\flex\flex\flex.cpp(15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\user\desktop\fflex\j-objective-c\flex\flex\flex.cpp(19): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
        Link:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\User\Desktop\flex last\flex\Debug\flex.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\flex.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\User\Desktop\flex last\flex\Debug\flex.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\User\Desktop\flex last\flex\Debug\flex.lib" /MACHINE:X86 Debug\flex.obj
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\User\Desktop\fflex\j-objective-c\flex\Debug\flex.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\flex.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\User\Desktop\fflex\j-objective-c\flex\Debug\flex.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\User\Desktop\fflex\j-objective-c\flex\Debug\flex.lib" /MACHINE:X86 Debug\flex.obj
          Debug\stdafx.obj
      1>flex.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
-         flex.vcxproj -> C:\Users\User\Desktop\flex last\flex\Debug\flex.exe
-       Manifest:
-         c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\User\Desktop\flex last\flex\Debug\flex.exe;#1" /manifest Debug\flex.exe.intermediate.manifest
-       FinalizeBuildStatus:
-         Deleting file "Debug\flex.unsuccessfulbuild".
-         Touching "Debug\flex.lastbuildstate".
-     1>Done Building Project "C:\Users\User\Desktop\flex last\flex\flex\flex.vcxproj" (build target(s)).
+     1>flex.obj : error LNK2001: unresolved external symbol "union YYSTYPE yylval" (?yylval@@3TYYSTYPE@@A)
+     1>C:\Users\User\Desktop\fflex\j-objective-c\flex\Debug\flex.exe : fatal error LNK1120: 1 unresolved externals
+     1>Done Building Project "C:\Users\User\Desktop\fflex\j-objective-c\flex\flex\flex.vcxproj" (build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:01.25
+Time Elapsed 00:00:02.20

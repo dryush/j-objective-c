@@ -2,6 +2,9 @@
 
 #include "tree_structs.h"
 
+struct Expr_list_st;
+
+struct Expression_st;
 struct Expr_list_st
 {
     struct Expression_st * expr;

@@ -1,37 +1,36 @@
 #ifndef SIMPLE_TREE_STRUCTS
 #define SIMPLE_TREE_STRUCTS
 
-#include "tree_structs_class.h"
-#include "tree_structs_func.h"
-
 enum OperationType 
 {
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	MOD,
-	ASSIGN,
-	ASSIGN_ARRAY,
-	ADD_ASSIGN,
-	SUB_ASSIGN,
-	MUL_ASSIGN,
-	DIV_ASSIGN,
-	MOD_ASSIGN,
-	LESS,
-	LESS_OR_EQUAL,
-	GREATER,
-	GREATER_OR_EQUAL,
-	EQUAL,
-	NOT_EQUAL,
-	LOGICAL_NOT,
-	UPLUS,
-	UMINUS,
-	PREINC,
-	POSTINC,
-	PREDEC,
-	POSTDEC,
-	VALUE
+	OP_ADD,
+	OP_SUB,
+	OP_MUL,
+	OP_DIV,
+	OP_MOD,
+	OP_ASSIGN,
+	OP_ASSIGN_ARRAY,
+	OP_ADD_ASSIGN,
+	OP_SUB_ASSIGN,
+	OP_MUL_ASSIGN,
+	OP_DIV_ASSIGN,
+	OP_MOD_ASSIGN,
+	OP_LESS,
+	OP_LESS_OR_EQUAL,
+	OP_GREATER,
+	OP_GREATER_OR_EQUAL,
+	OP_EQUAL,
+	OP_NOT_EQUAL,
+	OP_LOGICAL_NOT,
+	OP_AND,
+	OP_OR,
+	OP_UPLUS,
+	OP_UMINUS,
+	OP_PREINC,
+	OP_POSTINC,
+	OP_PREDEC,
+	OP_POSTDEC,
+	OP_VALUE
 };
 
 enum ExprType {
@@ -39,99 +38,19 @@ enum ExprType {
 	METHOD_CALL,
 	FUNC_CALL,
 	ARRAY_ELEM_CALL
-}
-
-enum DefaultType
-{
-	VOID,
-	INT,
-	FLOAT,
-	CHAR,
-	STRING,
-	BOOL
 };
 
-
-
-
-struct Statements_List_st
+enum VarType
 {
-	struct Statement_st *stmt;
-	struct Statements_List_st *next;
+	TYPE_VOID,
+	TYPE_INT,
+	TYPE_FLOAT,
+	TYPE_CHAR,
+	TYPE_STRING,
+	TYPE_BOOL,
+	TYPE_CUSTOM,
+	TYPE_POINTER,
 };
-
-struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt)
-{
-	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
-	cur->next =0 ;
-	list->next = cur;
-	cur->stmt = stmt;
-	return cur;
-}
-
-struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
-{
-	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
-	cur->next = 0;
-	cur->stmt = stmt;
-	return cur;
-}
-
-
-
-struct Statement_st
-{
-	struct Expression_st *expr;
-	struct While_statement *while_stmt;
-	struct If_statement_st *if_stmt;
-	struct Init_statement_st *init_stmt;
-	struct Statements_List_st* stmt_list;
-};
-
-struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->expr = expr;
-	return cur;
-}
-
-struct Statement_st *CreateWhileStatement(struct While_statement_st *while_stmt)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->while_stmt = while_stmt;
-	return cur;
-}
-
-struct Statement_st *CreateIfStatement(struct If_statement_st *if_stmt)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->if_stmt = if_stmt;
-	return cur;
-}
-
-struct Statement_st *CreateInitStatement(struct Init_statement_st* init_stmt)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->init_stmt = init_stmt;
-	return cur;
-}
-
-struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems)
-{
-	struct Expression_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->exprType = OPERATION;
-	cur->operationType = ASSIGN_ARRAY;
-	cur->left = left;
-	cur->arrayElems = elems;
-	return cur;
-}
-
-struct Statement_st *CreateCompoundStatement(struct Statements_List_st *stmt_list)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->stmt_list = stmt_list;
-	return cur;
-}
 
 
 
@@ -168,12 +87,23 @@ struct Expression_st *CreateExpression(OperationType operationType, struct Expre
 	return cur;
 }
 
+
+struct Expression_st *CreateIDExpression(char *identifier)
+{
+	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
+	cur->exprType = OPERATION;
+	cur->operationType = OP_VALUE;
+	cur->identifier = identifier;
+	return cur;
+}
+
+
 struct Expression_st *CreatePreIncDecExpression(OperationType operationType, char *identifier)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = OPERATION;
 	cur->operationType = operationType;
-	struct Expression_st *right = CreateIDExpression(char *identifier);
+	struct Expression_st *right = CreateIDExpression( identifier);
 	cur->right = right;
 	return cur;
 }
@@ -183,17 +113,8 @@ struct Expression_st *CreatePostIncDecExpression(OperationType operationType, ch
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = OPERATION;
 	cur->operationType = operationType;
-	struct Expression_st *left = CreateIDExpression(char *identifier);
+	struct Expression_st *left = CreateIDExpression(identifier);
 	cur->left = left;
-	return cur;
-}
-
-struct Expression_st *CreateIDExpression(char *identifier)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
-	cur->operationType = VALUE;
-	cur->identifier = identifier;
 	return cur;
 }
 
@@ -201,7 +122,7 @@ struct Expression_st *CreateIntValueExpression(int int_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = OPERATION;
-	cur->operationType = VALUE;
+	cur->operationType = OP_VALUE;
 	cur->int_value = int_value;
 	return cur;
 }
@@ -210,7 +131,7 @@ struct Expression_st *CreateFloatValueExpression(float float_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = OPERATION;
-	cur->operationType = VALUE;
+	cur->operationType = OP_VALUE;
 	cur->float_value = float_value;
 	return cur;
 }
@@ -219,7 +140,7 @@ struct Expression_st *CreateBoolValueExpression(bool bool_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = OPERATION;
-	cur->operationType = VALUE;
+	cur->operationType = OP_VALUE;
 	cur->bool_value = bool_value;
 	return cur;
 }
@@ -228,7 +149,7 @@ struct Expression_st *CreateCharValueExpression(char char_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = OPERATION;
-	cur->operationType = VALUE;
+	cur->operationType = OP_VALUE;
 	cur->char_value = char_value;
 	return cur;
 }
@@ -237,10 +158,114 @@ struct Expression_st *CreateStringValueExpression(char *string_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = OPERATION;
-	cur->operationType = VALUE;
+	cur->operationType = OP_VALUE;
 	cur->string_value = string_value;
 	return cur;
 }
+
+
+struct Statements_List_st
+{
+	struct Statement_st *stmt;
+	struct Statements_List_st *next;
+};
+
+struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt)
+{
+	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
+	cur->next =0 ;
+	list->next = cur;
+	cur->stmt = stmt;
+	return cur;
+}
+
+struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
+{
+	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
+	cur->next = 0;
+	cur->stmt = stmt;
+	return cur;
+}
+
+
+enum StatementType {
+	STMT_WHILE,
+	STMT_IF,
+	STMT_EXPR,
+	STMT_INIT,
+	STMT_LIST,
+	STMT_RETURN
+	
+};
+struct Statement_st
+{
+	enum StatementType type;
+	struct Expression_st *expr;
+	struct While_statement_st *while_stmt;
+	struct If_statement_st *if_stmt;
+	struct Init_statement_st *init_stmt;
+	struct Statements_List_st* stmt_list;
+};
+
+struct Statement_st* createReturnStatement(struct Expression_st* expr) {
+	
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->type = STMT_RETURN;
+	cur->expr = expr;
+	return cur;
+
+}
+
+struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->type = STMT_EXPR;
+	cur->expr = expr;
+	return cur;
+}
+
+struct Statement_st *CreateWhileStatement(struct While_statement_st *while_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->type = STMT_WHILE;
+	cur->while_stmt = while_stmt;
+	return cur;
+}
+
+struct Statement_st *CreateIfStatement(struct If_statement_st *if_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->type = STMT_IF;
+	cur->if_stmt = if_stmt;
+	return cur;
+}
+
+struct Statement_st *CreateInitStatement(struct Init_statement_st* init_stmt)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->type = STMT_INIT;
+	cur->init_stmt = init_stmt;
+	return cur;
+}
+
+struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems)
+{
+	struct Expression_st *expr = (struct Expression_st*)malloc(sizeof(struct Expression_st));
+	expr->exprType = OPERATION;
+	expr->operationType = OP_ASSIGN_ARRAY;
+	expr->left = left;
+	expr->arrayElems = elems;
+	return expr;
+}
+
+struct Statement_st *CreateCompoundStatement(struct Statements_List_st *stmt_list)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+	cur->stmt_list = stmt_list;
+	return cur;
+}
+
+
 
 
 
@@ -282,7 +307,7 @@ struct Init_statement_st
 {
 	struct Type_st *type;
 	char *identifier;
-	OperationType assign_type;
+	enum OperationType assign_type;
 	struct Expression_st *expr;
 	struct Array_constant *array_constant;
 };
@@ -294,7 +319,7 @@ struct Init_statement_st *CreateInitID(struct Type_st *type, char *identifier, s
 	cur->identifier = identifier;
 	if (expr != NULL)
 	{
-		cur->assign_type = ASSIGN;
+		cur->assign_type = OP_ASSIGN;
 		cur->expr = expr;
 	}
 	return cur;
@@ -304,32 +329,35 @@ struct Init_statement_st *CreateAssignID(char *identifier, OperationType assignT
 {
 	struct Init_statement_st *cur = (struct Init_statement_st *)malloc(sizeof(struct Init_statement_st));
 	cur->identifier = identifier;
-	cur->assignType = assignType;
+	cur->assign_type = assignType;
 	cur->expr = expr;
 	return cur;
 }
 
 
 
+/*
 struct Type_st
 {
 	struct Return_type_st *return_type;
 	struct Array_type_st *arrayt_type;
 };
+*/
 
-struct Return_type_st
+struct Type_st
 {
-	DefaultType default_type;
-	char *type_name;
-	bool isPointer;
+	enum VarType type;
+	char* name; /* Если свой тип*/
+	struct Type_st* childType; /*Массив чего или указатель на что*/
 };
 
-struct Array_type_st
-{
-	DefaultType default_type;
-	char *type_name, *array_name;
-	int size;
-};
+struct Type_st* createType( enum VarType type, char * name, struct Type_st* child) {
+	struct Type_st* st = (struct Type_st*)malloc(sizeof(struct Type_st));
+	st->type = type;
+	st->name = name;
+	st->childType = child;
+	return st; 
+}
 
 struct Enum_declaration_st
 {
@@ -344,8 +372,6 @@ struct Enum_declaration_st *CreateEnumDeclaration(char *identifier, struct Enume
 	cur->enumerator_list = enumerator_list;
 	return cur;
 }
-
-
 
 struct Enumerator_list_st
 {
@@ -387,6 +413,10 @@ struct Enumerator_st *CreateEnumenator(char *identifier, int value)
 }
 
 
+#include "tree_structs_class.h"
+#include "tree_structs_func.h"
+#include "tree_structs_array.h"
+
 struct Extern_code_st
 {
 	struct Func_declaration_st* func_decl;
@@ -406,6 +436,7 @@ struct Extern_code_st* createExternCode(
 	st->func_decl = func_decl;
 	st->func_impl = function_impl;
 	st->enum_decl = enum_decl;
+	return st;
 }
 
 struct Program_st

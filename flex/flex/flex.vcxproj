@@ -55,7 +55,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>flex.bat</Command>
+      <Command>bison.bat</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -78,7 +78,9 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="objectivec.tab.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="struct_print.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="unistd.h" />
   </ItemGroup>

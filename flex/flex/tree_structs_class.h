@@ -1,6 +1,23 @@
 #pragma once
 
 #include "tree_structs.h"
+struct Method_call_arg_list_st;
+struct Class_method_param_declaration_st;
+struct Class_method_param_declaration_list_st;
+struct Class_method_declaration_st;
+struct Class_methods_declaration_list_st;
+struct Class_methods_declaration_block_st;
+struct Class_methods_declaration_block_list_st;
+struct Class_invariant_declaration_st;
+struct Class_invariants_declaration_list_st;
+struct Class_invariants_declaration_block_st;
+struct Class_invariants_declaration_block_list_st;
+struct Class_declaration_st;
+
+enum Method_type_en{
+	NON_STATIC,
+	STATIC
+};
 
 /* КЛАССЫ */
 enum Field_access_en
@@ -62,11 +79,6 @@ struct Class_method_param_declaration_list_st* addToFrontClassMethodParamDeclara
 	newRoot->next = root;
 	return newRoot;
 }
-
-enum Method_type_en{
-	NON_STATIC,
-	STATIC
-};
 
 struct Class_method_declaration_st 
 {
@@ -137,6 +149,7 @@ struct Class_methods_declaration_block_list_st* createClassMethodsDeclarationBlo
 	struct Class_methods_declaration_block_list_st* st = (struct Class_methods_declaration_block_list_st*) malloc( sizeof(struct Class_methods_declaration_block_list_st));
 	st->list = list;
 	st->next = NULL;
+	return st;
 }
 
 struct Class_methods_declaration_block_list_st* addToClassMethodsDeclarationBlockList(
@@ -146,6 +159,7 @@ struct Class_methods_declaration_block_list_st* addToClassMethodsDeclarationBloc
 	while( last->next != NULL )
 		last = last->next;
 	last->next = createClassMethodsDeclarationBlockList(list);
+	return root;
 }
 
 struct Class_invariant_declaration_st
@@ -174,6 +188,7 @@ struct Class_invariants_declaration_list_st* createClassInvariantsDeclarationLis
 	struct Class_invariants_declaration_list_st* st = (struct Class_invariants_declaration_list_st*) malloc(sizeof(struct Class_invariants_declaration_list_st*));
 	st->invariant = invariant;
 	st->next = NULL;
+	return st;
 }
 
 struct Class_invariants_declaration_list_st* addToClassInvariantsDeclarationList(
@@ -198,6 +213,7 @@ struct Class_invariants_declaration_block_st* createClassInvariantsDeclarationBl
 	struct Class_invariants_declaration_block_st* st = (struct Class_invariants_declaration_block_st*) malloc(sizeof(struct Class_invariants_declaration_block_st));
 	st->access = access;
 	st->list = list;
+	return st;
 }
 
 struct Class_invariants_declaration_block_list_st
@@ -212,6 +228,7 @@ struct Class_invariants_declaration_block_list_st* createClassInvariantsDeclarat
 	struct Class_invariants_declaration_block_list_st* st = (struct Class_invariants_declaration_block_list_st*) malloc( sizeof(struct Class_methods_declaration_block_list_st));
 	st->list = list;
 	st->next = NULL;
+	return st;
 }
 
 struct Class_invariants_declaration_block_list_st* addToClassInvariantsDeclarationBlockList(
@@ -221,6 +238,7 @@ struct Class_invariants_declaration_block_list_st* addToClassInvariantsDeclarati
 	while( last->next != NULL )
 		last = last->next;
 	last->next = createClassInvariantsDeclarationBlockList(list);
+	return root;
 }
 
 
@@ -277,6 +295,7 @@ struct Class_method_impl_list_st* createClassMethodImplList(struct Class_method_
 	struct Class_method_impl_list_st* st = (struct Class_method_impl_list_st*)malloc(sizeof(struct Class_method_impl_list_st));
 	st->method = method;
 	st->next = NULL;
+	return st;
 }
 
 struct Class_method_impl_list_st* addToClassMethodImplList( struct Class_method_impl_list_st* root, struct Class_method_impl_st* method)
@@ -364,7 +383,7 @@ struct Expression_st* createMethodCall(
   struct Method_call_arg_list_st* args)
 {
 	struct Expression_st * st = (struct Expression_st*) malloc(sizeof(struct Expression_st));
-	st->func_args = args;
+	st->method_args = args;
 	st->identifier = name;
 	st->object = object;
 	return st;
