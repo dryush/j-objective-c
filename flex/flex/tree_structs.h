@@ -11,11 +11,6 @@ enum OperationType
 	OP_MOD,
 	OP_ASSIGN,
 	OP_ASSIGN_ARRAY,
-	OP_ADD_ASSIGN,
-	OP_SUB_ASSIGN,
-	OP_MUL_ASSIGN,
-	OP_DIV_ASSIGN,
-	OP_MOD_ASSIGN,
 	OP_LESS,
 	OP_LESS_OR_EQUAL,
 	OP_GREATER,
@@ -27,10 +22,6 @@ enum OperationType
 	OP_OR,
 	OP_UPLUS,
 	OP_UMINUS,
-	OP_PREINC,
-	OP_POSTINC,
-	OP_PREDEC,
-	OP_POSTDEC,
 	OP_VALUE
 };
 
@@ -52,8 +43,6 @@ enum VarType
 	TYPE_CUSTOM,
 	TYPE_POINTER
 };
-
-
 
 struct Expression_st
 {
@@ -165,32 +154,46 @@ struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
 }
 
 
-enum StatementType {
+enum StatementType 
+{
 	STMT_WHILE,
 	STMT_IF,
 	STMT_EXPR,
-	STMT_INIT,
+	STMT_VAR_DECL,
 	STMT_LIST,
 	STMT_RETURN
-	
 };
-struct Statement_st
+enum VarType
 {
-	enum StatementType stmt_type;
-	struct Expression_st *expr;
-	struct While_statement_st *while_stmt;
-	struct If_statement_st *if_stmt;
-	struct Init_statement_st *init_stmt;
-	struct Statements_List_st* stmt_list;
+	TYPE_VOID,
+	TYPE_INT,
+	TYPE_FLOAT,
+	TYPE_CHAR,
+	TYPE_STRING,
+	TYPE_BOOL,
+	TYPE_CUSTOM,
+	TYPE_POINTER,
 };
 
-struct Statement_st* createReturnStatement(struct Expression_st* expr) {
-	
+struct Statement_st
+{
+	enum StatementType type;
+	struct Expression_st *expr; // в expr, return, var_decl
+	struct Expression_st *condition; // while, if
+	struct Statements_List_st *truth_stmt_list; // while, if, compound
+	struct Statements_List_st *wrong_stmt_list; // if
+	// Для var_decl
+	struct Type_st *var_type; 
+	char *identifier; 
+	struct Array_constant *array_constant;
+};
+
+struct Statement_st* CreateReturnStatement(struct Expression_st* expr) 
+{
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
     cur->stmt_type = STMT_RETURN;
 	cur->expr = expr;
 	return cur;
-
 }
 
 struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
@@ -201,30 +204,36 @@ struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
 	return cur;
 }
 
-struct Statement_st *CreateWhileStatement(struct While_statement_st *while_stmt)
+struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statements_List_st *stmt_list)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->stmt_type = STMT_WHILE;
-	cur->while_stmt = while_stmt;
+	cur->type = STMT_WHILE;
+	cur->condition = condition;
+	cur->truth_stmt_list = stmt_list;
 	return cur;
 }
 
-struct Statement_st *CreateIfStatement(struct If_statement_st *if_stmt)
+struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct Statements_List_st *truth_stmt_list,
+								 	   struct Statements_List_st *wrong_stmt_list)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->stmt_type = STMT_IF;
-	cur->if_stmt = if_stmt;
+	cur->type = STMT_IF;
+	cur->condition = condition;
+	cur->truth_stmt_list = truth_stmt_list;
+	cur->wrong_stmt_list = wrong_stmt_list;
 	return cur;
 }
 
-struct Statement_st *CreateInitStatement(struct Init_statement_st* init_stmt)
+struct Statement_st *CreateVarDeclWithInit(Type_st *var_type, char *identifier, Expression_st *expr)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->stmt_type = STMT_INIT;
-	cur->init_stmt = init_stmt;
+	cur->type = STMT_VAR_DECL;
+	cur->var_type = var_type;
+	cur->identifier = identifier;
+	cur->expr = expr;
 	return cur;
 }
-
+// Нужно разобраться с объявлением массива
 struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems)
 {
 	struct Expression_st *expr = (struct Expression_st*)malloc(sizeof(struct Expression_st));
@@ -235,95 +244,9 @@ struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struc
 	return expr;
 }
 
-struct Statement_st *CreateCompoundStatement(struct Statements_List_st *stmt_list)
-{
-	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->stmt_list = stmt_list;
-	return cur;
-}
-
-
-
-
-
-struct While_statement_st
-{
-	struct Expression_st *condition;
-	struct Statements_List_st *stmt_list;
-};
-
-struct While_statement_st *CreateWhile(struct Expression_st *condition, struct Statements_List_st *stmt_list)
-{
-	struct While_statement_st *cur = (struct While_statement_st *)malloc(sizeof(struct While_statement_st));
-	cur->condition = condition;
-	cur->stmt_list = stmt_list;
-	return cur;
-}
-
-
-
-struct If_statement_st
-{
-	struct Expression_st *condition;
-	struct Statements_List_st *truth_stmt_list, *wrong_stmt_list;
-};
-
-struct If_statement_st *CreateIf(struct Expression_st *condition, struct Statements_List_st *truth_stmt_list,
-								 struct Statements_List_st *wrong_stmt_list)
-{
-	struct If_statement_st *cur = (struct If_statement_st *)malloc(sizeof(struct If_statement_st));
-	cur->condition = condition;
-	cur->truth_stmt_list = truth_stmt_list;
-	cur->wrong_stmt_list = wrong_stmt_list;
-	return cur;
-}
-
-
-
-struct Init_statement_st
-{
-	struct Type_st *val_type;
-	char *identifier;
-	enum OperationType assign_type;
-	struct Expression_st *expr;
-	struct Array_constant *array_constant;
-};
-
-struct Init_statement_st *CreateInitID(struct Type_st *val_type, char *identifier, struct Expression_st *expr)
-{
-	struct Init_statement_st *cur = (struct Init_statement_st *)malloc(sizeof(struct Init_statement_st));
-    cur->val_type = val_type;
-	cur->identifier = identifier;
-	if (expr != NULL)
-	{
-		cur->assign_type = OP_ASSIGN;
-		cur->expr = expr;
-	}
-	return cur;
-}
-
-struct Init_statement_st *CreateAssignID(char *identifier, enum OperationType assignType, struct Expression_st *expr)
-{
-	struct Init_statement_st *cur = (struct Init_statement_st *)malloc(sizeof(struct Init_statement_st));
-	cur->identifier = identifier;
-	cur->assign_type = assignType;
-	cur->expr = expr;
-	return cur;
-}
-
-
-
-/*
 struct Type_st
 {
-	struct Return_type_st *return_type;
-	struct Array_type_st *arrayt_type;
-};
-*/
-
-struct Type_st
-{
-	enum VarType var_type;
+	enum VarType type;
 	char* name; /* Если свой тип*/
 	struct Type_st* childType; /*Массив чего или указатель на что*/
 };
@@ -335,6 +258,8 @@ struct Type_st* createType( enum VarType vartype, char * name, struct Type_st* c
 	st->childType = child;
 	return st; 
 }
+
+
 
 struct Enum_declaration_st
 {
@@ -372,8 +297,6 @@ struct Enumerator_list_st *CreateEnumeratorList(struct Enumerator_st *enumerator
 	cur->enumerator = enumerator;
 	return cur;
 }
-
-
 
 struct Enumerator_st
 {
