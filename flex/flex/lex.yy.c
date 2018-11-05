@@ -608,6 +608,9 @@ char *yytext;
 #line 1 "objectivec.flex"
 #line 2 "objectivec.flex"
 	#define YY_NO_UNISTD_H 0
+ 	#include "tree_structs.h"
+ 	#include "objectivec.tab.h"
+
     #include <math.h>
     #include <stdlib.h>
     #include <stdio.h>
@@ -615,6 +618,8 @@ char *yytext;
     #include <conio.h>
     #include <locale.h>
 
+	
+	extern int yyparse(void);
 		
 	void addToBuffer( char* str);
 	void addToBufferOcto( char* str, int line);
@@ -628,9 +633,9 @@ char *yytext;
 
 	int start = 0;
 	char buffer[100000];
-#line 631 "lex.yy.c"
+#line 636 "lex.yy.c"
 
-#line 633 "lex.yy.c"
+#line 638 "lex.yy.c"
 
 #define INITIAL 0
 #define STRING_ 1
@@ -851,13 +856,13 @@ YY_DECL
 		}
 
 	{
-#line 49 "objectivec.flex"
+#line 54 "objectivec.flex"
 
 
 
 
 
-#line 860 "lex.yy.c"
+#line 865 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -923,416 +928,416 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 54 "objectivec.flex"
+#line 59 "objectivec.flex"
 {}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 56 "objectivec.flex"
+#line 61 "objectivec.flex"
 { BEGIN(MULTILINE_COMMENT); start = yylineno; }
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 57 "objectivec.flex"
+#line 62 "objectivec.flex"
 { addToBuffer(yytext); }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 58 "objectivec.flex"
+#line 63 "objectivec.flex"
 { addToBuffer(yytext); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 59 "objectivec.flex"
+#line 64 "objectivec.flex"
 { BEGIN(INITIAL);}
 	YY_BREAK
 case YY_STATE_EOF(MULTILINE_COMMENT):
-#line 60 "objectivec.flex"
+#line 65 "objectivec.flex"
 { BEGIN(INITIAL); handleError("unterminated multiline_comment", start);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 62 "objectivec.flex"
+#line 67 "objectivec.flex"
 { BEGIN(CHAR_); clearBuffer(); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 63 "objectivec.flex"
+#line 68 "objectivec.flex"
 { BEGIN(STRING_); clearBuffer(); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 64 "objectivec.flex"
+#line 69 "objectivec.flex"
 { BEGIN(INITIAL); handleError("More then one char in \'\'", yylineno); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 65 "objectivec.flex"
+#line 70 "objectivec.flex"
 { addToBuffer("\a"); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 66 "objectivec.flex"
+#line 71 "objectivec.flex"
 { addToBuffer("\b"); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 67 "objectivec.flex"
+#line 72 "objectivec.flex"
 { addToBuffer("\f"); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 68 "objectivec.flex"
+#line 73 "objectivec.flex"
 { addToBuffer("\n"); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 69 "objectivec.flex"
+#line 74 "objectivec.flex"
 { addToBuffer("\r"); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 70 "objectivec.flex"
+#line 75 "objectivec.flex"
 { addToBuffer("\t"); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 71 "objectivec.flex"
+#line 76 "objectivec.flex"
 { addToBuffer("\v"); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 72 "objectivec.flex"
+#line 77 "objectivec.flex"
 { addToBuffer("\""); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 73 "objectivec.flex"
+#line 78 "objectivec.flex"
 { addToBuffer("\'"); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 74 "objectivec.flex"
+#line 79 "objectivec.flex"
 { addToBuffer("\?"); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 75 "objectivec.flex"
+#line 80 "objectivec.flex"
 { addToBuffer("\\"); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 76 "objectivec.flex"
+#line 81 "objectivec.flex"
 { addToBuffer("\0"); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 77 "objectivec.flex"
+#line 82 "objectivec.flex"
 { addToBufferOcto(yytext+1, yylineno); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 78 "objectivec.flex"
+#line 83 "objectivec.flex"
 { addToBufferHex(yytext, yylineno);}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 79 "objectivec.flex"
+#line 84 "objectivec.flex"
 { addToBuffer(yytext); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 80 "objectivec.flex"
+#line 85 "objectivec.flex"
 { BEGIN(INITIAL);handleError("Expected hexadecimal number ", yylineno);}
 	YY_BREAK
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 81 "objectivec.flex"
+#line 86 "objectivec.flex"
 { ; /*Ничего*/}
 	YY_BREAK
 case 26:
 /* rule 26 can match eol */
 YY_RULE_SETUP
-#line 82 "objectivec.flex"
+#line 87 "objectivec.flex"
 { BEGIN(INITIAL); handleError("Expected \' ", yylineno); }
 	YY_BREAK
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 83 "objectivec.flex"
+#line 88 "objectivec.flex"
 { BEGIN(INITIAL); handleError("Expected \" ", yylineno); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 84 "objectivec.flex"
+#line 89 "objectivec.flex"
 { BEGIN(INITIAL); yylval.char_const=buffer[0]; return CHAR_CONST; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 85 "objectivec.flex"
+#line 90 "objectivec.flex"
 { BEGIN(INITIAL); strcpy(yylval.string_const,buffer); return STRING_CONST; }
 	YY_BREAK
  /* Наверное константы, а не названия типов, назвать const_int, const_float, const_string, const_char */
 case 30:
 YY_RULE_SETUP
-#line 90 "objectivec.flex"
+#line 95 "objectivec.flex"
 { return VOID; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 91 "objectivec.flex"
+#line 96 "objectivec.flex"
 { return INT; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 92 "objectivec.flex"
+#line 97 "objectivec.flex"
 { return FLOAT; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 93 "objectivec.flex"
+#line 98 "objectivec.flex"
 { return CHAR_; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 95 "objectivec.flex"
+#line 100 "objectivec.flex"
 { return ENUM; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 97 "objectivec.flex"
+#line 102 "objectivec.flex"
 { return IF; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 98 "objectivec.flex"
+#line 103 "objectivec.flex"
 { return ELSE; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 100 "objectivec.flex"
+#line 105 "objectivec.flex"
 { return WHILE; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 101 "objectivec.flex"
+#line 106 "objectivec.flex"
 { return DO; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 103 "objectivec.flex"
+#line 108 "objectivec.flex"
 { return RETURN; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 105 "objectivec.flex"
+#line 110 "objectivec.flex"
 { return INTERFACE; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 106 "objectivec.flex"
+#line 111 "objectivec.flex"
 { return IMPLEMENTATION; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 107 "objectivec.flex"
+#line 112 "objectivec.flex"
 { return END; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 109 "objectivec.flex"
+#line 114 "objectivec.flex"
 { return PRIVATE; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 110 "objectivec.flex"
+#line 115 "objectivec.flex"
 { return PROTECTED; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 111 "objectivec.flex"
+#line 116 "objectivec.flex"
 { return PUBLIC; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 113 "objectivec.flex"
+#line 118 "objectivec.flex"
 { yylval.bool_const = 1; return BOOL_CONST; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 114 "objectivec.flex"
+#line 119 "objectivec.flex"
 { yylval.bool_const = 0; return BOOL_CONST; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 116 "objectivec.flex"
+#line 121 "objectivec.flex"
 { yylval.id = yytext; return ID; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 117 "objectivec.flex"
+#line 122 "objectivec.flex"
 { yylval.int_const=atoi(yytext); return INT_CONST; };
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 118 "objectivec.flex"
+#line 123 "objectivec.flex"
 { yylval.int_const=handleTokenInt(yytext, 16); return INT_CONST; }; 
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 119 "objectivec.flex"
+#line 124 "objectivec.flex"
 { yylval.int_const=handleTokenInt(yytext, 8); return INT_CONST; };
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 120 "objectivec.flex"
+#line 125 "objectivec.flex"
 { yylval.float_const=atof(yytext); return FLOAT_CONST; }
 	YY_BREAK
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 122 "objectivec.flex"
+#line 127 "objectivec.flex"
 { }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 125 "objectivec.flex"
+#line 130 "objectivec.flex"
 { return '='; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 127 "objectivec.flex"
+#line 132 "objectivec.flex"
 { return '+'; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 128 "objectivec.flex"
+#line 133 "objectivec.flex"
 { return '-'; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 129 "objectivec.flex"
+#line 134 "objectivec.flex"
 { return '*'; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 130 "objectivec.flex"
+#line 135 "objectivec.flex"
 { return '/'; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 131 "objectivec.flex"
+#line 136 "objectivec.flex"
 { return '%'; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 134 "objectivec.flex"
+#line 139 "objectivec.flex"
 { return EQUAL; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 135 "objectivec.flex"
+#line 140 "objectivec.flex"
 { return '<'; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 136 "objectivec.flex"
+#line 141 "objectivec.flex"
 { return LESS_OR_EQUAL; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 137 "objectivec.flex"
+#line 142 "objectivec.flex"
 { return '>'; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 138 "objectivec.flex"
+#line 143 "objectivec.flex"
 { return GREATER_OR_EQUAL; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 139 "objectivec.flex"
+#line 144 "objectivec.flex"
 { return NOT_EQUAL; }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 140 "objectivec.flex"
+#line 145 "objectivec.flex"
 { return '!'; }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 142 "objectivec.flex"
+#line 147 "objectivec.flex"
 { return OR; }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 143 "objectivec.flex"
+#line 148 "objectivec.flex"
 { return AND; }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 145 "objectivec.flex"
+#line 150 "objectivec.flex"
 { return ARROW; }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 147 "objectivec.flex"
+#line 152 "objectivec.flex"
 { return '['; }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 148 "objectivec.flex"
+#line 153 "objectivec.flex"
 { return ']'; }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 149 "objectivec.flex"
+#line 154 "objectivec.flex"
 { return '('; }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 150 "objectivec.flex"
+#line 155 "objectivec.flex"
 { return ')'; }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 151 "objectivec.flex"
+#line 156 "objectivec.flex"
 { return '{'; }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 152 "objectivec.flex"
+#line 157 "objectivec.flex"
 { return '}'; }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 153 "objectivec.flex"
+#line 158 "objectivec.flex"
 { return ';'; }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 154 "objectivec.flex"
+#line 159 "objectivec.flex"
 { return ','; }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 156 "objectivec.flex"
+#line 161 "objectivec.flex"
 { return '.'; }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 157 "objectivec.flex"
+#line 162 "objectivec.flex"
 { handleToken("unknown character", yytext, yylineno); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 159 "objectivec.flex"
+#line 164 "objectivec.flex"
 ECHO;
 	YY_BREAK
-#line 1335 "lex.yy.c"
+#line 1340 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(STRING_):
 case YY_STATE_EOF(CHAR_):
@@ -2353,7 +2358,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 159 "objectivec.flex"
+#line 164 "objectivec.flex"
 
 
 void addToBuffer( char* str){
@@ -2420,3 +2425,11 @@ void handleError(char * error, int line){
 	printf("Error at line %d: %s\n\n",line, error);
 } 
 
+void main(int argc, char *argv[]) {
+    
+	setlocale(LC_ALL, "russian");
+	char * l = setlocale(LC_ALL, NULL);
+	freopen("output.txt", "w", stdout);
+	yyin = fopen("test.m", "r");
+	yyparse();
+}
