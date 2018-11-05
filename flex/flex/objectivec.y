@@ -14,12 +14,12 @@
 	
 	extern int yylex(void);
 
-	extern struct Program_st root;
+	extern struct Program_st* root;
 %}
 
 %union {
     int int_const;
-    float float_const;
+    double float_const;
     char char_const;
 	char bool_const; 
     char* string_const;
@@ -76,7 +76,7 @@
 /*%type <Название структуры из union> название (работает это тип typedef и define) */
 
 
-//%token Название токена, который возвращает FLEX
+/* %token Название токена, который возвращает FLEX */
 
 %token <int_const> INT_CONST
 %token <float_const> FLOAT_CONST
@@ -90,8 +90,6 @@
 %type <_stmt> stmt
 %type <_stmt> compound_stmt
 %type <_expr> expr
-%type <_while_stmt> while_stmt
-%type <_if_stmt> if_stmt
 %type <_type> type
 %type <_type> default_type
 %type <_enum_decl> enum_declaration
@@ -163,7 +161,7 @@
 %token BOOL
 %token VOID
 
-// СПИСОК ПРИОРИТЕТОВ ОПЕРАЦИЙ
+/* СПИСОК ПРИОРИТЕТОВ ОПЕРАЦИЙ */
 %left ','
 %right '='
 %left OR
@@ -178,7 +176,7 @@
 %nonassoc ')' ']'
  
 %%
-// ТУТ ПРАВИЛА
+/* ТУТ ПРАВИЛА */
 extern_code: func_declaration 	{ $$ = createExternCode($1, NULL, NULL, NULL, NULL);}
 	| func_implementation		{ $$ = createExternCode(NULL, $1, NULL, NULL, NULL);}
     | class_declaration 		{ $$ = createExternCode(NULL, NULL, $1, NULL, NULL);}
