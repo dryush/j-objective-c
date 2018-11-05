@@ -1,54 +1,50 @@
-﻿  objectivec.tab.cpp
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(74): warning C4627: #include "tree_structs.h": пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(75): warning C4627: #include "tree_structs_func.h": пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(76): warning C4627: #include "tree_structs_array.h": пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(77): warning C4627: #include "tree_structs_class.h": пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(93): warning C4005: YY_NULL: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(91): см. предыдущее определение "YY_NULL"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(287): warning C4005: YYSIZE_T: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(285): см. предыдущее определение "YYSIZE_T"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(290): warning C4627: #include <stddef.h>: пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(293): warning C4005: YYSIZE_T: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(287): см. предыдущее определение "YYSIZE_T"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(302): warning C4627: #include <libintl.h>: пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(307): warning C4005: YY_: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(303): см. предыдущее определение "YY_"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(315): warning C4005: YYUSE: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(313): см. предыдущее определение "YYUSE"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(345): warning C4627: #include <alloca.h>: пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(347): warning C4005: YYSTACK_ALLOC: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(343): см. предыдущее определение "YYSTACK_ALLOC"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(349): warning C4627: #include <malloc.h>: пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(352): warning C4005: YYSTACK_ALLOC: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(347): см. предыдущее определение "YYSTACK_ALLOC"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(355): warning C4627: #include <stdlib.h>: пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(376): warning C4005: YYSTACK_ALLOC: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(352): см. предыдущее определение "YYSTACK_ALLOC"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(377): warning C4005: YYSTACK_FREE: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(367): см. предыдущее определение "YYSTACK_FREE"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(379): warning C4005: YYSTACK_ALLOC_MAXIMUM: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(373): см. предыдущее определение "YYSTACK_ALLOC_MAXIMUM"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(384): warning C4627: #include <stdlib.h>: пропущен при поиске использования предкомпилированного заголовка
-          Добавление директивы в "StdAfx.h" или перестройка предкомпилированного заголовка
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(462): warning C4005: YYCOPY: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(453): см. предыдущее определение "YYCOPY"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(995): warning C4005: YYLEX: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(993): см. предыдущее определение "YYLEX"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1157): warning C4005: YYDPRINTF: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1010): см. предыдущее определение "YYDPRINTF"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1158): warning C4005: YY_SYMBOL_PRINT: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1021): см. предыдущее определение "YY_SYMBOL_PRINT"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1159): warning C4005: YY_STACK_PRINT: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1113): см. предыдущее определение "YY_STACK_PRINT"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1160): warning C4005: YY_REDUCE_PRINT: изменение макроопределения
-          c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(1151): см. предыдущее определение "YY_REDUCE_PRINT"
-c:\users\acer\desktop\политех\компилятор\j-objective-c\flex\flex\objectivec.tab.cpp(2767): fatal error C1010: непредвиденный конец файла во время поиска предкомпилированного заголовка. Возможно, вы забыли добавить директиву "#include "StdAfx.h"" в источник.
+﻿Build started 05.11.2018 20:43:07.
+     1>Project "C:\Users\User\Desktop\fflex\j-objective-c\flex\flex\flex.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\flex.unsuccessfulbuild".
+       PreBuildEvent:
+         bison.bat
+         :VCEnd
+     1>objectivec.y : warning : 1 nonterminal useless in grammar
+     1>objectivec.y : warning : 2 rules useless in grammar
+         objectivec.y:150.20-23: warning: nonterminal useless in grammar: prog
+         objectivec.y:192.7-76: warning: rule useless in grammar: prog: extern_code
+         objectivec.y:193.7-73: warning: rule useless in grammar: prog: prog extern_code
+         objectivec.y: conflicts: 20 shift/reduce
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt lex.yy.c objectivec.tab.c
+         objectivec.tab.c
+     1>objectivec.tab.c(1657): warning C4013: 'yylex' undefined; assuming extern returning int
+     1>objectivec.y(207): warning C4133: '=' : incompatible types - from 'While_statement_st *' to 'Statement_st *'
+     1>objectivec.y(208): warning C4133: '=' : incompatible types - from 'If_statement_st *' to 'Statement_st *'
+     1>objectivec.y(213): warning C4133: '=' : incompatible types - from 'Statements_List_st *' to 'Statement_st *'
+     1>objectivec.y(216): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(216): warning C4133: '=' : incompatible types - from 'Statement_st *' to 'If_statement_st *'
+     1>objectivec.y(217): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(217): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(217): warning C4133: '=' : incompatible types - from 'Statement_st *' to 'If_statement_st *'
+     1>objectivec.y(220): warning C4133: 'function' : incompatible types - from 'Statement_st *' to 'Statements_List_st *'
+     1>objectivec.y(220): warning C4133: '=' : incompatible types - from 'Statement_st *' to 'While_statement_st *'
+     1>objectivec.y(281): warning C4013: 'CreateEnumerator' undefined; assuming extern returning int
+     1>objectivec.y(281): warning C4047: '=' : 'Enumerator_st *' differs in levels of indirection from 'int'
+     1>objectivec.y(282): warning C4047: '=' : 'Enumerator_st *' differs in levels of indirection from 'int'
+         lex.yy.c
+     1>objectivec.flex(90): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
+     1>objectivec.flex(125): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>objectivec.flex(168): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
+     1>objectivec.flex(181): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
+     1>objectivec.flex(187): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
+     1>objectivec.flex(189): error C2143: syntax error : missing ';' before 'type'
+     1>objectivec.flex(191): error C2065: 'num' : undeclared identifier
+     1>objectivec.flex(196): error C2065: 'num' : undeclared identifier
+     1>objectivec.flex(233): error C2143: syntax error : missing ';' before 'type'
+         Generating Code...
+     1>Done Building Project "C:\Users\User\Desktop\fflex\j-objective-c\flex\flex\flex.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.65

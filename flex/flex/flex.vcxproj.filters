@@ -21,27 +21,30 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="unistd.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="struct_print.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="objectivec.tab.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="tree_structs.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="tree_structs_array.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="tree_structs_class.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="tree_structs_func.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="objectivec.tab.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="flex.cpp">
+    <ClCompile Include="lex.yy.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="objectivec.tab.cpp">

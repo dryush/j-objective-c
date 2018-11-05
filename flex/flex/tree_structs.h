@@ -1,5 +1,6 @@
-#ifndef SIMPLE_TREE_STRUCTS
-#define SIMPLE_TREE_STRUCTS
+#pragma once
+
+#include <stdlib.h>
 
 enum OperationType 
 {
@@ -24,14 +25,24 @@ enum OperationType
 	OP_VALUE
 };
 
-enum ExprType 
-{
-	OPERATION,
-	METHOD_CALL,
-	FUNC_CALL,
-	ARRAY_ELEM_CALL
+enum ExprType {
+	EXPR_OPERATION,
+	EXPR_METHOD_CALL,
+	EXPR_FUNC_CALL,
+	EXPR_ARRAY_ELEM_CALL
 };
 
+enum VarType
+{
+	TYPE_VOID,
+	TYPE_INT,
+	TYPE_FLOAT,
+	TYPE_CHAR,
+	TYPE_STRING,
+	TYPE_BOOL,
+	TYPE_CUSTOM,
+	TYPE_POINTER
+};
 
 struct Expression_st
 {
@@ -39,7 +50,7 @@ struct Expression_st
 	enum OperationType operationType;
 	struct Expression_st *left;
 	struct Expression_st *right;
-	struct Expr_list_st *arrayElems;
+	struct Expr_list_st *array_elems;
 	char *identifier; /* имя / имя функции / имя вызываемого поля / имя вызываемого метода */
 	int int_value;
 	float float_value;
@@ -51,15 +62,12 @@ struct Expression_st
 	struct Method_call_arg_list_st* method_args;
 	/* Вызов функции*/
     struct Func_call_arg_list_st* func_args;
-	/* Вызов элемента массива*/
-	struct Expression_st* array;
-	struct Expression_st* index;
+
 };
 
-struct Expression_st *CreateExpression(OperationType operationType, struct Expression_st *left, struct Expression_st *right)
-{
+struct Expression_st *CreateExpression(enum OperationType operationType, struct Expression_st *left, struct Expression_st *right) {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
+	cur->exprType = EXPR_OPERATION;
 	cur->operationType = operationType;
 	cur->left = left;
 	cur->right = right;
@@ -70,37 +78,16 @@ struct Expression_st *CreateExpression(OperationType operationType, struct Expre
 struct Expression_st *CreateIDExpression(char *identifier)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
+	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->identifier = identifier;
-	return cur;
-}
-
-
-struct Expression_st *CreatePreIncDecExpression(OperationType operationType, char *identifier)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
-	cur->operationType = operationType;
-	struct Expression_st *right = CreateIDExpression( identifier);
-	cur->right = right;
-	return cur;
-}
-
-struct Expression_st *CreatePostIncDecExpression(OperationType operationType, char *identifier)
-{
-	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
-	cur->operationType = operationType;
-	struct Expression_st *left = CreateIDExpression(identifier);
-	cur->left = left;
 	return cur;
 }
 
 struct Expression_st *CreateIntValueExpression(int int_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
+	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->int_value = int_value;
 	return cur;
@@ -109,16 +96,16 @@ struct Expression_st *CreateIntValueExpression(int int_value)
 struct Expression_st *CreateFloatValueExpression(float float_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
+	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->float_value = float_value;
 	return cur;
 }
 
-struct Expression_st *CreateBoolValueExpression(bool bool_value)
+struct Expression_st *CreateBoolValueExpression(char bool_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
+	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->bool_value = bool_value;
 	return cur;
@@ -127,7 +114,7 @@ struct Expression_st *CreateBoolValueExpression(bool bool_value)
 struct Expression_st *CreateCharValueExpression(char char_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
+	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->char_value = char_value;
 	return cur;
@@ -136,7 +123,7 @@ struct Expression_st *CreateCharValueExpression(char char_value)
 struct Expression_st *CreateStringValueExpression(char *string_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
-	cur->exprType = OPERATION;
+	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->string_value = string_value;
 	return cur;
@@ -176,21 +163,10 @@ enum StatementType
 	STMT_LIST,
 	STMT_RETURN
 };
-enum VarType
-{
-	TYPE_VOID,
-	TYPE_INT,
-	TYPE_FLOAT,
-	TYPE_CHAR,
-	TYPE_STRING,
-	TYPE_BOOL,
-	TYPE_CUSTOM,
-	TYPE_POINTER,
-};
 
 struct Statement_st
 {
-	enum StatementType type;
+	enum StatementType stmt_type;
 	struct Expression_st *expr; // в expr, return, var_decl
 	struct Expression_st *condition; // while, if
 	struct Statements_List_st *truth_stmt_list; // while, if, compound
@@ -204,7 +180,7 @@ struct Statement_st
 struct Statement_st* CreateReturnStatement(struct Expression_st* expr) 
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_RETURN;
+    cur->stmt_type = STMT_RETURN;
 	cur->expr = expr;
 	return cur;
 }
@@ -212,7 +188,7 @@ struct Statement_st* CreateReturnStatement(struct Expression_st* expr)
 struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_EXPR;
+    cur->stmt_type = STMT_EXPR;
 	cur->expr = expr;
 	return cur;
 }
@@ -220,7 +196,7 @@ struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
 struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statements_List_st *stmt_list)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_WHILE;
+	cur->stmt_type = STMT_WHILE;
 	cur->condition = condition;
 	cur->truth_stmt_list = stmt_list;
 	return cur;
@@ -230,17 +206,17 @@ struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct S
 								 	   struct Statements_List_st *wrong_stmt_list)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_IF;
+	cur->stmt_type = STMT_IF;
 	cur->condition = condition;
 	cur->truth_stmt_list = truth_stmt_list;
 	cur->wrong_stmt_list = wrong_stmt_list;
 	return cur;
 }
 
-struct Statement_st *CreateVarDeclWithInit(Type_st *var_type, char *identifier, Expression_st *expr)
+struct Statement_st* CreateVarDeclWithInit(struct Type_st *var_type, char *identifier, struct Expression_st *expr)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
-	cur->type = STMT_VAR_DECL;
+    cur->stmt_type = STMT_VAR_DECL;
 	cur->var_type = var_type;
 	cur->identifier = identifier;
 	cur->expr = expr;
@@ -250,23 +226,23 @@ struct Statement_st *CreateVarDeclWithInit(Type_st *var_type, char *identifier, 
 struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems)
 {
 	struct Expression_st *expr = (struct Expression_st*)malloc(sizeof(struct Expression_st));
-	expr->exprType = OPERATION;
+	expr->exprType = EXPR_OPERATION;
 	expr->operationType = OP_ASSIGN_ARRAY;
-	expr->left = left;
-	expr->arrayElems = elems;
+    expr->left = left;
+    expr->array_elems = elems;
 	return expr;
 }
 
 struct Type_st
 {
-	enum VarType type;
+	enum VarType var_type;
 	char* name; /* Если свой тип*/
 	struct Type_st* childType; /*Массив чего или указатель на что*/
 };
 
-struct Type_st* createType( enum VarType type, char * name, struct Type_st* child) {
+struct Type_st* createType( enum VarType vartype, char * name, struct Type_st* child) {
 	struct Type_st* st = (struct Type_st*)malloc(sizeof(struct Type_st));
-	st->type = type;
+	st->var_type = vartype;
 	st->name = name;
 	st->childType = child;
 	return st; 
@@ -374,4 +350,3 @@ struct Program_st* addToProgram( struct Program_st* root, struct Extern_code_st*
 	last->next = createProgram(code);
 	return last;
 }
-#endif

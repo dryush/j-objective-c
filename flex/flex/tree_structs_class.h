@@ -1,18 +1,8 @@
 #pragma once
 
 #include "tree_structs.h"
-struct Method_call_arg_list_st;
-struct Class_method_param_declaration_st;
-struct Class_method_param_declaration_list_st;
-struct Class_method_declaration_st;
-struct Class_methods_declaration_list_st;
-struct Class_methods_declaration_block_st;
-struct Class_methods_declaration_block_list_st;
-struct Class_invariant_declaration_st;
-struct Class_invariants_declaration_list_st;
-struct Class_invariants_declaration_block_st;
-struct Class_invariants_declaration_block_list_st;
-struct Class_declaration_st;
+
+#include <stdlib.h>
 
 enum Method_type_en{
 	NON_STATIC,
@@ -34,16 +24,16 @@ struct Class_method_param_declaration_st
 	char* innerName;
 	/* Имя, которое используется для ппередачи метода в параметр */
 	char* outerName;
-	struct Type_st* type;
+	struct Type_st* val_type;
 };
 
 
-struct Class_method_param_declaration_st* createClassMethodParamDeclaration( char* outerName, struct Type_st* type, char* innerName)
+struct Class_method_param_declaration_st* createClassMethodParamDeclaration( char* outerName, struct Type_st* valtype, char* innerName)
 {
 	struct Class_method_param_declaration_st* st = ( struct Class_method_param_declaration_st*) malloc( sizeof( struct Class_method_param_declaration_st));
 	st->innerName = innerName;
 	st->outerName = outerName;
-	st->type = type;
+    st->val_type = valtype;
 	return st;
 };
 
@@ -165,14 +155,14 @@ struct Class_methods_declaration_block_list_st* addToClassMethodsDeclarationBloc
 struct Class_invariant_declaration_st
 {
 	char* name;
-	struct Type_st* type;
+	struct Type_st* val_type;
 };
 
-struct Class_invariant_declaration_st* createClassInvariantDeclaration( struct Type_st* type, char * name)
+struct Class_invariant_declaration_st* createClassInvariantDeclaration( struct Type_st* valtype, char * name)
 {
 	struct Class_invariant_declaration_st* st = (struct Class_invariant_declaration_st*) malloc( sizeof(struct Class_invariant_declaration_st));
 	st->name = name;
-	st->type = type;
+	st->val_type = valtype;
 	return st;
 }
 
