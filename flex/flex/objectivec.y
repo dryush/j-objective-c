@@ -10,8 +10,7 @@
 	#include "tree_structs_array.h"
 	#include "tree_structs_class.h"
     
-	int yylex() { return getc(stdin); }
-    void yyerror(char *s) {
+    void yyerror( const char *s) {
         fprintf (stderr, "%s\n", s);
     }
 
@@ -19,18 +18,14 @@
 %}
 
 %union {
-/*ОБЪЯВЛЕНИЕ ПЕРЕМЕННЫХ*/
-/*ОБЪЯВЛЕНИЕ СТРУКТУР*/
     int int_const;
     float float_const;
     char char_const;
-	/*bool bool_const; */
-	char bool_const; /*В Си нет bool*/
+	char bool_const; 
     char* string_const;
     char* id;
-    /*void no_val; */ /*Сомнительно*/
-	
-	struct Statements_List_st_st *_stmt_list;
+    
+	struct Statements_List_st *_stmt_list;
 	struct Statement_st *_stmt;
 	struct Expression_st *_expr;
 	struct While_statement_st *_while_stmt;
@@ -211,22 +206,22 @@ stmt: RETURN expr ';' 	{ $$ = createReturnStatement($2);}
 	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
 	| while_stmt 		{ $$ = CreateWhileStatement($1); }
 	| if_stmt 			{ $$ = CreateIfStatement($1); }
-	| var_decl 			{ $$ = CreateInitStatement($1); }
-	| compound_stmt		{ $$ = CreateCompoundStatement($1); }
+	| var_decl 			{ /*$$ = CreateInitStatement($1); */}
+	| compound_stmt		{ /*$$ = CreateCompoundStatement($1);*/ }
     ;
 
-compound_stmt: '{' stmt_list_or_empty '}' { $$ = $2; }
+compound_stmt: '{' stmt_list_or_empty '}' { /* $$ = $2; */}
     ;
 
-if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIf($3,$5,NULL); }
-    | IF '(' expr ')' stmt ELSE stmt 	{ $$ = CreateIf($3,$5,$7); }
+if_stmt: IF '(' expr ')' stmt 			{ /*$$ = CreateIf($3,$5,NULL); */}
+    | IF '(' expr ')' stmt ELSE stmt 	{ /*$$ = CreateIf($3,$5,$7); */}
     ;
 	
-while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhile($3,$5); }
+while_stmt: WHILE '(' expr ')' stmt 	{ /* $$ = CreateWhile($3,$5); */}
 	;
 	
-var_decl: type ID '=' expr ';'			{ $$ = CreateInitID($1, $2, $4); }
-	| type ID ';'						{ $$ = CreateInitID($1, $2, NULL); }
+var_decl: type ID '=' expr ';'			{ /*$$ = CreateInitID($1, $2, $4); */}
+	| type ID ';'						{ /*$$ = CreateInitID($1, $2, NULL); */}
 	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  {;}
 	;
 
@@ -273,8 +268,8 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
 	| '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall($2, $3, $5);} /*Вызов метода*/
     | expr '[' expr ']' { $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
     | expr ARROW ID { $$ = createInvariantCall($1, $3);} /* Обращение к полю */
-	| ID '(' expr_list ')' { $$ = createFuncCall($1, $3); } /* Вызов функции */
-	| ID '(' ')'	{ $$ = createFuncCall($1, NULL); } /* Вызов функции */
+	| ID '(' expr_list ')' { /*$$ = createFuncCall($1, $3);*/ } /* Вызов функции */
+	| ID '(' ')'	{ /*$$ = createFuncCall($1, NULL); */} /* Вызов функции */
     ;
 
 enum_declaration: ENUM ID '{' enumerator_list '}' { $$ = CreateEnumDeclaration($2, $4); }
@@ -284,8 +279,8 @@ enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
-enumerator: ID {$$ = CreateEnumerator($1, -1); }
-	| ID '=' INT_CONST {$$ = CreateEnumerator($1, $3); }
+enumerator: ID { /*$$ = CreateEnumerator($1, -1);*/ }
+	| ID '=' INT_CONST { /*$$ = CreateEnumerator($1, $3);*/ }
 	;
 	
 	
@@ -401,8 +396,8 @@ class_methods_declaration_or_empty: class_methods_declaration_with_access_list {
     | /* empty */	{$$ = NULL; }
     ;
 
-class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, $4, $5, $6); }
-	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, $3, $4); }
+class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { /*$$ = createClassDeclaration($2, $4, $5, $6); */}
+	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { /*$$ = createClassDeclaration($2, NULL, $3, $4);*/ }
     ;
 
 class_method_implementation: class_method compound_stmt { $$ = createClassMethodImpl($1, $2); }
@@ -429,11 +424,11 @@ method_call_name_arg: ID ':' expr { $$ = createMethodCallArg($1,$3);}
     ;
 
 method_call_noname_args: method_call_noname_arg			{ $$ = createMethodCallArgList($1); }
-    | method_call_noname_args method_call_noname_arg	{ $$ = addToCreateMethodCallArgList($1, $2);}
+    | method_call_noname_args method_call_noname_arg	{ $$ = addToMethodCallArgList($1, $2);}
     ;
 
 method_call_name_args: method_call_name_arg				{ $$ = createMethodCallArgList($1); }
-    | method_call_name_args method_call_name_arg		{ $$ = addToCreateMethodCallArgList($1, $2);}
+    | method_call_name_args method_call_name_arg		{ $$ = addToMethodCallArgList($1, $2);}
     ;
 
 /*Список аргументов может быть пустым */
