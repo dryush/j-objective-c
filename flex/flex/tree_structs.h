@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SIMPLE_TREE_STRUCTS
+#define SIMPLE_TREE_STRUCTS
 
 #include <stdlib.h>
 
@@ -76,6 +77,102 @@ struct Func_call_arg_list_st;
 struct Extern_code_st;
 struct Program_st;
 
+struct Expression_st *CreateExpression(enum OperationType operationType, struct Expression_st *left, struct Expression_st *right);
+struct Expression_st *CreateIDExpression(char *identifier);
+struct Expression_st *CreateIntValueExpression(int int_value);
+struct Expression_st *CreateFloatValueExpression(double float_value);
+struct Expression_st *CreateBoolValueExpression(char bool_value);
+struct Expression_st *CreateStringValueExpression(char *string_value);
+struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt);
+struct Statements_List_st *CreateStatementList(struct Statement_st *stmt);
+struct Statement_st* CreateReturnStatement(struct Expression_st* expr);
+struct Statement_st *CreateExpressionStatement(struct Expression_st *expr);
+struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statements_List_st *stmt_list);
+struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct Statements_List_st *truth_stmt_list,
+								 	   struct Statements_List_st *wrong_stmt_list);
+struct Statement_st* CreateVarDeclWithInit(struct Type_st *var_type, char *identifier, struct Expression_st *expr);
+struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems);
+struct Type_st* createType( enum VarType vartype, char * name, struct Type_st* child);								   
+struct Enum_declaration_st *CreateEnumDeclaration(char *identifier, struct Enumerator_list_st *enumerator_list);
+struct Enumerator_list_st *AppendEnumeratorToList(struct Enumerator_list_st *list, struct Enumerator_st *enumerator);
+struct Enumerator_list_st *CreateEnumeratorList(struct Enumerator_st *enumerator);
+struct Enumerator_st *CreateEnumenator(char *identifier, int value);
+struct Class_method_param_declaration_st* createClassMethodParamDeclaration( char* outerName, struct Type_st* valtype, char* innerName);
+struct Class_method_param_declaration_list_st* createClassMethodParamDeclarationList( 
+  struct Class_method_param_declaration_st* param );
+struct Class_method_param_declaration_list_st* addToClassMethodParamDeclarationList(
+  struct Class_method_param_declaration_list_st* root, struct Class_method_param_declaration_st* param ); 
+struct Class_method_param_declaration_list_st* addToClassMethodParamDeclarationList(
+  struct Class_method_param_declaration_list_st* root, struct Class_method_param_declaration_st* param );
+struct Class_method_param_declaration_list_st* addToFrontClassMethodParamDeclarationList(
+  struct Class_method_param_declaration_list_st* root, struct Class_method_param_declaration_st* param );
+struct Class_method_declaration_st* createMethodDeclaration(enum Method_type_en methodType, struct Type_st* returnType, 
+  char* name, struct Class_method_param_declaration_list_st* params);
+struct Class_methods_declaration_list_st* createMethodsDeclarationList( struct Class_method_declaration_st* method );
+struct Class_methods_declaration_list_st* addToMethodsDeclarationList( 
+  struct Class_methods_declaration_list_st* root, struct Class_method_declaration_st* method );  
+struct Class_methods_declaration_block_st* createClassMethodsDeclarationBlock(
+  enum Field_access_en access, struct Class_methods_declaration_list_st* list);
+struct Class_methods_declaration_block_list_st* createClassMethodsDeclarationBlockList(
+  struct Class_methods_declaration_block_st* list );
+struct Class_methods_declaration_block_list_st* addToClassMethodsDeclarationBlockList(
+  struct Class_methods_declaration_block_list_st* root, struct Class_methods_declaration_block_st* list );
+struct Class_invariant_declaration_st* createClassInvariantDeclaration( struct Type_st* valtype, char * name);
+struct Class_invariants_declaration_list_st* createClassInvariantsDeclarationList(
+  struct Class_invariant_declaration_st* invariant);
+struct Class_invariants_declaration_list_st* addToClassInvariantsDeclarationList(
+  struct Class_invariants_declaration_list_st* root, struct Class_invariant_declaration_st* invariant);
+struct Class_invariants_declaration_block_st* createClassInvariantsDeclarationBlock(
+  enum Field_access_en access, struct Class_invariants_declaration_list_st* list );
+struct Class_invariants_declaration_block_list_st* createClassInvariantsDeclarationBlockList(
+  struct Class_invariants_declaration_block_st* list );
+struct Class_invariants_declaration_block_list_st* addToClassInvariantsDeclarationBlockList(
+  struct Class_invariants_declaration_block_list_st* root, struct Class_invariants_declaration_block_st* list );
+struct Class_declaration_st* createClassDeclaration(
+  char* name, char* parentName,
+  struct Class_methods_declaration_block_list_st* methods_declaraion_list,
+  struct Class_invariants_declaration_block_st* invariants_declaration_list );
+struct Class_method_impl_st* createClassMethodImpl(
+  struct Class_method_declaration_st* decl, struct Statement_st* stmt);
+struct Class_method_impl_list_st* createClassMethodImplList(struct Class_method_impl_st* method);
+struct Class_method_impl_list_st* addToClassMethodImplList( struct Class_method_impl_list_st* root, struct Class_method_impl_st* method);
+struct Class_impl_st* createClassImpl( char * name, struct Class_method_impl_list_st * methods);
+struct Expression_st* createInvariantCall(
+  struct Expression_st* object, char * name );
+struct Method_call_arg_st* createMethodCallArg(
+  char * outer_name, struct Expression_st* value);  
+struct Method_call_arg_list_st* createMethodCallArgList(
+  struct Method_call_arg_st* arg);
+struct Method_call_arg_list_st* addToMethodCallArgList(
+	struct Method_call_arg_list_st * root, struct Method_call_arg_st* arg );
+struct Method_call_arg_list_st* addToFrontMethodCallArgList(
+	struct Method_call_arg_list_st * root, struct Method_call_arg_st* arg );
+struct Expression_st* createMethodCall( 
+  struct Expression_st * object, char * name,
+  struct Method_call_arg_list_st* args);
+struct Func_arg_st* createFuncArg(struct Type_st* valtype, char * name);
+struct Func_arg_list_st* createFuncArgList( struct Func_arg_st* arg );
+struct Func_arg_list_st* addToFuncArgList( struct Func_arg_list_st* root, struct Func_arg_st* arg);
+struct Func_declaration_st* createFuncDeclaration(
+  struct Type_st* return_type, char*name, struct Func_arg_list_st * args );
+struct Func_impl_st* createFuncImpl(struct Func_declaration_st* decl, struct Statement_st* body);
+struct Func_call_arg_list_st* createFuncCallArgsList(struct Expression_st* arg);
+struct Func_call_arg_list_st* addToFuncCallArgList( 
+  struct Func_call_arg_list_st* root, struct Expression_st* arg );
+struct Expression_st* createFuncCall( char* name, struct Func_call_arg_list_st* args);
+struct Expr_list_st* createExprList( struct Expression_st* elem);
+struct Expr_list_st* addToExprList( 
+    struct Expr_list_st* root, struct Expression_st * elem);
+struct Expression_st* createArrayElemCall(
+  struct Expression_st* array_exp, struct Expression_st* index );
+struct Extern_code_st* createExternCode(
+	struct Func_declaration_st* func_decl, struct Func_impl_st* function_impl,
+	struct Class_declaration_st* class_decl, struct Class_impl_st* class_impl,
+	struct Enum_declaration_st* enum_decl );
+struct Program_st* createProgram(struct Extern_code_st* code);
+struct Program_st* addToProgram( struct Program_st* root, struct Extern_code_st* code);	
+
+
 struct Type_st
 {
 	enum VarType var_type;
@@ -91,7 +188,7 @@ struct Expression_st
 	struct Expr_list_st *array_elems;
 	char *identifier; /* имя / имя функции / имя вызываемого поля / имя вызываемого метода */
 	int int_value;
-	float float_value;
+	double float_value;
 	char bool_value;
 	char char_value;
 	char *string_value;
@@ -138,7 +235,7 @@ struct Expression_st *CreateIntValueExpression(int int_value)
 	return cur;
 }
 
-struct Expression_st *CreateFloatValueExpression(float float_value)
+struct Expression_st *CreateFloatValueExpression(double float_value)
 {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
@@ -894,3 +991,4 @@ struct Program_st* addToProgram( struct Program_st* root, struct Extern_code_st*
 	last->next = createProgram(code);
 	return last;
 }
+#endif
