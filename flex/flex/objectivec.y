@@ -6,15 +6,8 @@
     */
     #include <stdio.h>
 	#include "tree_structs.h"
-<<<<<<< HEAD
-    
-=======
-	#include "tree_structs_func.h"
-	#include "tree_structs_array.h"
-	#include "tree_structs_class.h"
-    #define YYSTYPE
+   /* #define YYSTYPE */
 
->>>>>>> master
     void yyerror( const char *s) {
         fprintf (stderr, "%s\n", s);
     }

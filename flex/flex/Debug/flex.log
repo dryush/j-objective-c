@@ -1,4 +1,4 @@
-﻿Build started 05.11.2018 22:30:37.
+﻿Build started 05.11.2018 22:36:28.
      1>Project "C:\Users\User\Desktop\fflex\j-objective-c\flex\flex\flex.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Debug\flex.unsuccessfulbuild".
@@ -7,9 +7,9 @@
          :VCEnd
      1>objectivec.y : warning : 1 nonterminal useless in grammar
      1>objectivec.y : warning : 2 rules useless in grammar
-         objectivec.y:149.20-23: warning: nonterminal useless in grammar: prog
-         objectivec.y:191.7-76: warning: rule useless in grammar: prog: extern_code
-         objectivec.y:192.7-73: warning: rule useless in grammar: prog: prog extern_code
+         objectivec.y:147.20-23: warning: nonterminal useless in grammar: prog
+         objectivec.y:189.7-76: warning: rule useless in grammar: prog: extern_code
+         objectivec.y:190.7-73: warning: rule useless in grammar: prog: prog extern_code
          objectivec.y: conflicts: 20 shift/reduce
        ClCompile:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt lex.yy.c objectivec.tab.c
@@ -33,4 +33,4 @@
 
 Build FAILED.
 
-Time Elapsed 00:00:00.67
+Time Elapsed 00:00:06.23

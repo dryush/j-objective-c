@@ -76,7 +76,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="objectivec.flex" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -87,12 +86,6 @@
   <ItemGroup>
     <ClCompile Include="lex.yy.c" />
     <ClCompile Include="objectivec.tab.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <Bison Include="objectivec.y">
-      <Debug Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</Debug>
-      <Verbose Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</Verbose>
-    </Bison>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -72,19 +72,25 @@
     */
     #include <stdio.h>
 	#include "tree_structs.h"
+<<<<<<< HEAD
+    
+=======
 	#include "tree_structs_func.h"
 	#include "tree_structs_array.h"
 	#include "tree_structs_class.h"
     #define YYSTYPE
 
+>>>>>>> master
     void yyerror( const char *s) {
         fprintf (stderr, "%s\n", s);
     }
+	
+	extern int yylex(void);
 
 	extern struct Program_st root;
 
 /* Line 371 of yacc.c  */
-#line 88 "objectivec.tab.cpp"
+#line 94 "objectivec.tab.cpp"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -163,7 +169,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 387 of yacc.c  */
-#line 21 "objectivec.y"
+#line 27 "objectivec.y"
 
     int int_const;
     float float_const;
@@ -219,7 +225,7 @@ typedef union YYSTYPE
 
 
 /* Line 387 of yacc.c  */
-#line 223 "objectivec.tab.cpp"
+#line 229 "objectivec.tab.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -247,7 +253,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 251 "objectivec.tab.cpp"
+#line 257 "objectivec.tab.cpp"
 
 #ifdef short
 # undef short
@@ -592,20 +598,20 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   183,   183,   184,   185,   186,   187,   194,   195,   198,
-     199,   202,   203,   204,   205,   206,   207,   208,   211,   214,
-     215,   218,   221,   222,   223,   226,   227,   228,   231,   232,
-     233,   234,   235,   236,   239,   240,   241,   242,   243,   244,
-     245,   246,   247,   248,   249,   250,   251,   252,   253,   254,
-     255,   256,   257,   258,   259,   260,   261,   262,   263,   265,
-     266,   267,   268,   269,   272,   275,   276,   279,   280,   306,
-     307,   308,   311,   314,   315,   319,   320,   324,   325,   328,
-     329,   332,   339,   342,   343,   346,   347,   351,   352,   356,
-     357,   368,   369,   370,   371,   374,   379,   380,   384,   385,
-     388,   389,   392,   393,   396,   397,   400,   404,   405,   408,
-     409,   412,   412,   417,   420,   423,   424,   427,   428,   432,
-     433,   436,   437,   441,   442,   447,   448,   453,   456,   457,
-     460,   461,   464,   467,   470
+       0,   189,   189,   190,   191,   192,   193,   200,   201,   204,
+     205,   208,   209,   210,   211,   212,   213,   214,   217,   220,
+     221,   224,   227,   228,   229,   232,   233,   234,   237,   238,
+     239,   240,   241,   242,   245,   246,   247,   248,   249,   250,
+     251,   252,   253,   254,   255,   256,   257,   258,   259,   260,
+     261,   262,   263,   264,   265,   266,   267,   268,   269,   271,
+     272,   273,   274,   275,   278,   281,   282,   285,   286,   312,
+     313,   314,   317,   320,   321,   325,   326,   330,   331,   334,
+     335,   338,   345,   348,   349,   352,   353,   357,   358,   362,
+     363,   374,   375,   376,   377,   380,   385,   386,   390,   391,
+     394,   395,   398,   399,   402,   403,   406,   410,   411,   414,
+     415,   418,   418,   423,   426,   429,   430,   433,   434,   438,
+     439,   442,   443,   447,   448,   453,   454,   459,   462,   463,
+     466,   467,   470,   473,   476
 };
 #endif
 
@@ -1732,805 +1738,805 @@ yyreduce:
     {
         case 2:
 /* Line 1792 of yacc.c  */
-#line 183 "objectivec.y"
+#line 189 "objectivec.y"
     { (yyval.extern_code_st) = createExternCode((yyvsp[(1) - (1)].func_declaration_st), NULL, NULL, NULL, NULL);}
     break;
 
   case 3:
 /* Line 1792 of yacc.c  */
-#line 184 "objectivec.y"
+#line 190 "objectivec.y"
     { (yyval.extern_code_st) = createExternCode(NULL, (yyvsp[(1) - (1)].func_impl_st), NULL, NULL, NULL);}
     break;
 
   case 4:
 /* Line 1792 of yacc.c  */
-#line 185 "objectivec.y"
+#line 191 "objectivec.y"
     { (yyval.extern_code_st) = createExternCode(NULL, NULL, (yyvsp[(1) - (1)].class_declaration_st), NULL, NULL);}
     break;
 
   case 5:
 /* Line 1792 of yacc.c  */
-#line 186 "objectivec.y"
+#line 192 "objectivec.y"
     { (yyval.extern_code_st) = createExternCode(NULL, NULL, NULL, (yyvsp[(1) - (1)].class_impl_st), NULL);}
     break;
 
   case 6:
 /* Line 1792 of yacc.c  */
-#line 187 "objectivec.y"
+#line 193 "objectivec.y"
     { (yyval.extern_code_st) = createExternCode(NULL, NULL, NULL, NULL, (yyvsp[(1) - (1)]._enum_decl));}
     break;
 
   case 7:
 /* Line 1792 of yacc.c  */
-#line 194 "objectivec.y"
+#line 200 "objectivec.y"
     { (yyval._stmt_list) = AppendStatementToList((yyvsp[(1) - (2)]._stmt_list), (yyvsp[(2) - (2)]._stmt)); }
     break;
 
   case 8:
 /* Line 1792 of yacc.c  */
-#line 195 "objectivec.y"
+#line 201 "objectivec.y"
     { (yyval._stmt_list) = CreateStatementList((yyvsp[(1) - (1)]._stmt)); }
     break;
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 198 "objectivec.y"
+#line 204 "objectivec.y"
     { (yyval._stmt_list) = (yyvsp[(1) - (1)]._stmt_list); }
     break;
 
   case 10:
 /* Line 1792 of yacc.c  */
-#line 199 "objectivec.y"
+#line 205 "objectivec.y"
     { (yyval._stmt_list) = NULL; }
     break;
 
   case 11:
 /* Line 1792 of yacc.c  */
-#line 202 "objectivec.y"
+#line 208 "objectivec.y"
     { (yyval._stmt) = CreateReturnStatement((yyvsp[(2) - (3)]._expr));}
     break;
 
   case 12:
 /* Line 1792 of yacc.c  */
-#line 203 "objectivec.y"
+#line 209 "objectivec.y"
     { (yyval._stmt) = CreateReturnStatement(NULL);}
     break;
 
   case 13:
 /* Line 1792 of yacc.c  */
-#line 204 "objectivec.y"
+#line 210 "objectivec.y"
     { (yyval._stmt) = CreateExpressionStatement((yyvsp[(1) - (2)]._expr)); }
     break;
 
   case 14:
 /* Line 1792 of yacc.c  */
-#line 205 "objectivec.y"
-    { (yyval._stmt) = (yyvsp[(1) - (1)]._while_stmt); }
+#line 211 "objectivec.y"
+    { /* $$ = $1; */ }
     break;
 
   case 15:
 /* Line 1792 of yacc.c  */
-#line 206 "objectivec.y"
-    { (yyval._stmt) = (yyvsp[(1) - (1)]._if_stmt); }
+#line 212 "objectivec.y"
+    { /* $$ = $1; */ }
     break;
 
   case 16:
 /* Line 1792 of yacc.c  */
-#line 207 "objectivec.y"
+#line 213 "objectivec.y"
     { (yyval._stmt) = (yyvsp[(1) - (1)]._stmt); }
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
-#line 208 "objectivec.y"
+#line 214 "objectivec.y"
     { (yyval._stmt) = (yyvsp[(1) - (1)]._stmt); }
     break;
 
   case 18:
 /* Line 1792 of yacc.c  */
-#line 211 "objectivec.y"
-    { (yyval._stmt) = (yyvsp[(2) - (3)]._stmt_list); }
+#line 217 "objectivec.y"
+    { /* $$ = $2; */}
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
-#line 214 "objectivec.y"
-    { (yyval._if_stmt) = CreateIfStatement((yyvsp[(3) - (5)]._expr), (yyvsp[(5) - (5)]._stmt), NULL); }
+#line 220 "objectivec.y"
+    { /* $$ = CreateIfStatement($3, $5, NULL); */ }
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
-#line 215 "objectivec.y"
-    { (yyval._if_stmt) = CreateIfStatement((yyvsp[(3) - (7)]._expr), (yyvsp[(5) - (7)]._stmt), (yyvsp[(7) - (7)]._stmt)); }
+#line 221 "objectivec.y"
+    { /* $$ = CreateIfStatement($3, $5, $7); */}
     break;
 
   case 21:
 /* Line 1792 of yacc.c  */
-#line 218 "objectivec.y"
-    { (yyval._while_stmt) = CreateWhileStatement((yyvsp[(3) - (5)]._expr), (yyvsp[(5) - (5)]._stmt)); }
+#line 224 "objectivec.y"
+    { /* $$ = CreateWhileStatement($3, $5); */ }
     break;
 
   case 22:
 /* Line 1792 of yacc.c  */
-#line 221 "objectivec.y"
+#line 227 "objectivec.y"
     { (yyval._stmt) = CreateVarDeclWithInit((yyvsp[(1) - (5)]._type), (yyvsp[(2) - (5)].id), (yyvsp[(4) - (5)]._expr)); }
     break;
 
   case 23:
 /* Line 1792 of yacc.c  */
-#line 222 "objectivec.y"
+#line 228 "objectivec.y"
     { (yyval._stmt) = CreateVarDeclWithInit((yyvsp[(1) - (3)]._type), (yyvsp[(2) - (3)].id), NULL); }
     break;
 
   case 24:
 /* Line 1792 of yacc.c  */
-#line 223 "objectivec.y"
+#line 229 "objectivec.y"
     {;}
     break;
 
   case 25:
 /* Line 1792 of yacc.c  */
-#line 226 "objectivec.y"
+#line 232 "objectivec.y"
     { (yyval._type) = (yyvsp[(1) - (1)]._type); }
     break;
 
   case 26:
 /* Line 1792 of yacc.c  */
-#line 227 "objectivec.y"
+#line 233 "objectivec.y"
     { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, (yyvsp[(1) - (2)].id), NULL)); }
     break;
 
   case 27:
 /* Line 1792 of yacc.c  */
-#line 228 "objectivec.y"
+#line 234 "objectivec.y"
     { createType(TYPE_CUSTOM, (yyvsp[(1) - (1)].id), NULL); }
     break;
 
   case 28:
 /* Line 1792 of yacc.c  */
-#line 231 "objectivec.y"
+#line 237 "objectivec.y"
     { (yyval._type) = createType(TYPE_INT, NULL, NULL);}
     break;
 
   case 29:
 /* Line 1792 of yacc.c  */
-#line 232 "objectivec.y"
+#line 238 "objectivec.y"
     { (yyval._type) = createType(TYPE_FLOAT, NULL, NULL);}
     break;
 
   case 30:
 /* Line 1792 of yacc.c  */
-#line 233 "objectivec.y"
+#line 239 "objectivec.y"
     { (yyval._type) = createType(TYPE_STRING, NULL, NULL);}
     break;
 
   case 31:
 /* Line 1792 of yacc.c  */
-#line 234 "objectivec.y"
+#line 240 "objectivec.y"
     { (yyval._type) = createType(TYPE_CHAR, NULL, NULL);}
     break;
 
   case 32:
 /* Line 1792 of yacc.c  */
-#line 235 "objectivec.y"
+#line 241 "objectivec.y"
     { (yyval._type) = createType(TYPE_BOOL, NULL, NULL);}
     break;
 
   case 33:
 /* Line 1792 of yacc.c  */
-#line 236 "objectivec.y"
+#line 242 "objectivec.y"
     { (yyval._type) = createType(TYPE_VOID, NULL, NULL);}
     break;
 
   case 34:
 /* Line 1792 of yacc.c  */
-#line 239 "objectivec.y"
+#line 245 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_ADD, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 35:
 /* Line 1792 of yacc.c  */
-#line 240 "objectivec.y"
+#line 246 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_SUB, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 36:
 /* Line 1792 of yacc.c  */
-#line 241 "objectivec.y"
+#line 247 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_MUL, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 37:
 /* Line 1792 of yacc.c  */
-#line 242 "objectivec.y"
+#line 248 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_DIV, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 38:
 /* Line 1792 of yacc.c  */
-#line 243 "objectivec.y"
+#line 249 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_MOD, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 39:
 /* Line 1792 of yacc.c  */
-#line 244 "objectivec.y"
+#line 250 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_ASSIGN, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 40:
 /* Line 1792 of yacc.c  */
-#line 245 "objectivec.y"
+#line 251 "objectivec.y"
     { (yyval._expr) = CreateArrayInitStatement((yyvsp[(1) - (5)]._expr), (yyvsp[(4) - (5)].expr_list_st));}
     break;
 
   case 41:
 /* Line 1792 of yacc.c  */
-#line 246 "objectivec.y"
+#line 252 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_LESS, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 42:
 /* Line 1792 of yacc.c  */
-#line 247 "objectivec.y"
+#line 253 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_LESS_OR_EQUAL, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 43:
 /* Line 1792 of yacc.c  */
-#line 248 "objectivec.y"
+#line 254 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_GREATER, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 44:
 /* Line 1792 of yacc.c  */
-#line 249 "objectivec.y"
+#line 255 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_GREATER_OR_EQUAL, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 45:
 /* Line 1792 of yacc.c  */
-#line 250 "objectivec.y"
+#line 256 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_EQUAL, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 46:
 /* Line 1792 of yacc.c  */
-#line 251 "objectivec.y"
+#line 257 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_NOT_EQUAL, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 47:
 /* Line 1792 of yacc.c  */
-#line 252 "objectivec.y"
+#line 258 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_AND, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 48:
 /* Line 1792 of yacc.c  */
-#line 253 "objectivec.y"
+#line 259 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_OR, (yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)]._expr)); }
     break;
 
   case 49:
 /* Line 1792 of yacc.c  */
-#line 254 "objectivec.y"
+#line 260 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_LOGICAL_NOT, (yyvsp[(2) - (2)]._expr), NULL); }
     break;
 
   case 50:
 /* Line 1792 of yacc.c  */
-#line 255 "objectivec.y"
+#line 261 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_UPLUS, (yyvsp[(2) - (2)]._expr), NULL); }
     break;
 
   case 51:
 /* Line 1792 of yacc.c  */
-#line 256 "objectivec.y"
+#line 262 "objectivec.y"
     { (yyval._expr) = CreateExpression(OP_UMINUS, (yyvsp[(2) - (2)]._expr), NULL); }
     break;
 
   case 52:
 /* Line 1792 of yacc.c  */
-#line 257 "objectivec.y"
+#line 263 "objectivec.y"
     { (yyval._expr) = (yyvsp[(2) - (3)]._expr); }
     break;
 
   case 53:
 /* Line 1792 of yacc.c  */
-#line 258 "objectivec.y"
+#line 264 "objectivec.y"
     { (yyval._expr) = CreateIDExpression((yyvsp[(1) - (1)].id)); }
     break;
 
   case 54:
 /* Line 1792 of yacc.c  */
-#line 259 "objectivec.y"
+#line 265 "objectivec.y"
     { (yyval._expr) = CreateIntValueExpression((yyvsp[(1) - (1)].int_const)); }
     break;
 
   case 55:
 /* Line 1792 of yacc.c  */
-#line 260 "objectivec.y"
+#line 266 "objectivec.y"
     { (yyval._expr) = CreateFloatValueExpression((yyvsp[(1) - (1)].float_const)); }
     break;
 
   case 56:
 /* Line 1792 of yacc.c  */
-#line 261 "objectivec.y"
+#line 267 "objectivec.y"
     { (yyval._expr) = CreateBoolValueExpression((yyvsp[(1) - (1)].bool_const)); }
     break;
 
   case 57:
 /* Line 1792 of yacc.c  */
-#line 262 "objectivec.y"
+#line 268 "objectivec.y"
     { (yyval._expr) = CreateCharValueExpression((yyvsp[(1) - (1)].char_const)); }
     break;
 
   case 58:
 /* Line 1792 of yacc.c  */
-#line 263 "objectivec.y"
+#line 269 "objectivec.y"
     { (yyval._expr) = CreateStringValueExpression((yyvsp[(1) - (1)].string_const)); }
     break;
 
   case 59:
 /* Line 1792 of yacc.c  */
-#line 265 "objectivec.y"
+#line 271 "objectivec.y"
     { (yyval._expr) =createMethodCall((yyvsp[(2) - (6)]._expr), (yyvsp[(3) - (6)].id), (yyvsp[(5) - (6)].method_call_arg_list_st));}
     break;
 
   case 60:
 /* Line 1792 of yacc.c  */
-#line 266 "objectivec.y"
+#line 272 "objectivec.y"
     { (yyval._expr) = createArrayElemCall((yyvsp[(1) - (4)]._expr), (yyvsp[(3) - (4)]._expr)); }
     break;
 
   case 61:
 /* Line 1792 of yacc.c  */
-#line 267 "objectivec.y"
+#line 273 "objectivec.y"
     { (yyval._expr) = createInvariantCall((yyvsp[(1) - (3)]._expr), (yyvsp[(3) - (3)].id));}
     break;
 
   case 62:
 /* Line 1792 of yacc.c  */
-#line 268 "objectivec.y"
+#line 274 "objectivec.y"
     { /*$$ = createFuncCall($1, $3);*/ }
     break;
 
   case 63:
 /* Line 1792 of yacc.c  */
-#line 269 "objectivec.y"
+#line 275 "objectivec.y"
     { /*$$ = createFuncCall($1, NULL); */}
     break;
 
   case 64:
 /* Line 1792 of yacc.c  */
-#line 272 "objectivec.y"
+#line 278 "objectivec.y"
     { (yyval._enum_decl) = CreateEnumDeclaration((yyvsp[(2) - (5)].id), (yyvsp[(4) - (5)]._enum_list)); }
     break;
 
   case 65:
 /* Line 1792 of yacc.c  */
-#line 275 "objectivec.y"
+#line 281 "objectivec.y"
     { (yyval._enum_list) = AppendEnumeratorToList((yyvsp[(1) - (3)]._enum_list), (yyvsp[(3) - (3)]._enumerator)); }
     break;
 
   case 66:
 /* Line 1792 of yacc.c  */
-#line 276 "objectivec.y"
+#line 282 "objectivec.y"
     { (yyval._enum_list) = CreateEnumeratorList((yyvsp[(1) - (1)]._enumerator)); }
     break;
 
   case 67:
 /* Line 1792 of yacc.c  */
-#line 279 "objectivec.y"
-    { (yyval._enumerator) = CreateEnumerator((yyvsp[(1) - (1)].id), -1); }
+#line 285 "objectivec.y"
+    { /* $$ = CreateEnumerator($1, -1); */ }
     break;
 
   case 68:
 /* Line 1792 of yacc.c  */
-#line 280 "objectivec.y"
-    { (yyval._enumerator) = CreateEnumerator((yyvsp[(1) - (3)].id), (yyvsp[(3) - (3)].int_const)); }
+#line 286 "objectivec.y"
+    {  /* $$ = CreateEnumerator($1, $3); */ }
     break;
 
   case 69:
 /* Line 1792 of yacc.c  */
-#line 306 "objectivec.y"
+#line 312 "objectivec.y"
     { (yyval.field_access_en) = A_PUBLIC; }
     break;
 
   case 70:
 /* Line 1792 of yacc.c  */
-#line 307 "objectivec.y"
+#line 313 "objectivec.y"
     { (yyval.field_access_en) = A_PROTECTED; }
     break;
 
   case 71:
 /* Line 1792 of yacc.c  */
-#line 308 "objectivec.y"
+#line 314 "objectivec.y"
     { (yyval.field_access_en) = A_PRIVATE; }
     break;
 
   case 72:
 /* Line 1792 of yacc.c  */
-#line 311 "objectivec.y"
+#line 317 "objectivec.y"
     { (yyval.class_invariant_declaration_st) = createClassInvariantDeclaration((yyvsp[(1) - (3)]._type), (yyvsp[(2) - (3)].id)); }
     break;
 
   case 73:
 /* Line 1792 of yacc.c  */
-#line 314 "objectivec.y"
+#line 320 "objectivec.y"
     { (yyval.class_invariants_declaration_list_st) = createClassInvariantsDeclarationList((yyvsp[(1) - (1)].class_invariant_declaration_st)); }
     break;
 
   case 74:
 /* Line 1792 of yacc.c  */
-#line 315 "objectivec.y"
+#line 321 "objectivec.y"
     { (yyval.class_invariants_declaration_list_st) = addToClassInvariantsDeclarationList((yyvsp[(1) - (2)].class_invariants_declaration_list_st), (yyvsp[(2) - (2)].class_invariant_declaration_st)); }
     break;
 
   case 75:
 /* Line 1792 of yacc.c  */
-#line 319 "objectivec.y"
+#line 325 "objectivec.y"
     { (yyval.class_invariants_declaration_block_st) = createClassInvariantsDeclarationBlock((yyvsp[(1) - (2)].field_access_en), (yyvsp[(2) - (2)].class_invariants_declaration_list_st)); }
     break;
 
   case 76:
 /* Line 1792 of yacc.c  */
-#line 320 "objectivec.y"
+#line 326 "objectivec.y"
     { (yyval.class_invariants_declaration_block_st) = createClassInvariantsDeclarationBlock(A_NOT_SET, (yyvsp[(1) - (1)].class_invariants_declaration_list_st)); }
     break;
 
   case 77:
 /* Line 1792 of yacc.c  */
-#line 324 "objectivec.y"
+#line 330 "objectivec.y"
     { (yyval.class_invariants_declaration_block_list_st) = createClassInvariantsDeclarationBlockList((yyvsp[(1) - (1)].class_invariants_declaration_block_st)); }
     break;
 
   case 78:
 /* Line 1792 of yacc.c  */
-#line 325 "objectivec.y"
+#line 331 "objectivec.y"
     { (yyval.class_invariants_declaration_block_list_st) = addToClassInvariantsDeclarationBlockList((yyvsp[(1) - (2)].class_invariants_declaration_block_list_st), (yyvsp[(2) - (2)].class_invariants_declaration_block_st)); }
     break;
 
   case 79:
 /* Line 1792 of yacc.c  */
-#line 328 "objectivec.y"
+#line 334 "objectivec.y"
     { (yyval.class_invariants_declaration_block_list_st) = NULL; }
     break;
 
   case 80:
 /* Line 1792 of yacc.c  */
-#line 329 "objectivec.y"
+#line 335 "objectivec.y"
     { (yyval.class_invariants_declaration_block_list_st) = (yyvsp[(2) - (3)].class_invariants_declaration_block_list_st); }
     break;
 
   case 81:
 /* Line 1792 of yacc.c  */
-#line 332 "objectivec.y"
+#line 338 "objectivec.y"
     { (yyval.class_method_param_declaration_st) = createClassMethodParamDeclaration( NULL, (yyvsp[(2) - (4)]._type), (yyvsp[(4) - (4)].id) );}
     break;
 
   case 82:
 /* Line 1792 of yacc.c  */
-#line 339 "objectivec.y"
+#line 345 "objectivec.y"
     { (yyval.class_method_param_declaration_st) = createClassMethodParamDeclaration((yyvsp[(1) - (6)].id), (yyvsp[(4) - (6)]._type), (yyvsp[(6) - (6)].id)); }
     break;
 
   case 83:
 /* Line 1792 of yacc.c  */
-#line 342 "objectivec.y"
+#line 348 "objectivec.y"
     { (yyval.class_method_param_declaration_list_st) = createClassMethodParamDeclarationList((yyvsp[(1) - (1)].class_method_param_declaration_st)); }
     break;
 
   case 84:
 /* Line 1792 of yacc.c  */
-#line 343 "objectivec.y"
+#line 349 "objectivec.y"
     { (yyval.class_method_param_declaration_list_st) = addToClassMethodParamDeclarationList((yyvsp[(1) - (2)].class_method_param_declaration_list_st), (yyvsp[(2) - (2)].class_method_param_declaration_st)); }
     break;
 
   case 85:
 /* Line 1792 of yacc.c  */
-#line 346 "objectivec.y"
+#line 352 "objectivec.y"
     { (yyval.class_method_param_declaration_list_st) = createClassMethodParamDeclarationList((yyvsp[(1) - (1)].class_method_param_declaration_st)); }
     break;
 
   case 86:
 /* Line 1792 of yacc.c  */
-#line 347 "objectivec.y"
+#line 353 "objectivec.y"
     { (yyval.class_method_param_declaration_list_st) = addToClassMethodParamDeclarationList((yyvsp[(1) - (2)].class_method_param_declaration_list_st), (yyvsp[(2) - (2)].class_method_param_declaration_st)); }
     break;
 
   case 87:
 /* Line 1792 of yacc.c  */
-#line 351 "objectivec.y"
+#line 357 "objectivec.y"
     { (yyval.class_method_param_declaration_list_st) = addToFrontClassMethodParamDeclarationList((yyvsp[(2) - (2)].class_method_param_declaration_list_st), (yyvsp[(1) - (2)].class_method_param_declaration_st)); }
     break;
 
   case 88:
 /* Line 1792 of yacc.c  */
-#line 352 "objectivec.y"
+#line 358 "objectivec.y"
     {(yyval.class_method_param_declaration_list_st) = (yyvsp[(1) - (1)].class_method_param_declaration_list_st); }
     break;
 
   case 89:
 /* Line 1792 of yacc.c  */
-#line 356 "objectivec.y"
+#line 362 "objectivec.y"
     {(yyval.class_method_param_declaration_list_st) = (yyvsp[(1) - (1)].class_method_param_declaration_list_st); }
     break;
 
   case 90:
 /* Line 1792 of yacc.c  */
-#line 357 "objectivec.y"
+#line 363 "objectivec.y"
     {(yyval.class_method_param_declaration_list_st) = NULL; }
     break;
 
   case 91:
 /* Line 1792 of yacc.c  */
-#line 368 "objectivec.y"
+#line 374 "objectivec.y"
     { (yyval.class_method_declaration_st) = createMethodDeclaration(NON_STATIC, (yyvsp[(3) - (7)]._type), (yyvsp[(5) - (7)].id), (yyvsp[(7) - (7)].class_method_param_declaration_list_st));}
     break;
 
   case 92:
 /* Line 1792 of yacc.c  */
-#line 369 "objectivec.y"
+#line 375 "objectivec.y"
     { (yyval.class_method_declaration_st) = createMethodDeclaration(STATIC, (yyvsp[(3) - (7)]._type), (yyvsp[(5) - (7)].id), (yyvsp[(7) - (7)].class_method_param_declaration_list_st));}
     break;
 
   case 93:
 /* Line 1792 of yacc.c  */
-#line 370 "objectivec.y"
+#line 376 "objectivec.y"
     { (yyval.class_method_declaration_st) = createMethodDeclaration(NON_STATIC, (yyvsp[(3) - (5)]._type), (yyvsp[(5) - (5)].id), NULL);}
     break;
 
   case 94:
 /* Line 1792 of yacc.c  */
-#line 371 "objectivec.y"
+#line 377 "objectivec.y"
     { (yyval.class_method_declaration_st) = createMethodDeclaration(STATIC, (yyvsp[(3) - (5)]._type), (yyvsp[(5) - (5)].id), NULL);}
     break;
 
   case 95:
 /* Line 1792 of yacc.c  */
-#line 374 "objectivec.y"
+#line 380 "objectivec.y"
     { (yyval.class_method_declaration_st) = (yyvsp[(1) - (2)].class_method_declaration_st); }
     break;
 
   case 96:
 /* Line 1792 of yacc.c  */
-#line 379 "objectivec.y"
+#line 385 "objectivec.y"
     { (yyval.class_methods_declaration_list_st) = createMethodsDeclarationList( (yyvsp[(1) - (1)].class_method_declaration_st)); }
     break;
 
   case 97:
 /* Line 1792 of yacc.c  */
-#line 380 "objectivec.y"
+#line 386 "objectivec.y"
     { (yyval.class_methods_declaration_list_st) = addToMethodsDeclarationList( (yyvsp[(1) - (2)].class_methods_declaration_list_st), (yyvsp[(2) - (2)].class_method_declaration_st)); }
     break;
 
   case 98:
 /* Line 1792 of yacc.c  */
-#line 384 "objectivec.y"
+#line 390 "objectivec.y"
     { (yyval.class_methods_declaration_block_st) = createClassMethodsDeclarationBlock(A_NOT_SET, (yyvsp[(1) - (1)].class_methods_declaration_list_st)); }
     break;
 
   case 99:
 /* Line 1792 of yacc.c  */
-#line 385 "objectivec.y"
+#line 391 "objectivec.y"
     { (yyval.class_methods_declaration_block_st) = createClassMethodsDeclarationBlock( (yyvsp[(1) - (2)].field_access_en), (yyvsp[(2) - (2)].class_methods_declaration_list_st)); }
     break;
 
   case 100:
 /* Line 1792 of yacc.c  */
-#line 388 "objectivec.y"
+#line 394 "objectivec.y"
     { (yyval.class_methods_declaration_block_list_st) = createClassMethodsDeclarationBlockList( (yyvsp[(1) - (1)].class_methods_declaration_block_st)); }
     break;
 
   case 101:
 /* Line 1792 of yacc.c  */
-#line 389 "objectivec.y"
+#line 395 "objectivec.y"
     { (yyval.class_methods_declaration_block_list_st) = addToClassMethodsDeclarationBlockList( (yyvsp[(1) - (2)].class_methods_declaration_block_list_st), (yyvsp[(2) - (2)].class_methods_declaration_block_st)); }
     break;
 
   case 102:
 /* Line 1792 of yacc.c  */
-#line 392 "objectivec.y"
+#line 398 "objectivec.y"
     { (yyval.class_methods_declaration_block_list_st) = (yyvsp[(1) - (1)].class_methods_declaration_block_list_st); }
     break;
 
   case 103:
 /* Line 1792 of yacc.c  */
-#line 393 "objectivec.y"
+#line 399 "objectivec.y"
     {(yyval.class_methods_declaration_block_list_st) = NULL; }
     break;
 
   case 104:
 /* Line 1792 of yacc.c  */
-#line 396 "objectivec.y"
+#line 402 "objectivec.y"
     { /*$$ = createClassDeclaration($2, $4, $5, $6); */}
     break;
 
   case 105:
 /* Line 1792 of yacc.c  */
-#line 397 "objectivec.y"
+#line 403 "objectivec.y"
     { /*$$ = createClassDeclaration($2, NULL, $3, $4);*/ }
     break;
 
   case 106:
 /* Line 1792 of yacc.c  */
-#line 400 "objectivec.y"
+#line 406 "objectivec.y"
     { (yyval.class_method_impl_st) = createClassMethodImpl((yyvsp[(1) - (2)].class_method_declaration_st), (yyvsp[(2) - (2)]._stmt)); }
     break;
 
   case 107:
 /* Line 1792 of yacc.c  */
-#line 404 "objectivec.y"
+#line 410 "objectivec.y"
     { (yyval.class_method_impl_list_st) = createClassMethodImplList((yyvsp[(1) - (1)].class_method_impl_st)); }
     break;
 
   case 108:
 /* Line 1792 of yacc.c  */
-#line 405 "objectivec.y"
+#line 411 "objectivec.y"
     { (yyval.class_method_impl_list_st) = addToClassMethodImplList((yyvsp[(1) - (2)].class_method_impl_list_st), (yyvsp[(2) - (2)].class_method_impl_st)); }
     break;
 
   case 109:
 /* Line 1792 of yacc.c  */
-#line 408 "objectivec.y"
+#line 414 "objectivec.y"
     {(yyval.class_method_impl_list_st) = (yyvsp[(1) - (1)].class_method_impl_list_st); }
     break;
 
   case 110:
 /* Line 1792 of yacc.c  */
-#line 409 "objectivec.y"
+#line 415 "objectivec.y"
     {(yyval.class_method_impl_list_st) = NULL; }
     break;
 
   case 111:
 /* Line 1792 of yacc.c  */
-#line 412 "objectivec.y"
+#line 418 "objectivec.y"
     {}
     break;
 
   case 112:
 /* Line 1792 of yacc.c  */
-#line 412 "objectivec.y"
+#line 418 "objectivec.y"
     { (yyval.class_impl_st) = createClassImpl((yyvsp[(2) - (5)].id), (yyvsp[(3) - (5)].class_method_impl_list_st)); }
     break;
 
   case 113:
 /* Line 1792 of yacc.c  */
-#line 417 "objectivec.y"
+#line 423 "objectivec.y"
     { (yyval.method_call_arg_st) = createMethodCallArg(NULL, (yyvsp[(2) - (2)]._expr));}
     break;
 
   case 114:
 /* Line 1792 of yacc.c  */
-#line 420 "objectivec.y"
+#line 426 "objectivec.y"
     { (yyval.method_call_arg_st) = createMethodCallArg((yyvsp[(1) - (3)].id),(yyvsp[(3) - (3)]._expr));}
     break;
 
   case 115:
 /* Line 1792 of yacc.c  */
-#line 423 "objectivec.y"
+#line 429 "objectivec.y"
     { (yyval.method_call_arg_list_st) = createMethodCallArgList((yyvsp[(1) - (1)].method_call_arg_st)); }
     break;
 
   case 116:
 /* Line 1792 of yacc.c  */
-#line 424 "objectivec.y"
+#line 430 "objectivec.y"
     { (yyval.method_call_arg_list_st) = addToMethodCallArgList((yyvsp[(1) - (2)].method_call_arg_list_st), (yyvsp[(2) - (2)].method_call_arg_st));}
     break;
 
   case 117:
 /* Line 1792 of yacc.c  */
-#line 427 "objectivec.y"
+#line 433 "objectivec.y"
     { (yyval.method_call_arg_list_st) = createMethodCallArgList((yyvsp[(1) - (1)].method_call_arg_st)); }
     break;
 
   case 118:
 /* Line 1792 of yacc.c  */
-#line 428 "objectivec.y"
+#line 434 "objectivec.y"
     { (yyval.method_call_arg_list_st) = addToMethodCallArgList((yyvsp[(1) - (2)].method_call_arg_list_st), (yyvsp[(2) - (2)].method_call_arg_st));}
     break;
 
   case 119:
 /* Line 1792 of yacc.c  */
-#line 432 "objectivec.y"
+#line 438 "objectivec.y"
     { (yyval.method_call_arg_list_st) = addToFrontMethodCallArgList((yyvsp[(2) - (2)].method_call_arg_list_st), (yyvsp[(1) - (2)].method_call_arg_st));}
     break;
 
   case 120:
 /* Line 1792 of yacc.c  */
-#line 433 "objectivec.y"
+#line 439 "objectivec.y"
     { (yyval.method_call_arg_list_st) = (yyvsp[(1) - (1)].method_call_arg_list_st); }
     break;
 
   case 121:
 /* Line 1792 of yacc.c  */
-#line 436 "objectivec.y"
+#line 442 "objectivec.y"
     { (yyval.method_call_arg_list_st) = (yyvsp[(1) - (1)].method_call_arg_list_st);}
     break;
 
   case 122:
 /* Line 1792 of yacc.c  */
-#line 437 "objectivec.y"
+#line 443 "objectivec.y"
     { (yyval.method_call_arg_list_st) = NULL; }
     break;
 
   case 123:
 /* Line 1792 of yacc.c  */
-#line 441 "objectivec.y"
+#line 447 "objectivec.y"
     { (yyval.expr_list_st) = createExprList((yyvsp[(1) - (1)]._expr));}
     break;
 
   case 124:
 /* Line 1792 of yacc.c  */
-#line 442 "objectivec.y"
+#line 448 "objectivec.y"
     { (yyval.expr_list_st) = addToExprList((yyvsp[(1) - (3)].expr_list_st), (yyvsp[(3) - (3)]._expr));}
     break;
 
   case 125:
 /* Line 1792 of yacc.c  */
-#line 447 "objectivec.y"
+#line 453 "objectivec.y"
     { (yyval.expr_list_st) = (yyvsp[(1) - (1)].expr_list_st);}
     break;
 
   case 126:
 /* Line 1792 of yacc.c  */
-#line 448 "objectivec.y"
+#line 454 "objectivec.y"
     { (yyval.expr_list_st) = NULL;}
     break;
 
   case 127:
 /* Line 1792 of yacc.c  */
-#line 453 "objectivec.y"
+#line 459 "objectivec.y"
     { (yyval.func_arg_st) =  createFuncArg((yyvsp[(1) - (2)]._type), (yyvsp[(2) - (2)].id));}
     break;
 
   case 128:
 /* Line 1792 of yacc.c  */
-#line 456 "objectivec.y"
+#line 462 "objectivec.y"
     { (yyval.func_arg_list_st) = createFuncArgList((yyvsp[(1) - (1)].func_arg_st)); }
     break;
 
   case 129:
 /* Line 1792 of yacc.c  */
-#line 457 "objectivec.y"
+#line 463 "objectivec.y"
     { (yyval.func_arg_list_st) = addToFuncArgList((yyvsp[(1) - (2)].func_arg_list_st), (yyvsp[(2) - (2)].func_arg_st)); }
     break;
 
   case 130:
 /* Line 1792 of yacc.c  */
-#line 460 "objectivec.y"
+#line 466 "objectivec.y"
     { (yyval.func_arg_list_st) = (yyvsp[(1) - (1)].func_arg_list_st); }
     break;
 
   case 131:
 /* Line 1792 of yacc.c  */
-#line 461 "objectivec.y"
+#line 467 "objectivec.y"
     { (yyval.func_arg_list_st) = NULL; }
     break;
 
   case 132:
 /* Line 1792 of yacc.c  */
-#line 464 "objectivec.y"
+#line 470 "objectivec.y"
     { (yyval.func_declaration_st) = createFuncDeclaration((yyvsp[(1) - (5)]._type), (yyvsp[(2) - (5)].id), (yyvsp[(4) - (5)].func_arg_list_st)); }
     break;
 
   case 133:
 /* Line 1792 of yacc.c  */
-#line 467 "objectivec.y"
+#line 473 "objectivec.y"
     { (yyval.func_declaration_st) = (yyvsp[(1) - (2)].func_declaration_st); }
     break;
 
   case 134:
 /* Line 1792 of yacc.c  */
-#line 470 "objectivec.y"
+#line 476 "objectivec.y"
     { (yyval.func_impl_st) = createFuncImpl((yyvsp[(1) - (2)].func_declaration_st), (yyvsp[(2) - (2)]._stmt));}
     break;
 
 
 /* Line 1792 of yacc.c  */
-#line 2534 "objectivec.tab.cpp"
+#line 2540 "objectivec.tab.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2762,4 +2768,4 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 476 "objectivec.y"
+#line 482 "objectivec.y"
