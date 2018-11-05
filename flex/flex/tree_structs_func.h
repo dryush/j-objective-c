@@ -2,16 +2,18 @@
 
 #include "tree_structs.h"
 
+#include <stdlib.h>
+
 struct Func_arg_st 
 {
-    struct Type_st* type;
+    struct Type_st* val_type;
     char* name;
 };
 
-struct Func_arg_st* createFuncArg(struct Type_st* type, char * name)
+struct Func_arg_st* createFuncArg(struct Type_st* valtype, char * name)
 {
     struct Func_arg_st* st = (struct Func_arg_st*) malloc(sizeof(struct Func_arg_st));
-    st->type = type;
+    st->val_type = valtype;
     st->name = name;
     return st; 
 }
@@ -102,7 +104,7 @@ struct Func_call_arg_list_st* addToFuncCallArgList(
 struct Expression_st* createFuncCall( char* name, struct Func_call_arg_list_st* args)
 {
     struct Expression_st* st = (struct Expression_st*) malloc ( sizeof(struct Expression_st));
-    st->exprType = FUNC_CALL;
+    st->exprType = EXPR_FUNC_CALL;
     st->identifier = name;
     st->func_args = args;
     return st;

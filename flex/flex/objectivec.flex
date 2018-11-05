@@ -1,5 +1,8 @@
 %{
 	#define YY_NO_UNISTD_H 0
+ 	#include "tree_structs.h"
+ 	#include "objectivec.tab.h"
+
     #include <math.h>
     #include <stdlib.h>
     #include <stdio.h>
@@ -7,6 +10,8 @@
     #include <conio.h>
     #include <locale.h>
 
+	
+	extern int yyparse(void);
 		
 	void addToBuffer( char* str);
 	void addToBufferOcto( char* str, int line);
@@ -221,3 +226,14 @@ int handleTokenInt(char * text, int system) {
 void handleError(char * error, int line){
 	printf("Error at line %d: %s\n\n",line, error);
 } 
+
+int main(int argc, char *argv[]) {
+    
+	setlocale(LC_ALL, "russian");
+	char * l = setlocale(LC_ALL, NULL);
+	freopen("output.txt", "w", stdout);
+	yyin = fopen("test.m", "r");
+	yyparse();
+
+	return 0;
+}

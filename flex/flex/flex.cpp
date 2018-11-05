@@ -1,22 +1,22 @@
 // flex.cpp: определяет точку входа для консольного приложения.
 //
 
-#include "stdafx.h"
+extern int yyparse(void);
+extern int yylex(void)
+
 #include "struct_print.h"
 #include "objectivec.tab.h"
 #include "lex.yy.c"
 #include <locale.h>
 #include <string>
 
-extern int yyparse(void);
-extern int yylex(void);
 
-void _tmain(int argc, _TCHAR* argv[])
+int main()
 {
 	setlocale(LC_ALL, "russian");
 	char * l = setlocale(LC_ALL, NULL);
 	freopen("output.txt", "w", stdout);
 	yyin = fopen("test.m", "r");
-	yylex();
+	yyparse();
 }
 

@@ -7,7 +7,9 @@
 
 int max_id = 0;
 
+
 int getNextId() {
+    
     return max_id ++;
 }
 

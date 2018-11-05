@@ -2,9 +2,8 @@
 
 #include "tree_structs.h"
 
-struct Expr_list_st;
+#include <stdlib.h>
 
-struct Expression_st;
 struct Expr_list_st
 {
     struct Expression_st * expr;
@@ -30,10 +29,10 @@ struct Expr_list_st* addToExprList(
 }
 
 struct Expression_st* createArrayElemCall(
-  struct Expression_st* array, struct Expression_st* index )
+  struct Expression_st* array_exp, struct Expression_st* index )
 {
     struct Expression_st* st = (struct Expression_st*)malloc(sizeof(struct Expression_st));
-    st->array = array;
-    st->index = index;
+    st->left = array_exp;
+    st->right = index;
     return st;
 }
