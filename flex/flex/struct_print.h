@@ -13,6 +13,22 @@ unordered_map<void*, string> labels;
 unordered_map<void*, vector<void*>> g;
 int lvl = 0; // уровень глубины
 
+void printDot() {
+    string dot = "";
+    for( auto i = ids.begin(); i != ids.end(); i++) {
+        dot += "" + to_string((long long)i->second) + "  [label=\"" + labels[i->first] + "\"]\n"; 
+    }
+    dot += "\n\n\n";
+    for( auto i = g.begin(); i != g.end(); i++){ 
+        for( auto in = i->second.begin(); in != i->second.end(); in++) {
+            //if ( ids[*in] != 0) {
+                dot += "" + to_string((long long)ids[i->first]) + "->" + to_string((long long)ids[*in]) + "\n";
+            //}
+        }
+    }
+    printf(dot.c_str());
+}
+
 void printSpaces() {
     for (int i = 0 ; i < lvl; i++) {
         printf(" ");
@@ -130,17 +146,20 @@ void print( Func_impl_st* st) {
     if (st != NULL) {
 		ids[st] = getNextId();
 		labels[st] = "Func_impl function " + string(st->name) + "()";
-		g[st].push_back(st->return_type);
-		g[st].push_back(st->args);
-		g[st].push_back(st->body);
-        printSpaces();
-        printf("Func_impl function %s()\n", st->name);
-        lvl++;
-        // print( st->return_type);
-        // printf( "function %s()\n", st->name);
-        // print( st->args);
-        print( st->body);
-        lvl--;
+        if( st->return_type){
+            g[st].push_back(st->return_type);
+            // print( st->return_type);
+        }
+
+        if( st->args) {
+            g[st].push_back(st->args);
+            // print( st->args);
+        }
+
+        if( st->body){
+            g[st].push_back(st->body);
+            print( st->body);
+        }
     }
 }
 
@@ -148,36 +167,44 @@ void print( Extern_code_st* st) {
     if (st != NULL) {
 		ids[st] = getNextId();
 		labels[st] = "Extern code";
-		g[st].push_back(st->class_decl);
-		g[st].push_back(st->class_impl);
-		g[st].push_back(st->enum_decl);
-		g[st].push_back(st->func_decl);
-		g[st].push_back(st->func_impl);
-        printSpaces();
-        printf("Extern code\n");
-        lvl++;
-        print( st->class_decl);
-        print( st->class_impl);
-        print( st->enum_decl);
-        print( st->func_decl);
-        print( st->func_impl);
-        lvl--;
+        if( st->class_decl) {
+            g[st].push_back(st->class_decl);
+            print( st->class_decl);
+        }
+
+        if( st->class_impl) {
+            g[st].push_back(st->class_impl);
+		    print( st->class_impl);
+        }
+
+        if ( st->enum_decl){
+            g[st].push_back(st->enum_decl);
+            print( st->enum_decl);
+        }
+
+        if( st->func_decl){
+            g[st].push_back(st->func_decl);
+            print( st->func_decl);
+        }
+
+        if( st->func_impl){
+            g[st].push_back(st->func_impl);
+            print( st->func_impl);
+        }
     }
 }
 
 void print( Program_st* st ) {
-    printSpaces();
-    printf("Program\n");
     if (st != NULL) {
         ids[st] = getNextId();
         labels[st] = "Program";
-		g[st].push_back(st->code);
-		g[st].push_back(st->next);
-        lvl++;
-        print( st->code);
-        if( st->next) {
-            print( st->next);
+
+        auto next = st;
+        while( next){
+            g[st].push_back(next->code);
+            print( next->code);
+            next = st->next;
         }
-        lvl--;
     }
+    printDot();
 }
