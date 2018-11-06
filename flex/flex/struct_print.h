@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "tree_structs.h"
 
@@ -14,19 +15,21 @@ unordered_map<void*, vector<void*>> g;
 int lvl = 0; // уровень глубины
 
 void printDot() {
-    string dot = "";
+    string dot = "digraph Program {\n";
     for( auto i = ids.begin(); i != ids.end(); i++) {
-        dot += "" + to_string((long long)i->second) + "  [label=\"" + labels[i->first] + "\"]\n"; 
+        dot += "\t" + to_string((long long)i->second) + "  [label=\"" + labels[i->first] + "\"];\n"; 
     }
     dot += "\n\n\n";
     for( auto i = g.begin(); i != g.end(); i++){ 
         for( auto in = i->second.begin(); in != i->second.end(); in++) {
             //if ( ids[*in] != 0) {
-                dot += "" + to_string((long long)ids[i->first]) + "->" + to_string((long long)ids[*in]) + "\n";
+                dot += "\t" + to_string((long long)ids[i->first]) + "->" + to_string((long long)ids[*in]) + ";\n";
             //}
         }
     }
-    printf(dot.c_str());
+    dot += "}";
+    freopen("graph.txt","w", stdout);
+    cout << dot;
 }
 
 void printSpaces() {

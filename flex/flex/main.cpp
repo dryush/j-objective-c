@@ -5,6 +5,7 @@
 #include <string.h>
 #include <conio.h>
 #include <locale.h>
+#include <process.h>
 
 #include "tree_structs.h"
 #include "struct_print.h"
@@ -21,5 +22,6 @@ int main(int argc, char *argv[]) {
 	Program_st* prog = root;
 	printf("\n\n");
 	print(root);
+    execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
 	return 0;
 }
