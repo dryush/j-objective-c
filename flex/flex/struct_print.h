@@ -69,15 +69,23 @@ void print( Statement_st* st) {
     if (st != NULL) {
         printSpaces();
         lvl++;
+        ids[st] = getNextId();
         switch(st->stmt_type) {
             case STMT_WHILE: {
                 printf("While_stmt\n");
+                labels[st] = "While_stmt";
+		        g[st].push_back(st->condition);
+                g[st].push_back(st->truth_stmt_list);
                 print(st->condition);
                 print(st->truth_stmt_list);
                 break;
             }
             case STMT_IF: {
                 printf("If_stmt\n");
+                labels[st] = "If_stmt";
+		        g[st].push_back(st->condition);
+                g[st].push_back(st->truth_stmt_list);
+                g[st].push_back(st->wrong_stmt_list);
                 print(st->condition);
                 print(st->truth_stmt_list);
                 print(st->wrong_stmt_list);
@@ -85,11 +93,17 @@ void print( Statement_st* st) {
             }
             case STMT_EXPR: {
                 printf("Expr\n");
+                labels[st] = "Expr";
+		        g[st].push_back(st->expr);
                 print(st->expr);
                 break;
             }
             case STMT_VAR_DECL: {
                 printf("Var_decl_stmt %s\n", st->identifier);
+                labels[st] = "Var_decl_stmt " + string(st->identifier);
+		        g[st].push_back(st->var_type);
+                g[st].push_back(st->array_constant);
+                g[st].push_back(st->expr);
                // print(st->var_type);
                // print(st->array_constant);
                 print(st->expr);
@@ -97,11 +111,15 @@ void print( Statement_st* st) {
             }
             case STMT_RETURN: {
                 printf("Return_stmt\n");
+                labels[st] = "Return_stmt";
+		        g[st].push_back(st->expr);
                 print(st->expr);
                 break;
             }
             case STMT_COMPOUND: {
                 printf("Compound_stmt\n");
+                labels[st] = "Compound_stmt";
+		        g[st].push_back(st->truth_stmt_list);
                 print(st->truth_stmt_list);
                 break;
             }
@@ -111,19 +129,29 @@ void print( Statement_st* st) {
 }
 
 void print( Class_declaration_st* st) {
-    //ids[st] = getNextId();
-
+    if (st != NULL) {
+		ids[st] = getNextId();
+		labels[st] = "Class_decl class " + string(st->name);
+		g[st].push_back(st->methods_declaraion_list);
+        g[st].push_back(st->invariants_declaration_list);
+        // print(st->methods_declaraion_list);
+        // print(st->invariants_declaration_list);
+	}
 }
 
 void print( Class_impl_st* st ) {
-    //ids[st] = getNextId();
-
+    if (st != NULL) {
+		ids[st] = getNextId();
+		labels[st] = "Class_impl class " + string(st->name);
+		g[st].push_back(st->methods);
+        // print(st->methods);
+	}
 }
 
 void print( Enum_declaration_st* st) {
     if (st != NULL) {
 		ids[st] = getNextId();
-		labels[st] = "Enum_decl enum " + string(st->identifier) + "()";
+		labels[st] = "Enum_decl enum " + string(st->identifier);
 		g[st].push_back(st->enumerator_list);
         // print(st->enumerator_list);
 	}
