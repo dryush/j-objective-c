@@ -18,43 +18,98 @@ int getNextId() {
     return max_id ++;
 }
 
-void print( Class_declaration_st* st){
-    //ids[st] = getNextId();
-
-}
-
-void print( Class_impl_st* st ){
-    //ids[st] = getNextId();
-
-}
-
-void print( Enum_declaration_st* st){
-    //ids[st] = getNextId();
-
-}
-
-void print( Func_declaration_st* st){
-    //ids[st] = getNextId();
-
-}
-
-void print( Func_impl_st* st){
-    //ids[st] = getNextId();
+void print( Statement_st* st) {
     if (st != NULL) {
+        printSpaces();
         lvl++;
-       // print( st->return_type);
-        printf( "function %s()\n", st->name);
-        //print( st->args);
-       // print( st->body);
+        switch(st->stmt_type) {
+            case STMT_WHILE: {
+                printf("While_stmt\n");
+                print(st->condition);
+                print(st->truth_stmt_list);
+                break;
+            }
+            case STMT_IF: {
+                printf("If_stmt\n");
+                print(st->condition);
+                print(st->truth_stmt_list);
+                print(st->wrong_stmt_list);
+                break;
+            }
+            case STMT_EXPR: {
+                printf("Expr\n");
+                print(st->expr);
+                break;
+            }
+            case STMT_VAR_DECL: {
+                printf("Var_decl_stmt %s\n", st->name);
+                print(st->var_type);
+                print(st->array_constant);
+                print(st->expr);
+                break;
+            }
+            case STMT_RETURN: {
+                printf("Return_stmt\n");
+                print(st->expr);
+                break;
+            }
+            case STMT_COMPOUND: {
+                printf("Compound_stmt\n");
+                printf(st->truth_stmt_list);
+                break;
+            }
+        }
         lvl--;
     }
 }
 
-void print( Extern_code_st* st){
+void print( Class_declaration_st* st) {
     //ids[st] = getNextId();
-    printSpaces();
-    printf("Extern code\n");
+
+}
+
+void print( Class_impl_st* st ) {
+    //ids[st] = getNextId();
+
+}
+
+void print( Enum_declaration_st* st) {
+    //ids[st] = getNextId();
+
+}
+
+void print( Func_declaration_st* st) {
+    //ids[st] = getNextId();
     if (st != NULL) {
+        printSpaces();
+        printf("Func_decl function %s()\n", st->name);
+        lvl++;
+        // print( st->return_type);
+        // printf( "function %s()\n", st->name);
+        // print( st->args);
+        lvl--;
+    }
+}
+
+void print( Func_impl_st* st) {
+    //ids[st] = getNextId();
+    if (st != NULL) {
+        printSpaces();
+        printf("Func_impl function %s()\n", st->name);
+        lvl++;
+        // print( st->return_type);
+        // printf( "function %s()\n", st->name);
+        // print( st->args);
+        // print( st->body);
+        lvl--;
+    }
+}
+
+void print( Extern_code_st* st) {
+    //ids[st] = getNextId();
+    if (st != NULL) {
+        printSpaces();
+        printf("Extern code\n");
         lvl++;
         print( st->class_decl);
         print( st->class_impl);
@@ -65,7 +120,7 @@ void print( Extern_code_st* st){
     }
 }
 
-void print( Program_st* st ){
+void print( Program_st* st ) {
     //ids[st] = getNextId();
     printSpaces();
     printf("Program");
