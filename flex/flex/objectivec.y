@@ -6,6 +6,7 @@
     */
     #include <stdio.h>
 	#include "tree_structs.h"
+
    /* #define YYSTYPE */
 
     void yyerror( const char *s) {
@@ -13,8 +14,8 @@
     }
 	
 	extern int yylex(void);
+	struct Program_st* root;
 
-	extern struct Program_st* root;
 %}
 
 %union {

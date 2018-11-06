@@ -1,5 +1,5 @@
-#ifndef SIMPLE_TREE_STRUCTS
-#define SIMPLE_TREE_STRUCTS
+#ifndef TREE_STRUCTS_H
+#define TREE_STRUCTS_H
 
 #include <stdlib.h>
 
@@ -213,6 +213,7 @@ struct Expression_st *CreateExpression(enum OperationType operationType, struct 
 	cur->operationType = operationType;
 	cur->left = left;
 	cur->right = right;
+    printf("CreateExpression\n");
 	return cur;
 }
 
@@ -223,6 +224,7 @@ struct Expression_st *CreateIDExpression(char *identifier)
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->identifier = identifier;
+    printf("CreateIDExpression\n");
 	return cur;
 }
 
@@ -232,6 +234,7 @@ struct Expression_st *CreateIntValueExpression(int int_value)
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->int_value = int_value;
+    printf("CreateIntValueExpression\n");
 	return cur;
 }
 
@@ -241,6 +244,7 @@ struct Expression_st *CreateFloatValueExpression(double float_value)
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->float_value = float_value;
+    printf("CreateFloatValueExpression\n");
 	return cur;
 }
 
@@ -250,6 +254,7 @@ struct Expression_st *CreateBoolValueExpression(char bool_value)
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->bool_value = bool_value;
+    printf("CreateBoolValueExpression\n");
 	return cur;
 }
 
@@ -259,6 +264,7 @@ struct Expression_st *CreateCharValueExpression(char char_value)
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->char_value = char_value;
+    printf("CreateCharValueExpression\n");
 	return cur;
 }
 
@@ -268,6 +274,7 @@ struct Expression_st *CreateStringValueExpression(char *string_value)
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
 	cur->string_value = string_value;
+    printf("CreateStringValueExpression\n");
 	return cur;
 }
 
@@ -308,6 +315,7 @@ struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list
 	cur->next =0 ;
 	list->next = cur;
 	cur->stmt = stmt;
+    printf("AppendStatementToList\n");
 	return cur;
 }
 
@@ -316,6 +324,7 @@ struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
 	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
 	cur->next = 0;
 	cur->stmt = stmt;
+    printf("CreateStatementList\n");
 	return cur;
 }
 
@@ -325,6 +334,7 @@ struct Statement_st* CreateReturnStatement(struct Expression_st* expr)
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
     cur->stmt_type = STMT_RETURN;
 	cur->expr = expr;
+    printf("CreateReturnStatement\n");
 	return cur;
 }
 
@@ -333,6 +343,7 @@ struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
     cur->stmt_type = STMT_EXPR;
 	cur->expr = expr;
+    printf("CreateExpressionStatement\n");
 	return cur;
 }
 
@@ -342,6 +353,7 @@ struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struc
 	cur->stmt_type = STMT_WHILE;
 	cur->condition = condition;
 	cur->truth_stmt_list = stmt_list;
+    printf("CreateWhileStatement\n");
 	return cur;
 }
 
@@ -353,6 +365,7 @@ struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct S
 	cur->condition = condition;
 	cur->truth_stmt_list = truth_stmt_list;
 	cur->wrong_stmt_list = wrong_stmt_list;
+    printf("CreateIfStatement\n");
 	return cur;
 }
 
@@ -363,6 +376,7 @@ struct Statement_st* CreateVarDeclWithInit(struct Type_st *var_type, char *ident
 	cur->var_type = var_type;
 	cur->identifier = identifier;
 	cur->expr = expr;
+    printf("CreateVarDeclWithInit\n");
 	return cur;
 }
 /* Нужно разобраться с объявлением массива */
@@ -373,6 +387,7 @@ struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struc
 	expr->operationType = OP_ASSIGN_ARRAY;
     expr->left = left;
     expr->array_elems = elems;
+    printf("CreateArrayInitStatement\n");
 	return expr;
 }
 
@@ -382,6 +397,7 @@ struct Type_st* createType( enum VarType vartype, char * name, struct Type_st* c
 	st->var_type = vartype;
 	st->name = name;
 	st->childType = child;
+    printf("createType\n");
 	return st; 
 }
 
@@ -398,6 +414,7 @@ struct Enum_declaration_st *CreateEnumDeclaration(char *identifier, struct Enume
 	struct Enum_declaration_st *cur = (struct Enum_declaration_st *)malloc(sizeof(struct Enum_declaration_st));
 	cur->identifier = identifier;
 	cur->enumerator_list = enumerator_list;
+    printf("CreateEnumDeclaration\n");
 	return cur;
 }
 
@@ -413,6 +430,7 @@ struct Enumerator_list_st *AppendEnumeratorToList(struct Enumerator_list_st *lis
 	cur->next = 0;
 	list->next = cur;
 	cur->enumerator = enumerator;
+    printf("AppendEnumeratorToList\n");
 	return cur;
 }
 
@@ -421,6 +439,7 @@ struct Enumerator_list_st *CreateEnumeratorList(struct Enumerator_st *enumerator
 	struct Enumerator_list_st *cur = (struct Enumerator_list_st *)malloc(sizeof(struct Enumerator_list_st));
 	cur->next = 0;
 	cur->enumerator = enumerator;
+    printf("CreateEnumeratorList\n");
 	return cur;
 }
 
@@ -435,6 +454,7 @@ struct Enumerator_st *CreateEnumenator(char *identifier, int value)
 	struct Enumerator_st *cur = (struct Enumerator_st *)malloc(sizeof(struct Enumerator_st));
 	cur->identifier = identifier;
 	cur->value = value;
+    printf("CreateEnumenator\n");
 	return cur;
 }
 
@@ -469,6 +489,7 @@ struct Class_method_param_declaration_st* createClassMethodParamDeclaration( cha
 	st->innerName = innerName;
 	st->outerName = outerName;
     st->val_type = valtype;
+    printf("createClassMethodParamDeclaration\n");
 	return st;
 }
 
@@ -484,6 +505,7 @@ struct Class_method_param_declaration_list_st* createClassMethodParamDeclaration
 	struct  Class_method_param_declaration_list_st* st = (struct  Class_method_param_declaration_list_st*) malloc( sizeof(struct  Class_method_param_declaration_list_st));
 	st->param = param;
 	st->next = NULL;
+    printf("createClassMethodParamDeclarationList\n");
 	return st;
 }
 
@@ -493,7 +515,8 @@ struct Class_method_param_declaration_list_st* addToClassMethodParamDeclarationL
 	struct Class_method_param_declaration_list_st* last = root;
 	while ( last->next != NULL )
 	 	last = last->next;
-	last->next = createClassMethodParamDeclarationList(param); 
+	last->next = createClassMethodParamDeclarationList(param);
+    printf("addToClassMethodParamDeclarationList\n"); 
 	return root;
 }
 struct Class_method_param_declaration_list_st* addToFrontClassMethodParamDeclarationList(
@@ -502,6 +525,7 @@ struct Class_method_param_declaration_list_st* addToFrontClassMethodParamDeclara
 
 	struct Class_method_param_declaration_list_st* newRoot = createClassMethodParamDeclarationList(param);
 	newRoot->next = root;
+    printf("addToFrontClassMethodParamDeclarationList\n"); 
 	return newRoot;
 }
 
@@ -519,6 +543,7 @@ struct Class_method_declaration_st* createMethodDeclaration(enum Method_type_en 
 	st->returnType = returnType;
 	st->name = name;
 	st->params = params;
+    printf("createMethodDeclaration\n"); 
 	return st;
 }
 
@@ -534,6 +559,7 @@ struct Class_methods_declaration_list_st* createMethodsDeclarationList( struct C
 	struct Class_methods_declaration_list_st* st = (struct Class_methods_declaration_list_st*) malloc(sizeof(struct Class_methods_declaration_list_st));
 	st->method = method;
 	st->next = NULL;
+    printf("createMethodsDeclarationList\n");
 	return st;
 }
 
@@ -544,6 +570,7 @@ struct Class_methods_declaration_list_st* addToMethodsDeclarationList(
 	while( last->next != NULL)
 		last = last->next;
 	last->next = createMethodsDeclarationList(method);
+    printf("addToMethodsDeclarationList\n");
 	return root;
 }
 
@@ -559,6 +586,7 @@ struct Class_methods_declaration_block_st* createClassMethodsDeclarationBlock(
 	struct Class_methods_declaration_block_st* st = (struct Class_methods_declaration_block_st*) malloc (sizeof(struct Class_methods_declaration_block_st));
 	st->access = access;
 	st->list = list;
+    printf("createClassMethodsDeclarationBlock\n");
 	return st;
 }
 
@@ -574,6 +602,7 @@ struct Class_methods_declaration_block_list_st* createClassMethodsDeclarationBlo
 	struct Class_methods_declaration_block_list_st* st = (struct Class_methods_declaration_block_list_st*) malloc( sizeof(struct Class_methods_declaration_block_list_st));
 	st->list = list;
 	st->next = NULL;
+    printf("createClassMethodsDeclarationBlockList\n");
 	return st;
 }
 
@@ -584,6 +613,7 @@ struct Class_methods_declaration_block_list_st* addToClassMethodsDeclarationBloc
 	while( last->next != NULL )
 		last = last->next;
 	last->next = createClassMethodsDeclarationBlockList(list);
+    printf("addToClassMethodsDeclarationBlockList\n");
 	return root;
 }
 
@@ -598,6 +628,7 @@ struct Class_invariant_declaration_st* createClassInvariantDeclaration( struct T
 	struct Class_invariant_declaration_st* st = (struct Class_invariant_declaration_st*) malloc( sizeof(struct Class_invariant_declaration_st));
 	st->name = name;
 	st->val_type = valtype;
+    printf("createClassInvariantDeclaration\n");
 	return st;
 }
 
@@ -613,6 +644,7 @@ struct Class_invariants_declaration_list_st* createClassInvariantsDeclarationLis
 	struct Class_invariants_declaration_list_st* st = (struct Class_invariants_declaration_list_st*) malloc(sizeof(struct Class_invariants_declaration_list_st*));
 	st->invariant = invariant;
 	st->next = NULL;
+    printf("createClassInvariantsDeclarationList\n");
 	return st;
 }
 
@@ -623,6 +655,7 @@ struct Class_invariants_declaration_list_st* addToClassInvariantsDeclarationList
 	while( last->next != NULL)
 		last = last->next;
 	last->next = createClassInvariantsDeclarationList(invariant);
+    printf("addToClassInvariantsDeclarationList\n");
 	return root;
 }
 
@@ -638,6 +671,7 @@ struct Class_invariants_declaration_block_st* createClassInvariantsDeclarationBl
 	struct Class_invariants_declaration_block_st* st = (struct Class_invariants_declaration_block_st*) malloc(sizeof(struct Class_invariants_declaration_block_st));
 	st->access = access;
 	st->list = list;
+    printf("createClassInvariantsDeclarationBlock\n");
 	return st;
 }
 
@@ -653,6 +687,7 @@ struct Class_invariants_declaration_block_list_st* createClassInvariantsDeclarat
 	struct Class_invariants_declaration_block_list_st* st = (struct Class_invariants_declaration_block_list_st*) malloc( sizeof(struct Class_methods_declaration_block_list_st));
 	st->list = list;
 	st->next = NULL;
+    printf("createClassInvariantsDeclarationBlockList\n");
 	return st;
 }
 
@@ -663,6 +698,7 @@ struct Class_invariants_declaration_block_list_st* addToClassInvariantsDeclarati
 	while( last->next != NULL )
 		last = last->next;
 	last->next = createClassInvariantsDeclarationBlockList(list);
+    printf("addToClassInvariantsDeclarationBlockList\n");
 	return root;
 }
 
@@ -685,6 +721,7 @@ struct Class_declaration_st* createClassDeclaration(
 	st->parentName = parentName;
 	st->methods_declaraion_list = methods_declaraion_list;
 	st->invariants_declaration_list = invariants_declaration_list;
+    printf("createClassDeclaration\n");
 	return st;
 };
 
@@ -707,6 +744,7 @@ struct Class_method_impl_st* createClassMethodImpl(
 	st->params = decl->params;
 	st->returnType = decl->returnType;
 	st->body = stmt;
+    printf("createClassMethodImpl\n");
 	return st;
 }
 
@@ -721,6 +759,7 @@ struct Class_method_impl_list_st* createClassMethodImplList(struct Class_method_
 	struct Class_method_impl_list_st* st = (struct Class_method_impl_list_st*)malloc(sizeof(struct Class_method_impl_list_st));
 	st->method = method;
 	st->next = NULL;
+    printf("createClassMethodImplList\n");
 	return st;
 }
 
@@ -730,6 +769,7 @@ struct Class_method_impl_list_st* addToClassMethodImplList( struct Class_method_
 	while( last->next != NULL)
 		last = last->next;
 	last->next = createClassMethodImplList(method);
+    printf("addToClassMethodImplList\n");
 	return root;
 }
 
@@ -744,6 +784,7 @@ struct Class_impl_st* createClassImpl( char * name, struct Class_method_impl_lis
 	struct Class_impl_st* st = (struct Class_impl_st*) malloc( sizeof(struct Class_impl_st));
 	st->name = name;
 	st->methods = methods;
+    printf("createClassImpl\n");
 	return st;
 }
 
@@ -753,6 +794,7 @@ struct Expression_st* createInvariantCall(
     struct Expression_st* st = (struct Expression_st*) malloc(sizeof(struct Expression_st));
     st->identifier = name;
     st->object = object;
+    printf("createInvariantCall\n");
     return st;
 }
 
@@ -768,6 +810,7 @@ struct Method_call_arg_st* createMethodCallArg(
 	struct Method_call_arg_st* st = (struct Method_call_arg_st*)malloc(sizeof(struct Method_call_arg_st));
 	st->outer_name = outer_name;
 	st->value = value;
+    printf("createMethodCallArgs\n");
 	return st;
 }
 
@@ -783,6 +826,7 @@ struct Method_call_arg_list_st* createMethodCallArgList(
 	struct Method_call_arg_list_st * st = (struct Method_call_arg_list_st*) malloc(sizeof(struct Method_call_arg_list_st));
 	st->arg = arg;
 	st->next = NULL;
+    printf("createMethodCallArgList\n");
 	return st;
 }
 
@@ -793,6 +837,7 @@ struct Method_call_arg_list_st* addToMethodCallArgList(
 	while ( last->next != NULL)
 		last = last->next;
 	last->next = createMethodCallArgList(arg);
+    printf("addToMethodCallArgList\n");
 	return root; 
 }
 
@@ -801,6 +846,7 @@ struct Method_call_arg_list_st* addToFrontMethodCallArgList(
 {
 	struct Method_call_arg_list_st* newRoot = createMethodCallArgList(arg);
 	newRoot->next = root;
+    printf("addToFrontMethodCallArgList\n");
 	return newRoot;
 }
 
@@ -812,6 +858,7 @@ struct Expression_st* createMethodCall(
 	st->method_args = args;
 	st->identifier = name;
 	st->object = object;
+    printf("createMethodCall\n");
 	return st;
 }
 struct Func_arg_st 
@@ -825,6 +872,7 @@ struct Func_arg_st* createFuncArg(struct Type_st* valtype, char * name)
     struct Func_arg_st* st = (struct Func_arg_st*) malloc(sizeof(struct Func_arg_st));
     st->val_type = valtype;
     st->name = name;
+    printf("createFuncArg\n");
     return st; 
 }
 
@@ -839,6 +887,7 @@ struct Func_arg_list_st* createFuncArgList( struct Func_arg_st* arg )
     struct Func_arg_list_st* st = (struct Func_arg_list_st*) malloc(sizeof(struct Func_arg_list_st));
     st->arg  = arg;
     st->next = NULL;
+    printf("createFuncArgList\n");
     return st;
 }
 
@@ -848,6 +897,7 @@ struct Func_arg_list_st* addToFuncArgList( struct Func_arg_list_st* root, struct
     while ( last->next != NULL )
         last = last->next;
     last->next = createFuncArgList( arg);
+    printf("addToFuncArgList\n");
     return root;
 }
 
@@ -865,6 +915,7 @@ struct Func_declaration_st* createFuncDeclaration(
     st->return_type = return_type;
     st->name = name;
     st->args = args;
+    printf("createFuncDeclaration\n");
     return st;
 }
 
@@ -883,6 +934,7 @@ struct Func_impl_st* createFuncImpl(struct Func_declaration_st* decl, struct Sta
     st->name = decl->name;
     st->args = decl->args;
     st->body = body;
+    printf("createFuncImpl\n");
     return st;
 }
 
@@ -897,6 +949,7 @@ struct Func_call_arg_list_st* createFuncCallArgsList(struct Expression_st* arg)
     struct Func_call_arg_list_st* st = (struct Func_call_arg_list_st*) malloc(sizeof(struct Func_call_arg_list_st));
     st->arg = arg;
     st->next = NULL;
+    printf("createFuncCallArgsList\n");
     return st;
 }
 
@@ -907,6 +960,7 @@ struct Func_call_arg_list_st* addToFuncCallArgList(
     while (last->next != NULL)
         last = last->next;
     last->next = createFuncCallArgsList(arg);
+    printf("addToFuncCallArgList\n");
     return root;
 }
 
@@ -917,6 +971,7 @@ struct Expression_st* createFuncCall( char* name, struct Func_call_arg_list_st* 
     st->exprType = EXPR_FUNC_CALL;
     st->identifier = name;
     st->func_args = args;
+    printf("createFuncCall\n");
     return st;
 }
 
@@ -925,6 +980,7 @@ struct Expr_list_st* createExprList( struct Expression_st* elem)
     struct Expr_list_st* st = (struct Expr_list_st*) malloc(sizeof(struct Expr_list_st));
     st->expr = elem;
     st->next = NULL;
+    printf("createExprList\n");
     return st;
 }
 
@@ -935,6 +991,7 @@ struct Expr_list_st* addToExprList(
     while ( last->next != NULL)
         last = last->next;
     last->next = createExprList( elem);
+    printf("addToExprList\n");
     return root;
 }
 
@@ -944,6 +1001,7 @@ struct Expression_st* createArrayElemCall(
     struct Expression_st* st = (struct Expression_st*)malloc(sizeof(struct Expression_st));
     st->left = array_exp;
     st->right = index;
+    printf("createArrayElemCall\n");
     return st;
 }
 
@@ -955,6 +1013,7 @@ struct Extern_code_st
 	struct Class_impl_st* class_impl;
 	struct Enum_declaration_st* enum_decl;
 };
+
 struct Extern_code_st* createExternCode(
 	struct Func_declaration_st* func_decl, struct Func_impl_st* function_impl,
 	struct Class_declaration_st* class_decl, struct Class_impl_st* class_impl,
@@ -966,6 +1025,7 @@ struct Extern_code_st* createExternCode(
 	st->func_decl = func_decl;
 	st->func_impl = function_impl;
 	st->enum_decl = enum_decl;
+    printf("createExternCode\n");
 	return st;
 }
 
@@ -980,6 +1040,7 @@ struct Program_st* createProgram(struct Extern_code_st* code)
 	struct Program_st* st = (struct Program_st*) malloc (sizeof(struct Program_st));
 	st->code = code;
 	st->next = NULL;
+    printf("createProgram\n");
 	return st;
 }
 
@@ -989,6 +1050,7 @@ struct Program_st* addToProgram( struct Program_st* root, struct Extern_code_st*
 	while( last->next != NULL)
 		last = last->next;
 	last->next = createProgram(code);
+    printf("addToProgram\n");
 	return last;
 }
-#endif
+#endif TREE_STRUCTS_H
