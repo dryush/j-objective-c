@@ -20,7 +20,7 @@ void printSpaces() {
 }
 
 int getNextId() {
-    return max_id ++;
+    return max_id++;
 }
 
 void initId() {
@@ -102,14 +102,21 @@ void print( Class_impl_st* st ) {
 }
 
 void print( Enum_declaration_st* st) {
-    //ids[st] = getNextId();
-
+    if (st != NULL) {
+		ids[st] = getNextId();
+		labels[st] = "Enum_decl enum " + string(st->identifier) + "()";
+		g[st].push_back(st->enumerator_list);
+        print(st->enumerator_list);
+	}
 }
 
 void print( Func_declaration_st* st) {
-    //ids[st] = getNextId();
     if (st != NULL) {
-        printSpaces();
+        ids[st] = getNextId();
+		labels[st] = "Func_decl function " + string(st->name) + "()";
+		g[st].push_back(st->return_type);
+		g[st].push_back(st->args);
+		printSpaces();
         printf("Func_decl function %s()\n", st->name);
         lvl++;
         // print( st->return_type);
@@ -120,8 +127,12 @@ void print( Func_declaration_st* st) {
 }
 
 void print( Func_impl_st* st) {
-    //ids[st] = getNextId();
     if (st != NULL) {
+		ids[st] = getNextId();
+		labels[st] = "Func_impl function " + string(st->name) + "()";
+		g[st].push_back(st->return_type);
+		g[st].push_back(st->args);
+		g[st].push_back(st->body);
         printSpaces();
         printf("Func_impl function %s()\n", st->name);
         lvl++;
@@ -134,8 +145,14 @@ void print( Func_impl_st* st) {
 }
 
 void print( Extern_code_st* st) {
-    //ids[st] = getNextId();
     if (st != NULL) {
+		ids[st] = getNextId();
+		labels[st] = "Extern code";
+		g[st].push_back(st->class_decl);
+		g[st].push_back(st->class_impl);
+		g[st].push_back(st->enum_decl);
+		g[st].push_back(st->func_decl);
+		g[st].push_back(st->func_impl);
         printSpaces();
         printf("Extern code\n");
         lvl++;
@@ -149,10 +166,13 @@ void print( Extern_code_st* st) {
 }
 
 void print( Program_st* st ) {
-    //ids[st] = getNextId();
     printSpaces();
     printf("Program\n");
     if (st != NULL) {
+        ids[st] = getNextId();
+        labels[st] = "Program";
+		g[st].push_back(st->code);
+		g[st].push_back(st->next);
         lvl++;
         print( st->code);
         if( st->next) {
