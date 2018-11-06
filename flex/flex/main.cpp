@@ -19,6 +19,7 @@ int main(int argc, char *argv[]) {
 	yyin = fopen("test.m", "r");
 	yyparse();
 	Program_st* prog = root;
+	printf("\n\n");
 	print(root);
 	return 0;
 }

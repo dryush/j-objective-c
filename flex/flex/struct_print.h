@@ -27,30 +27,25 @@ void initId() {
 
 }
 
-void print( Class_declaration_st* st){
-    ids[st] = getNextId();
-
+void print( Expression_st* st) {
+    if (st != NULL) {
+        printSpaces();
+        lvl++;
+        lvl--;
+    }
 }
 
-void print( Class_impl_st* st ){
-    ids[st] = getNextId();
-
+void print( Statements_List_st* st) {
+    if (st != NULL) {
+        printSpaces();
+        printf("Statement list\n");
+        lvl++;
+        //print(st->stmt);
+        //print(st->next);
+        lvl--;
+    }
 }
 
-void print( Enum_declaration_st* st){
-    ids[st] = getNextId();
-
-}
-
-void print( Func_declaration_st* st){
-    ids[st] = getNextId();
-
-}
-
-void print( Func_impl_st* st){
-    if( st == NULL )
-        return;
-    ids[st] = getNextId();
 void print( Statement_st* st) {
     if (st != NULL) {
         printSpaces();
@@ -75,9 +70,9 @@ void print( Statement_st* st) {
                 break;
             }
             case STMT_VAR_DECL: {
-                printf("Var_decl_stmt %s\n", st->name);
-                print(st->var_type);
-                print(st->array_constant);
+                printf("Var_decl_stmt %s\n", st->identifier);
+               // print(st->var_type);
+               // print(st->array_constant);
                 print(st->expr);
                 break;
             }
@@ -88,7 +83,7 @@ void print( Statement_st* st) {
             }
             case STMT_COMPOUND: {
                 printf("Compound_stmt\n");
-                printf(st->truth_stmt_list);
+                print(st->truth_stmt_list);
                 break;
             }
         }
@@ -133,7 +128,7 @@ void print( Func_impl_st* st) {
         // print( st->return_type);
         // printf( "function %s()\n", st->name);
         // print( st->args);
-        // print( st->body);
+        print( st->body);
         lvl--;
     }
 }
@@ -156,7 +151,7 @@ void print( Extern_code_st* st) {
 void print( Program_st* st ) {
     //ids[st] = getNextId();
     printSpaces();
-    printf("Program");
+    printf("Program\n");
     if (st != NULL) {
         lvl++;
         print( st->code);
