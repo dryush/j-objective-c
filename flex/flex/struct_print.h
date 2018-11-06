@@ -5,15 +5,12 @@
 
 #include "tree_structs.h"
 
-<<<<<<< HEAD
 using namespace std;
 
 int max_id = 1;
 unordered_map<void*, int> ids;
 unordered_map<void*, string> labels;
 unordered_map<void*, vector<void*>> g;
-=======
-int max_id = 0;
 int lvl = 0; // ÑƒÑ€Ð¾Ð²ÐµÐ½ÑŒ Ð³Ð»ÑƒÐ±Ð¸Ð½Ñ‹
 
 void printSpaces() {
@@ -21,13 +18,11 @@ void printSpaces() {
         printf(" ");
     }
 }
->>>>>>> e1a9a4418ba2ec6f06bbf14e9778497581054860
 
 int getNextId() {
     return max_id ++;
 }
 
-<<<<<<< HEAD
 void initId() {
 
 }
@@ -56,7 +51,6 @@ void print( Func_impl_st* st){
     if( st == NULL )
         return;
     ids[st] = getNextId();
-=======
 void print( Statement_st* st) {
     if (st != NULL) {
         printSpaces();
@@ -129,7 +123,6 @@ void print( Func_declaration_st* st) {
         lvl--;
     }
 }
->>>>>>> e1a9a4418ba2ec6f06bbf14e9778497581054860
 
 void print( Func_impl_st* st) {
     //ids[st] = getNextId();
@@ -145,27 +138,6 @@ void print( Func_impl_st* st) {
     }
 }
 
-<<<<<<< HEAD
-void print( Extern_code_st* st){
-    if( st == NULL )
-        return;
-    ids[st] = getNextId();
-    labels[st] = "Áëà áëà áëà";
-    g[st].push_back( st->class_decl);
-    print( st->class_decl);
-    print( st->class_impl);
-    print( st->enum_decl);
-    print( st->func_decl);
-    print( st->func_impl);
-    
-}
-
-void print( Program_st* st ){
-    ids[st] = getNextId();
-    print( st->code);
-    if( st->next) {
-        print( st->next);
-=======
 void print( Extern_code_st* st) {
     //ids[st] = getNextId();
     if (st != NULL) {
@@ -192,6 +164,5 @@ void print( Program_st* st ) {
             print( st->next);
         }
         lvl--;
->>>>>>> e1a9a4418ba2ec6f06bbf14e9778497581054860
     }
 }
