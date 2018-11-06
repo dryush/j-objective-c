@@ -47,6 +47,164 @@ void print( Expression_st* st) {
     if (st != NULL) {
         printSpaces();
         lvl++;
+        ids[st] = getNextId();
+        switch(st->exprType) {
+            case EXPR_OPERATION: {
+                switch(st->operationType) {
+                    case OP_ADD: {
+                        labels[st] = "+";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_SUB: {
+                        labels[st] = "-";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_MUL: {
+                        labels[st] = "*";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_DIV: {
+                        labels[st] = "/";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_MOD: {
+                        labels[st] = "%";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_ASSIGN: {
+                        labels[st] = "=";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_ASSIGN_ARRAY: {
+
+                    }
+                    case OP_LESS: {
+                        labels[st] = "<";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_LESS_OR_EQUAL: {
+                        labels[st] = "<=";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_GREATER: {
+                        labels[st] = ">";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_GREATER_OR_EQUAL: {
+                        labels[st] = ">=";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_EQUAL: {
+                        labels[st] = "==";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_NOT_EQUAL: {
+                        labels[st] = "!=";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_LOGICAL_NOT: {
+                        labels[st] = "!";
+                        g[st].push_back(st->left);
+                        print(st->left);
+                    }
+                    case OP_AND: {
+                        labels[st] = "&&";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_OR: {
+                        labels[st] = "||";
+                        g[st].push_back(st->left);
+                        g[st].push_back(st->right);
+                        print(st->left);
+                        print(st->right);
+                    }
+                    case OP_UPLUS: {
+                        labels[st] = "UPLUS";
+                        g[st].push_back(st->left);
+                        print(st->left);
+                    }
+                    case OP_UMINUS: {
+                        labels[st] = "UMINUS";
+                        g[st].push_back(st->left);
+                        print(st->left);
+                    }
+                    case OP_VALUE: {
+                        labels[st] = "Value";
+                        switch(st->const_type) {
+                            case TYPE_INT: {
+                                labels[st] += "Const_Int ";
+                            }
+                            case TYPE_FLOAT: {
+                                labels[st] += "Const_Float ";
+                            }
+                            case TYPE_CHAR: {
+                                labels[st] += "Const_Char " + string(st->char_value);                                
+                            }
+                            case TYPE_STRING: {
+                                labels[st] += "Const_String " + string(st->string_value);
+                            }
+                            case TYPE_BOOL: {
+                                labels[st] += "Const_Bool " + string(st->bool_value);                                
+                            }
+                            case TYPE_CUSTOM: {
+                                labels[st] += "Identifier " + string(st->identifier);                                
+                            }
+                            case TYPE_INT: {
+                                labels[st] += "Pointer " + string(st->identifier);                                
+                            }
+                        }
+                    }
+                }
+            }
+            case EXPR_ARRAY_ELEM_CALL: {
+                labels[st] = "Array_elem_call ";
+            }
+            case EXPR_FUNC_CALL: {
+                labels[st] = "Func_call ";
+            }
+            case EXPR_METHOD_CALL: {
+                labels[st] = "Method_call ";
+            }
+        }
         lvl--;
     }
 }
@@ -56,6 +214,10 @@ void print( Statements_List_st* st) {
         printSpaces();
         printf("Statement list\n");
         lvl++;
+        ids[st] = getNextId();
+        labels[st] = "Statements_list";
+        g[st].push_back(st->stmt);
+        g[st].push_back(st->next);
         //print(st->stmt);
         //print(st->next);
         lvl--;
