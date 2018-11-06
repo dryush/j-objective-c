@@ -7,6 +7,7 @@
 #include <locale.h>
 
 #include "tree_structs.h"
+#include "struct_print.h"
 #include "objectivec.tab.c"
 #include "lex.yy.c"
 
@@ -18,5 +19,6 @@ int main(int argc, char *argv[]) {
 	yyin = fopen("test.m", "r");
 	yyparse();
 	Program_st* prog = root;
+	print(root);
 	return 0;
 }

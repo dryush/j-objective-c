@@ -286,8 +286,8 @@ enum StatementType
 	STMT_IF,
 	STMT_EXPR,
 	STMT_VAR_DECL,
-	STMT_LIST,
-	STMT_RETURN
+	STMT_RETURN,
+	STMT_COMPOUND
 };
 
 struct Statement_st
