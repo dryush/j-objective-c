@@ -106,7 +106,7 @@ void print( Enum_declaration_st* st) {
 		ids[st] = getNextId();
 		labels[st] = "Enum_decl enum " + string(st->identifier) + "()";
 		g[st].push_back(st->enumerator_list);
-        print(st->enumerator_list);
+        // print(st->enumerator_list);
 	}
 }
 
