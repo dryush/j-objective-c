@@ -175,6 +175,8 @@
 %left '.' ARROW
 %left '['
 %nonassoc ')' ']'
+
+%start prog
  
 %%
 /* ТУТ ПРАВИЛА */
@@ -185,8 +187,8 @@ extern_code: func_declaration 	{ $$ = createExternCode($1, NULL, NULL, NULL, NUL
 	| enum_declaration			{ $$ = createExternCode(NULL, NULL, NULL, NULL, $1);}
 	;
 	
-prog: extern_code 				{ root = createProgram($1);}
-    | prog extern_code 			{ root = addToProgram(root, $2);}
+prog: extern_code 				{ root = createProgram($1); printf("createProg");}
+    | prog extern_code 			{ root = addToProgram($1, $2);}
     ;
 
 stmt_list: stmt_list stmt { $$ = AppendStatementToList($1, $2); }

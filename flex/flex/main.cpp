@@ -14,7 +14,7 @@ extern struct Program_st* root;
 
 int main(int argc, char *argv[]) {
     
-	freopen("output.txt", "w", stdout);
+	//freopen("output.txt", "w", stdout);
 	yyin = fopen("test.m", "r");
 	yyparse();
 	Program_st* prog = root;
