@@ -183,6 +183,7 @@ struct Expression_st
 {
 	enum ExprType exprType;
 	enum OperationType operationType;
+	enum VarType const_type;
 	struct Expression_st *left;
 	struct Expression_st *right;
 	struct Expr_list_st *array_elems;

@@ -180,19 +180,19 @@ void print( Expression_st* st) {
                                 labels[st] += "Const_Float ";
                             }
                             case TYPE_CHAR: {
-                                labels[st] += "Const_Char " + string(st->char_value);                                
+                                labels[st] += "Const_Char ";                                
                             }
                             case TYPE_STRING: {
-                                labels[st] += "Const_String " + string(st->string_value);
+                                labels[st] += "Const_String ";
                             }
                             case TYPE_BOOL: {
-                                labels[st] += "Const_Bool " + string(st->bool_value);                                
+                                labels[st] += "Const_Bool ";                                
                             }
                             case TYPE_CUSTOM: {
-                                labels[st] += "Identifier " + string(st->identifier);                                
+                                labels[st] += "Identifier ";                                
                             }
-                            case TYPE_INT: {
-                                labels[st] += "Pointer " + string(st->identifier);                                
+                            case TYPE_POINTER: {
+                                labels[st] += "Pointer ";                                
                             }
                         }
                     }
