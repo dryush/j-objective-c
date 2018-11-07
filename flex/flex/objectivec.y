@@ -227,8 +227,8 @@ var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
 	;
 
 type: default_type { $$ = $1; } 
-	| ID '*' { createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
-	| ID { createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
+	| ID '*' { $$ = createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
+	| ID { $$ = createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
 	;
 
 default_type:  INT { $$ = createType(TYPE_INT, NULL, NULL);}
