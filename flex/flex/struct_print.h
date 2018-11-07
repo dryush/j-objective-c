@@ -50,10 +50,24 @@ void printDot() {
 int getNextId() {
     return max_id++;
 }
+void print(Expression_st* st);
+void print(Expr_list_st* st) {
+    if (st != NULL) {
+        ids[st] = getNextId();
+        labels[st] = "Func_call_arg_list";
+        Expr_list_st* next = st;
+		int number = 1;
+        while( next){
+            g[st].push_back(Edge::numb(next->expr, number));
+            print(next->expr);
+            next = next->next;
+			number++;
+        }
+    }
+}
 
 void print( Expression_st* st) {
     if (st != NULL) {
-
         ids[st] = getNextId();
         switch(st->exprType) {
             case EXPR_OPERATION: {
@@ -233,7 +247,9 @@ void print( Expression_st* st) {
 				break;
             }
             case EXPR_FUNC_CALL: {
-                labels[st] = "Func_call ";
+                labels[st] = "Func_call " + string(st->identifier) + "()";
+                g[st].push_back(st->func_args);
+                print(st->func_args);
 				break;
             }
             case EXPR_METHOD_CALL: {
@@ -247,13 +263,8 @@ void print( Statement_st* st);
 
 void print( Statements_List_st* st) {
     if (st != NULL) {
-
         ids[st] = getNextId();
         labels[st] = "Statements_list";
-        //g[st].push_back(st->stmt);
-        //g[st].push_back(st->next);
-        //print(st->stmt);
-        
         Statements_List_st* next = st;
 		int number = 1;
         while( next){
@@ -444,7 +455,7 @@ void print( Func_declaration_st* st) {
     if (st != NULL) {
         ids[st] = getNextId();
 		labels[st] = "Func_decl function " + string(st->name) + "()";
-		g[st].push_back(st->return_type);
+		g[st].push_back(Edge(st->return_type, "type"));
         print( st->return_type);
 		g[st].push_back(st->args);
         print( st->args);
@@ -509,10 +520,12 @@ void print( Program_st* st ) {
         labels[st] = "Program";
 
         Program_st* next = st;
+        int number = 1;
         while( next){
-            g[st].push_back(next->code);
+            g[st].push_back(Edge::numb(next->code, number));
             print( next->code);
             next = next->next;
+            number++;
         }
     }
     printDot();
