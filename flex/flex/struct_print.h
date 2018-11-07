@@ -51,6 +51,7 @@ int getNextId() {
     return max_id++;
 }
 
+
 void print( Expression_st* st) {
     if (st != NULL) {
 
@@ -107,6 +108,11 @@ void print( Expression_st* st) {
 						break;
                     }
                     case OP_ASSIGN_ARRAY: {
+						g[st].push_back(Edge::left(st->left));
+						g[st].push_back(Edge::right(st->array_elems));
+						print(st->left);
+						// ÐÀÑÊÎÌÅÍÒÈÒÜ
+						// print(st->array_elems);
 						break;
                     }
                     case OP_LESS: {
@@ -338,12 +344,15 @@ void print( Statement_st* st) {
             case STMT_VAR_DECL: {
                 printf("Var_decl_stmt %s\n", st->identifier);
                 labels[st] = "Var_decl_stmt " + string(st->identifier);
-		        g[st].push_back(Edge(st->var_type, "type"));
-                // g[st].push_back(st->array_constant);
-                g[st].push_back(st->expr);
-                print(st->var_type);
-                // print(st->array_constant);
-                print(st->expr);
+				if (st->var_type) {
+					g[st].push_back(Edge(st->var_type, "type"));
+					print(st->var_type);
+				}
+
+				if (st->expr) {
+					g[st].push_back(st->expr);
+					print(st->expr);
+				}
                 break;
             }
             case STMT_RETURN: {
