@@ -309,7 +309,6 @@ struct Statement_st
 	/* Для var_decl */
 	struct Type_st *var_type; 
 	char *identifier; 
-	struct Array_constant *array_constant;
 };
 
 struct Statements_List_st
