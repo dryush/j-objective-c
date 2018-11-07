@@ -25,7 +25,7 @@ struct Edge{
 	static Edge numb( void* st, int num) { return Edge(st, to_string((ll)num)); }
 };
 unordered_map<void*, vector<Edge>> g;
-int lvl = 0; // уровень глубины
+
 
 void printDot() {
     string dot = "digraph Program {\n";
@@ -47,24 +47,13 @@ void printDot() {
 	//freopen("CON","w", stdout);
 }
 
-void printSpaces() {
-    for (int i = 0 ; i < lvl; i++) {
-        printf(" ");
-    }
-}
-
 int getNextId() {
     return max_id++;
 }
 
-void initId() {
-
-}
-
 void print( Expression_st* st) {
     if (st != NULL) {
-        printSpaces();
-        lvl++;
+
         ids[st] = getNextId();
         switch(st->exprType) {
             case EXPR_OPERATION: {
@@ -252,16 +241,13 @@ void print( Expression_st* st) {
 				break;
             }
         }
-        lvl--;
     }
 }
 void print( Statement_st* st);
 
 void print( Statements_List_st* st) {
     if (st != NULL) {
-        printSpaces();
-        printf("Statement list\n");
-        lvl++;
+
         ids[st] = getNextId();
         labels[st] = "Statements_list";
         //g[st].push_back(st->stmt);
@@ -276,7 +262,6 @@ void print( Statements_List_st* st) {
             next = next->next;
 			number++;
         }
-        lvl--;
     }
 }
 
@@ -322,8 +307,7 @@ void print(Type_st * st) {
 
 void print( Statement_st* st) {
     if (st != NULL) {
-        printSpaces();
-        lvl++;
+
         ids[st] = getNextId();
         switch(st->stmt_type) {
             case STMT_WHILE: {
@@ -379,7 +363,6 @@ void print( Statement_st* st) {
                 break;
             }
         }
-        lvl--;
     }
 }
 
@@ -439,14 +422,10 @@ void print( Func_declaration_st* st) {
         ids[st] = getNextId();
 		labels[st] = "Func_decl function " + string(st->name) + "()";
 		g[st].push_back(st->return_type);
-		//g[st].push_back(st->args);
-		printSpaces();
-        printf("Func_decl function %s()\n", st->name);
-        lvl++;
         print( st->return_type);
-        // printf( "function %s()\n", st->name);
+
+		//g[st].push_back(st->args);
         // print( st->args);
-        lvl--;
     }
 }
 
