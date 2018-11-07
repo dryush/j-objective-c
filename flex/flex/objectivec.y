@@ -447,17 +447,17 @@ expr_list: expr 			{ $$ = createExprList($1);}
 
 /*МАССИВЫ */
 
-array_elems_or_empty: expr_list { $$ = $1;}
-    | /* empty */				  { $$ = NULL;}
+array_elems_or_empty: expr_list { $$ = $1; }
+    | /* empty */				{ $$ = NULL; }
     ;
 
 
 /*ФУНКЦИИ */
-func_arg: type ID { $$ =  createFuncArg($1, $2);}
+func_arg: type ID { $$ =  createFuncArg($1, $2); }
     ;
 
-func_args: func_arg 		{ $$ = createFuncArgList($1); }
-    | func_args func_arg	{ $$ = addToFuncArgList($1, $2); }
+func_args: func_arg 			{ $$ = createFuncArgList($1); }
+    | func_args ',' func_arg	{ $$ = addToFuncArgList($1, $3); }
     ;
 
 func_args_or_empty: func_args	{ $$ = $1; }
@@ -470,7 +470,7 @@ func_header: type ID '(' func_args_or_empty ')' { $$ = createFuncDeclaration($1,
 func_declaration: func_header ';' { $$ = $1; }
     ;
 
-func_implementation: func_header compound_stmt { $$ = createFuncImpl($1, $2);}
+func_implementation: func_header compound_stmt { $$ = createFuncImpl($1, $2); }
     ;
 
 
