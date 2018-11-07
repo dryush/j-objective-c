@@ -206,27 +206,27 @@ void print( Expression_st* st) {
                         labels[st] = "Value ";
                         switch(st->const_type) {
                             case TYPE_INT: {
-                                labels[st] += to_string((ll)st->int_value);
+                                labels[st] += string("Const_INT ") + to_string((ll)st->int_value);
 								break;
                             }
                             case TYPE_FLOAT: {
-                                labels[st] += to_string((ld)st->float_value);
+                                labels[st] += string("Const_FLOAT ") + to_string((ld)st->float_value);
 								break;
                             }
                             case TYPE_CHAR: {
-                                labels[st] +=  string(1, st->char_value);
+                                labels[st] += string("Const_CHAR \'") + string(1, st->char_value) + "\'";
 								break;
                             }
                             case TYPE_STRING: {
-                                labels[st] += string(st->string_value);
+                                labels[st] += string("Const_STRING ") + string(st->string_value);
 								break;
                             }
                             case TYPE_BOOL: {
-                                labels[st] += string(st->bool_value ? "true" : "false"); 
+                                labels[st] += string("Const_BOOL ") + string(st->bool_value ? "true" : "false"); 
 								break;
                             }
                             case TYPE_CUSTOM: {
-                                labels[st] += string("Identifier ")+ string(st->identifier) ;
+                                labels[st] += string("Identifier ") + string(st->identifier) ;
 								break;
                             }
                             case TYPE_POINTER: {
@@ -280,69 +280,6 @@ void print( Statements_List_st* st) {
     }
 }
 
-void print( Statement_st* st) {
-    if (st != NULL) {
-        printSpaces();
-        lvl++;
-        ids[st] = getNextId();
-        switch(st->stmt_type) {
-            case STMT_WHILE: {
-                printf("While_stmt\n");
-                labels[st] = "While_stmt";
-		        g[st].push_back(st->condition);
-                g[st].push_back(st->truth_stmt);
-                print(st->condition);
-                print(st->truth_stmt);
-                break;
-            }
-            case STMT_IF: {
-                printf("If_stmt\n");
-                labels[st] = "If_stmt";
-		        g[st].push_back(st->condition);
-                g[st].push_back(st->truth_stmt);
-                g[st].push_back(st->wrong_stmt);
-                print(st->condition);
-                print(st->truth_stmt);
-                print(st->wrong_stmt);
-                break;
-            }
-            case STMT_EXPR: {
-                printf("Expr\n");
-                labels[st] = "Expr";
-		        g[st].push_back(st->expr);
-                print(st->expr);
-                break;
-            }
-            case STMT_VAR_DECL: {
-                printf("Var_decl_stmt %s\n", st->identifier);
-                labels[st] = "Var_decl_stmt " + string(st->identifier);
-		        g[st].push_back(st->var_type);
-                g[st].push_back(st->array_constant);
-                g[st].push_back(st->expr);
-               // print(st->var_type);
-               // print(st->array_constant);
-                print(st->expr);
-                break;
-            }
-            case STMT_RETURN: {
-                printf("Return_stmt\n");
-                labels[st] = "Return_stmt";
-		        g[st].push_back(st->expr);
-                print(st->expr);
-                break;
-            }
-            case STMT_COMPOUND: {
-                printf("Compound_stmt\n");
-                labels[st] = "Compound_stmt";
-		        g[st].push_back(st->stmt_list);
-                print(st->stmt_list);
-                break;
-            }
-        }
-        lvl--;
-    }
-}
-
 void print(Type_st * st) {
     if (st != NULL) {
         ids[st] = getNextId();
@@ -380,6 +317,69 @@ void print(Type_st * st) {
 				break;
             } 
         }
+    }
+}
+
+void print( Statement_st* st) {
+    if (st != NULL) {
+        printSpaces();
+        lvl++;
+        ids[st] = getNextId();
+        switch(st->stmt_type) {
+            case STMT_WHILE: {
+                printf("While_stmt\n");
+                labels[st] = "While_stmt";
+		        g[st].push_back(st->condition);
+                g[st].push_back(st->truth_stmt);
+                print(st->condition);
+                print(st->truth_stmt);
+                break;
+            }
+            case STMT_IF: {
+                printf("If_stmt\n");
+                labels[st] = "If_stmt";
+		        g[st].push_back(st->condition);
+                g[st].push_back(st->truth_stmt);
+                g[st].push_back(st->wrong_stmt);
+                print(st->condition);
+                print(st->truth_stmt);
+                print(st->wrong_stmt);
+                break;
+            }
+            case STMT_EXPR: {
+                printf("Expr\n");
+                labels[st] = "Expr";
+		        g[st].push_back(st->expr);
+                print(st->expr);
+                break;
+            }
+            case STMT_VAR_DECL: {
+                printf("Var_decl_stmt %s\n", st->identifier);
+                labels[st] = "Var_decl_stmt " + string(st->identifier);
+		        g[st].push_back(st->var_type);
+                // g[st].push_back(st->array_constant);
+                g[st].push_back(st->expr);
+                print(st->var_type);
+                // print(st->array_constant);
+                print(st->expr);
+                break;
+            }
+            case STMT_RETURN: {
+                printf("Return_stmt\n");
+                labels[st] = "Return_stmt";
+		        g[st].push_back(st->expr);
+                print(st->expr);
+                break;
+            }
+            case STMT_COMPOUND: {
+                printf("Compound_stmt\n");
+                labels[st] = "Compound_stmt";
+		        g[st].push_back(st->stmt_list);
+                print(st->stmt_list);
+                break;
+            }
+        }
+        lvl--;
     }
 }
 
