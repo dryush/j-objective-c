@@ -295,7 +295,8 @@ void print(Type_st * st) {
 				break;
             }
             case TYPE_POINTER: {
-                //labels[st] += "* ";      
+                labels[st] += "* (pointer)";
+				print(st->childType);
 				break;
             } 
         }
