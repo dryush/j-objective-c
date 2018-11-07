@@ -98,7 +98,7 @@ ONE_LINE_COMMENT \/\/.*\n
 "void"		{ return VOID; }
 "int"		{ return INT; }
 "float"		{ return FLOAT; }
-"char"		{ return CHAR_; }
+"char"		{ return CHAR; }
 
 "enum"		{ return ENUM; }
 
