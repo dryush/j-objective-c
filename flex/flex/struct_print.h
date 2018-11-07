@@ -417,15 +417,37 @@ void print( Enum_declaration_st* st) {
 	}
 }
 
+void print(Func_arg_st* st) {
+    if (st != NULL) {
+        ids[st] = getNextId();
+        labels[st] = string(st->name);
+        g[st].push_back(Edge(st->val_type, "type"));
+        print( st->val_type);
+    }
+}
+
+void print(Func_arg_list_st* st) {
+    if (st != NULL) {
+        ids[st] = getNextId();
+        labels[st] = "Func_arg_list";
+        Func_arg_list_st* next = st;
+		int number = 1;
+        while( next){
+            g[st].push_back(Edge::numb(next->arg, number));
+            print(next->arg);
+            next = next->next;
+			number++;
+        }
+    }
+}
 void print( Func_declaration_st* st) {
     if (st != NULL) {
         ids[st] = getNextId();
 		labels[st] = "Func_decl function " + string(st->name) + "()";
 		g[st].push_back(st->return_type);
         print( st->return_type);
-
-		//g[st].push_back(st->args);
-        // print( st->args);
+		g[st].push_back(st->args);
+        print( st->args);
     }
 }
 
@@ -439,8 +461,8 @@ void print( Func_impl_st* st) {
         }
 
         if( st->args) {
-            //g[st].push_back(st->args);
-            // print( st->args);
+            g[st].push_back(st->args);
+            print( st->args);
         }
 
         if( st->body){
