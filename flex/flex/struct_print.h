@@ -366,14 +366,102 @@ void print( Statement_st* st) {
     }
 }
 
+void print(Class_method_param_declaration_st* st) {
+	ids[st] = getNextId();
+	labels[st] = "param name out: " + string(st->outerName) + " in " + string(st->innerName) ;
+	if (st->val_type) {
+		g[st].push_back(st);
+		print(st->val_type);
+	}
+}
+
+void print(Class_method_param_declaration_list_st* st) {
+	ids[st] = getNextId();
+	labels[st] = "params";
+	auto next = st;
+	while (next) {
+		g[st].push_back(next->param);
+		print(next->param);
+		next = next->next;
+	}
+}
+
+void print(Class_method_declaration_st* st) {
+	ids[st] = getNextId();
+	string lbl = "";
+	if (st->methodType == STATIC) {
+		lbl += " static ";
+	}
+	else if (st->methodType == NON_STATIC) {
+		lbl += " non_static ";
+	}
+	lbl += st->name;
+	labels[st] = lbl;
+	if (st->returnType) {
+		g[st].push_back(st->returnType);
+		print(st->returnType);
+	}
+
+	if (st->params) {
+		g[st].push_back(st->params);
+		print(st->params);
+	}
+}
+
+void print(Class_methods_declaration_block_st* st) {
+	ids[st] = getNextId();
+	string acs;
+	if (st->access == A_NOT_SET)
+		acs = "ACSESS NOT SET";
+	else if (st->access == A_PRIVATE)
+		acs = "PRIVATE";
+	else if (st->access == A_PROTECTED)
+		acs = "PROTECTED";
+	else if (st->access == A_PRIVATE)
+		acs = "PRIVATE";
+
+	labels[st] = acs;
+	auto next = st->list;
+	while (next) {
+		if (next->method) {
+			g[st].push_back(next->method);
+			print(next->method);
+		}
+		next = next->next;
+	}
+}
+
+void print(Class_methods_declaration_block_list_st* st) {
+	ids[st] = getNextId();
+	labels[st] = "Method_decl - s";
+	auto next = st;
+	while (next) {
+		if (next->list) {
+			g[st].push_back(next->list);
+			print(next->list);
+		}
+		next = next->next;
+	}
+}
+
 void print( Class_declaration_st* st) {
     if (st != NULL) {
 		ids[st] = getNextId();
-		labels[st] = "Class_decl class " + string(st->name);
-		g[st].push_back(st->methods_declaraion_list);
-        g[st].push_back(st->invariants_declaration_list);
-        // print(st->methods_declaraion_list);
-        // print(st->invariants_declaration_list);
+		if (st->parentName) {
+			labels[st] = "Class_decl class " + string(st->name) + " : " + string(st->parentName) ;
+		}
+		else {
+			labels[st] = "Class_decl class " + string(st->name);
+		}
+		if (st->methods_declaraion_list) {
+			g[st].push_back(st->methods_declaraion_list);
+			print(st->methods_declaraion_list);
+		}
+
+		if (st->invariants_declaration_list) {
+			g[st].push_back(st->invariants_declaration_list);
+			// print(st->invariants_declaration_list);
+		}
 	}
 }
 
