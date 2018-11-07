@@ -443,6 +443,52 @@ void print(Class_methods_declaration_block_list_st* st) {
 		next = next->next;
 	}
 }
+void print(Class_invariant_declaration_st* st) {
+	ids[st] = getNextId();
+	labels[st] = "invar: " + string(st->name);
+	if (st->val_type) {
+		g[st].push_back(st->val_type);
+		print(st->val_type);
+	}
+
+}
+void print(Class_invariants_declaration_block_st* st) {
+	ids[st] = getNextId();
+	string acs;
+	if (st->access == A_NOT_SET)
+		acs = "ACSESS NOT SET";
+	else if (st->access == A_PRIVATE)
+		acs = "PRIVATE";
+	else if (st->access == A_PROTECTED)
+		acs = "PROTECTED";
+	else if (st->access == A_PRIVATE)
+		acs = "PRIVATE";
+
+	labels[st] = acs;
+
+	auto next = st->list;
+	if (next) {
+		if (next->invariant) {
+			g[st].push_back(next->invariant);
+			print(next->invariant);
+		}
+		next = next->next;
+	}
+
+}
+
+void print(Class_invariants_declaration_block_list_st* st) {
+	ids[st] = getNextId();
+	labels[st] = "class inv";
+	auto  next = st;
+	while (next) {
+		if (next->list) {
+			g[st].push_back(next->list);
+			print(next->list);
+		}
+		next = next->next;
+	}
+}
 
 void print( Class_declaration_st* st) {
     if (st != NULL) {
@@ -460,7 +506,7 @@ void print( Class_declaration_st* st) {
 
 		if (st->invariants_declaration_list) {
 			g[st].push_back(st->invariants_declaration_list);
-			// print(st->invariants_declaration_list);
+			print(st->invariants_declaration_list);
 		}
 	}
 }
