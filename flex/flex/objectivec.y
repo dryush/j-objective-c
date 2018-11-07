@@ -90,14 +90,15 @@
 %type <_stmt_list> stmt_list_or_empty
 %type <_stmt> stmt
 %type <_stmt> compound_stmt
+%type <_stmt> var_decl
+%type <_stmt> if_stmt
+%type <_stmt> while_stmt
 %type <_expr> expr
 %type <_type> type
 %type <_type> default_type
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
 %type <_enumerator> enumerator
-
-%type <_stmt> var_decl
 
 %type <field_access_en> class_fields_access
 %type <class_invariant_declaration_st> class_invariant_declaration
@@ -176,7 +177,7 @@
 %left '['
 %nonassoc ')' ']'
 
-%start prog
+%start prog_full
  
 %%
 /* ТУТ ПРАВИЛА */
@@ -187,10 +188,12 @@ extern_code: func_declaration 	{ $$ = createExternCode($1, NULL, NULL, NULL, NUL
 	| enum_declaration			{ $$ = createExternCode(NULL, NULL, NULL, NULL, $1);}
 	;
 	
-prog: extern_code 				{ root = createProgram($1); printf("createProg");}
-    | prog extern_code 			{ root = addToProgram($1, $2);}
+prog: extern_code 				{ $$ = createProgram($1);}
+    | prog extern_code 			{ $$ = addToProgram($1, $2);}
     ;
 
+prog_full: prog { root = $1; }
+	;
 stmt_list: stmt_list stmt { $$ = AppendStatementToList($1, $2); }
     | stmt { $$ = CreateStatementList($1); }
     ;
@@ -202,20 +205,20 @@ stmt_list_or_empty: stmt_list { $$ = $1; }
 stmt: RETURN expr ';' 	{ $$ = CreateReturnStatement($2);}
 	| RETURN ';'		{ $$ = CreateReturnStatement(NULL);}
 	| expr ';' 			{ $$ = CreateExpressionStatement($1); }
-	| while_stmt 		{ /* $$ = $1; */ }
-	| if_stmt 			{ /* $$ = $1; */ }
+	| while_stmt 		{ $$ = $1; }
+	| if_stmt 			{ $$ = $1; }
 	| var_decl 			{ $$ = $1; }
 	| compound_stmt		{ $$ = $1; }
     ;
 
-compound_stmt: '{' stmt_list_or_empty '}' { /* $$ = $2; */}
+compound_stmt: '{' stmt_list_or_empty '}' { $$ = CreateCompoundStatement($2); }
     ;
 
-if_stmt: IF '(' expr ')' stmt 			{ /* $$ = CreateIfStatement($3, $5, NULL); */ }
-    | IF '(' expr ')' stmt ELSE stmt 	{ /* $$ = CreateIfStatement($3, $5, $7); */}
+if_stmt: IF '(' expr ')' stmt 			{ $$ = CreateIfStatement($3, $5, NULL); }
+    | IF '(' expr ')' stmt ELSE stmt 	{ $$ = CreateIfStatement($3, $5, $7); }
     ;
 	
-while_stmt: WHILE '(' expr ')' stmt 	{ /* $$ = CreateWhileStatement($3, $5); */ }
+while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhileStatement($3, $5); }
 	;
 	
 var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }

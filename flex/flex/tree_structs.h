@@ -85,11 +85,12 @@ struct Expression_st *CreateBoolValueExpression(char bool_value);
 struct Expression_st *CreateStringValueExpression(char *string_value);
 struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt);
 struct Statements_List_st *CreateStatementList(struct Statement_st *stmt);
+struct Statement_st* CreateCompoundStatement(struct Statements_List_st* stmt_list);
 struct Statement_st* CreateReturnStatement(struct Expression_st* expr);
 struct Statement_st *CreateExpressionStatement(struct Expression_st *expr);
-struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statements_List_st *stmt_list);
-struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct Statements_List_st *truth_stmt_list,
-								 	   struct Statements_List_st *wrong_stmt_list);
+struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statement_st *stmt);
+struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct Statement_st *truth_stmt,
+								 	   struct Statement_st *wrong_stmt);
 struct Statement_st* CreateVarDeclWithInit(struct Type_st *var_type, char *identifier, struct Expression_st *expr);
 struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems);
 struct Type_st* createType( enum VarType vartype, char * name, struct Type_st* child);								   
@@ -224,6 +225,7 @@ struct Expression_st *CreateIDExpression(char *identifier)
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
+	cur->const_type = TYPE_CUSTOM;
 	cur->identifier = identifier;
     printf("CreateIDExpression\n");
 	return cur;
@@ -234,6 +236,7 @@ struct Expression_st *CreateIntValueExpression(int int_value)
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
+	cur->const_type = TYPE_INT;
 	cur->int_value = int_value;
     printf("CreateIntValueExpression\n");
 	return cur;
@@ -244,6 +247,7 @@ struct Expression_st *CreateFloatValueExpression(double float_value)
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
+	cur->const_type = TYPE_FLOAT;
 	cur->float_value = float_value;
     printf("CreateFloatValueExpression\n");
 	return cur;
@@ -254,6 +258,7 @@ struct Expression_st *CreateBoolValueExpression(char bool_value)
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
+	cur->const_type = TYPE_BOOL;
 	cur->bool_value = bool_value;
     printf("CreateBoolValueExpression\n");
 	return cur;
@@ -264,6 +269,7 @@ struct Expression_st *CreateCharValueExpression(char char_value)
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
+	cur->const_type = TYPE_CHAR;
 	cur->char_value = char_value;
     printf("CreateCharValueExpression\n");
 	return cur;
@@ -274,6 +280,7 @@ struct Expression_st *CreateStringValueExpression(char *string_value)
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
 	cur->operationType = OP_VALUE;
+	cur->const_type = TYPE_STRING;
 	cur->string_value = string_value;
     printf("CreateStringValueExpression\n");
 	return cur;
@@ -296,8 +303,9 @@ struct Statement_st
 	enum StatementType stmt_type;
 	struct Expression_st *expr; /* в expr, return, var_decl */
 	struct Expression_st *condition; /* while, if */
-	struct Statements_List_st *truth_stmt_list; /* while, if, compound */
-	struct Statements_List_st *wrong_stmt_list; /* if */
+	struct Statement_st *truth_stmt; /* while, if */
+	struct Statement_st *wrong_stmt; /* if */
+	struct Statements_List_st *stmt_list; /* compound*/
 	/* Для var_decl */
 	struct Type_st *var_type; 
 	char *identifier; 
@@ -310,16 +318,6 @@ struct Statements_List_st
 	struct Statements_List_st *next;
 };
 
-struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt)
-{
-	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
-	cur->next =0 ;
-	list->next = cur;
-	cur->stmt = stmt;
-    printf("AppendStatementToList\n");
-	return cur;
-}
-
 struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
 {
 	struct Statements_List_st *cur = (struct Statements_List_st *)malloc(sizeof(struct Statements_List_st));
@@ -328,7 +326,26 @@ struct Statements_List_st *CreateStatementList(struct Statement_st *stmt)
     printf("CreateStatementList\n");
 	return cur;
 }
+struct Statements_List_st *AppendStatementToList(struct Statements_List_st *list, struct Statement_st *stmt)
+{
+	struct Statements_List_st* last = list;
+	while ( last->next){
+		last = last->next;
+	}
+	last->next = CreateStatementList(stmt);
+    printf("AppendStatementToList\n");
+	return list;
+}
 
+
+struct Statement_st* CreateCompoundStatement(struct Statements_List_st* stmt_list)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+    cur->stmt_type = STMT_COMPOUND;
+	cur->stmt_list = stmt_list;
+    printf("CreateCompoundStatement\n");
+	return cur;
+}
 
 struct Statement_st* CreateReturnStatement(struct Expression_st* expr) 
 {
@@ -348,24 +365,24 @@ struct Statement_st *CreateExpressionStatement(struct Expression_st *expr)
 	return cur;
 }
 
-struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statements_List_st *stmt_list)
+struct Statement_st *CreateWhileStatement(struct Expression_st *condition, struct Statement_st *stmt)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
 	cur->stmt_type = STMT_WHILE;
 	cur->condition = condition;
-	cur->truth_stmt_list = stmt_list;
+	cur->truth_stmt = stmt;
     printf("CreateWhileStatement\n");
 	return cur;
 }
 
-struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct Statements_List_st *truth_stmt_list,
-								 	   struct Statements_List_st *wrong_stmt_list)
+struct Statement_st *CreateIfStatement(struct Expression_st *condition, struct Statement_st *truth_stmt,
+								 	   struct Statement_st *wrong_stmt)
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
 	cur->stmt_type = STMT_IF;
 	cur->condition = condition;
-	cur->truth_stmt_list = truth_stmt_list;
-	cur->wrong_stmt_list = wrong_stmt_list;
+	cur->truth_stmt = truth_stmt;
+	cur->wrong_stmt = wrong_stmt;
     printf("CreateIfStatement\n");
 	return cur;
 }
@@ -1040,7 +1057,7 @@ struct Program_st* createProgram(struct Extern_code_st* code)
 {
 	struct Program_st* st = (struct Program_st*) malloc (sizeof(struct Program_st));
 	st->code = code;
-	st->next = NULL;
+	st->next = 0;
     printf("createProgram\n");
 	return st;
 }
@@ -1052,6 +1069,6 @@ struct Program_st* addToProgram( struct Program_st* root, struct Extern_code_st*
 		last = last->next;
 	last->next = createProgram(code);
     printf("addToProgram\n");
-	return last;
+	return root;
 }
 #endif TREE_STRUCTS_H
