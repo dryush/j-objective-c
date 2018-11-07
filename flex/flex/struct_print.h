@@ -403,12 +403,34 @@ void print( Class_impl_st* st ) {
 	}
 }
 
+void print( Enumerator_st* st) {
+    if (st != NULL) {
+        ids[st] = getNextId();
+        labels[st] = string(st->identifier) + " = " + to_string((ll)st->value);
+    }
+}
+
+void print( Enumerator_list_st* st) {
+    if (st != NULL) {
+        ids[st] = getNextId();
+        labels[st] = "Enumerator list";
+        Enumerator_list_st* next = st;
+		int number = 1;
+        while( next){
+            g[st].push_back(Edge::numb(next->enumerator, number));
+            print(next->enumerator);
+            next = next->next;
+			number++;
+        }
+    }
+}
+
 void print( Enum_declaration_st* st) {
     if (st != NULL) {
 		ids[st] = getNextId();
 		labels[st] = "Enum_decl enum " + string(st->identifier);
 		g[st].push_back(st->enumerator_list);
-        // print(st->enumerator_list);
+        print(st->enumerator_list);
 	}
 }
 
