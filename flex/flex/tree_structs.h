@@ -131,8 +131,8 @@ struct Class_invariants_declaration_block_list_st* addToClassInvariantsDeclarati
   struct Class_invariants_declaration_block_list_st* root, struct Class_invariants_declaration_block_st* list );
 struct Class_declaration_st* createClassDeclaration(
   char* name, char* parentName,
-  struct Class_methods_declaration_block_list_st* methods_declaraion_list,
-  struct Class_invariants_declaration_block_st* invariants_declaration_list );
+  struct Class_invariants_declaration_block_list_st* invariants_declaration_list,
+  struct Class_methods_declaration_block_list_st* methods_declaraion_list);
 struct Class_method_impl_st* createClassMethodImpl(
   struct Class_method_declaration_st* decl, struct Statement_st* stmt);
 struct Class_method_impl_list_st* createClassMethodImplList(struct Class_method_impl_st* method);
@@ -727,13 +727,13 @@ struct Class_declaration_st
 	char * name;
 	char * parentName;
 	struct Class_methods_declaration_block_list_st* methods_declaraion_list;
-	struct Class_invariants_declaration_block_st* invariants_declaration_list;
+	struct Class_invariants_declaration_block_list_st* invariants_declaration_list;
 };
 
 struct Class_declaration_st* createClassDeclaration(
   char* name, char* parentName,
-  struct Class_methods_declaration_block_list_st* methods_declaraion_list,
-  struct Class_invariants_declaration_block_st* invariants_declaration_list )
+  struct Class_invariants_declaration_block_list_st* invariants_declaration_list,
+  struct Class_methods_declaration_block_list_st* methods_declaraion_list )
 {
 	struct Class_declaration_st* st = (struct Class_declaration_st*)malloc(sizeof(struct Class_declaration_st));
 	st->name = name;

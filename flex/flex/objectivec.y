@@ -396,8 +396,8 @@ class_methods_declaration_or_empty: class_methods_declaration_with_access_list {
     | /* empty */	{$$ = NULL; }
     ;
 
-class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { /*$$ = createClassDeclaration($2, $4, $5, $6); */}
-	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { /*$$ = createClassDeclaration($2, NULL, $3, $4);*/ }
+class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, $4, $5, $6); }
+	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, $3, $4); }
     ;
 
 class_method_implementation: class_method compound_stmt { $$ = createClassMethodImpl($1, $2); }
@@ -412,7 +412,7 @@ class_methods_implementation_or_empty: class_methods_implementation {$$ = $1; }
     | /* empty */	{$$ = NULL; }
     ;
 
-class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END {} { $$ = createClassImpl($2, $3); }
+class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END { $$ = createClassImpl($2, $3); }
 	;
 	
 /*ВЫЗОВ МЕТОДА*/
