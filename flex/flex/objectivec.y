@@ -268,7 +268,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
 	| '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall($2, $3, $5);} /*Вызов метода*/
     | expr '[' expr ']' { $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
     | expr ARROW ID { $$ = createInvariantCall($1, $3);} /* Обращение к полю */
-	| ID '(' expr_list ')' { /*$$ = createFuncCall($1, $3);*/ } /* Вызов функции */
+	| ID '(' expr_list ')' { $$ = createFuncCall($1, $3); } /* Вызов функции */
 	| ID '(' ')'	{ /*$$ = createFuncCall($1, NULL); */} /* Вызов функции */
     ;
 

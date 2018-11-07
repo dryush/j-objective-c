@@ -198,7 +198,7 @@ struct Expression_st
     struct Expression_st* object; /* объект у которого вызывается поле или метод */
 	struct Method_call_arg_list_st* method_args;
 	/* Вызов функции*/
-    struct Func_call_arg_list_st* func_args;
+    struct Expr_list_st* func_args;
 
 };
 
@@ -957,34 +957,8 @@ struct Func_impl_st* createFuncImpl(struct Func_declaration_st* decl, struct Sta
     return st;
 }
 
-struct Func_call_arg_list_st
-{
-    struct Expression_st* arg;
-    struct Func_call_arg_list_st* next;
-};
 
-struct Func_call_arg_list_st* createFuncCallArgsList(struct Expression_st* arg)
-{
-    struct Func_call_arg_list_st* st = (struct Func_call_arg_list_st*) malloc(sizeof(struct Func_call_arg_list_st));
-    st->arg = arg;
-    st->next = NULL;
-    printf("createFuncCallArgsList\n");
-    return st;
-}
-
-struct Func_call_arg_list_st* addToFuncCallArgList( 
-  struct Func_call_arg_list_st* root, struct Expression_st* arg )
-{
-    struct Func_call_arg_list_st* last = root;
-    while (last->next != NULL)
-        last = last->next;
-    last->next = createFuncCallArgsList(arg);
-    printf("addToFuncCallArgList\n");
-    return root;
-}
-
-
-struct Expression_st* createFuncCall( char* name, struct Func_call_arg_list_st* args)
+struct Expression_st* createFuncCall( char* name, struct Expr_list_st* args)
 {
     struct Expression_st* st = (struct Expression_st*) malloc ( sizeof(struct Expression_st));
     st->exprType = EXPR_FUNC_CALL;
