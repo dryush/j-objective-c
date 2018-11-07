@@ -329,8 +329,8 @@ void print( Statement_st* st) {
             case STMT_WHILE: {
                 printf("While_stmt\n");
                 labels[st] = "While_stmt";
-		        g[st].push_back(st->condition);
-                g[st].push_back(st->truth_stmt);
+		        g[st].push_back(Edge(st->condition, "condition"));
+                g[st].push_back(Edge(st->truth_stmt, "true"));
                 print(st->condition);
                 print(st->truth_stmt);
                 break;
@@ -338,9 +338,9 @@ void print( Statement_st* st) {
             case STMT_IF: {
                 printf("If_stmt\n");
                 labels[st] = "If_stmt";
-		        g[st].push_back(st->condition);
-                g[st].push_back(st->truth_stmt);
-                g[st].push_back(st->wrong_stmt);
+		        g[st].push_back(Edge(st->condition, "condition"));
+                g[st].push_back(Edge(st->truth_stmt, "true"));
+                g[st].push_back(Edge(st->wrong_stmt, "false"));
                 print(st->condition);
                 print(st->truth_stmt);
                 print(st->wrong_stmt);
@@ -356,7 +356,7 @@ void print( Statement_st* st) {
             case STMT_VAR_DECL: {
                 printf("Var_decl_stmt %s\n", st->identifier);
                 labels[st] = "Var_decl_stmt " + string(st->identifier);
-		        g[st].push_back(st->var_type);
+		        g[st].push_back(Edge(st->var_type, "type"));
                 // g[st].push_back(st->array_constant);
                 g[st].push_back(st->expr);
                 print(st->var_type);
@@ -433,7 +433,7 @@ void print( Func_impl_st* st) {
 		ids[st] = getNextId();
 		labels[st] = "Func_impl function " + string(st->name) + "()";
         if( st->return_type){
-            g[st].push_back(st->return_type);
+            g[st].push_back(Edge(st->return_type, "type"));
             print( st->return_type);
         }
 
