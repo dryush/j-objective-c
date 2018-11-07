@@ -218,7 +218,7 @@ void print( Expression_st* st) {
 								break;
                             }
                             case TYPE_STRING: {
-                                labels[st] += string("Const_STRING ") + string(st->string_value);
+                                labels[st] +="Const_STRING \\\"" + string(st->string_value) + "\\\"";
 								break;
                             }
                             case TYPE_BOOL: {
