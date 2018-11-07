@@ -444,12 +444,13 @@ struct Enumerator_list_st
 
 struct Enumerator_list_st *AppendEnumeratorToList(struct Enumerator_list_st *list, struct Enumerator_st *enumerator)
 {
-	struct Enumerator_list_st *cur = (struct Enumerator_list_st *)malloc(sizeof(struct Enumerator_list_st));
-	cur->next = 0;
-	list->next = cur;
-	cur->enumerator = enumerator;
+	struct Enumerator_list_st *last = list;
+	while (last->next) {
+		last = last->next;
+	}
+	last->next = CreateEnumeratorList(enumerator);
     printf("AppendEnumeratorToList\n");
-	return cur;
+	return list;
 }
 
 struct Enumerator_list_st *CreateEnumeratorList(struct Enumerator_st *enumerator)
@@ -467,7 +468,7 @@ struct Enumerator_st
 	int value;
 };
 
-struct Enumerator_st *CreateEnumenator(char *identifier, int value)
+struct Enumerator_st *CreateEnumerator(char *identifier, int value)
 {
 	struct Enumerator_st *cur = (struct Enumerator_st *)malloc(sizeof(struct Enumerator_st));
 	cur->identifier = identifier;

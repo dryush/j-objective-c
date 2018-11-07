@@ -272,15 +272,15 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
 	| ID '(' ')'	{ /*$$ = createFuncCall($1, NULL); */} /* Вызов функции */
     ;
 
-enum_declaration: ENUM ID '{' enumerator_list '}' { $$ = CreateEnumDeclaration($2, $4); }
+enum_declaration: ENUM ID '{' enumerator_list '}' ';' { $$ = CreateEnumDeclaration($2, $4); }
 	;
 
 enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1, $3); }
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
-enumerator: ID { /* $$ = CreateEnumerator($1, -1); */ }
-	| ID '=' INT_CONST {  /* $$ = CreateEnumerator($1, $3); */ }
+enumerator: ID { $$ = CreateEnumerator($1, NULL); }
+	| ID '=' INT_CONST { $$ = CreateEnumerator($1, $3); }
 	;
 	
 	
