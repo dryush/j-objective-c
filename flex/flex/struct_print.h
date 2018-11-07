@@ -250,10 +250,7 @@ void print( Statements_List_st* st) {
 
         ids[st] = getNextId();
         labels[st] = "Statements_list";
-        //g[st].push_back(st->stmt);
-        //g[st].push_back(st->next);
-        //print(st->stmt);
-        
+
         Statements_List_st* next = st;
 		int number = 1;
         while( next){
@@ -388,7 +385,7 @@ void print(Class_method_param_declaration_list_st* st) {
 
 void print(Class_method_declaration_st* st) {
 	ids[st] = getNextId();
-	string lbl = "";
+	string lbl = "decl ";
 	if (st->methodType == STATIC) {
 		lbl += " static ";
 	}
@@ -511,12 +508,55 @@ void print( Class_declaration_st* st) {
 	}
 }
 
+void print(Class_method_impl_st* st) {
+	ids[st] = getNextId();
+	string lbl = "impl: ";
+	if (st->methodType == STATIC) {
+		lbl += " static ";
+	}
+	else if (st->methodType == NON_STATIC) {
+		lbl += " non_static ";
+	}
+	lbl += st->name;
+	labels[st] = lbl;
+
+	if (st->body) {
+		g[st].push_back(st->body);
+		print(st->body);
+	}
+
+	if (st->params) {
+		g[st].push_back(st->params);
+		print(st->params);
+	}
+
+	if (st->returnType) {
+		g[st].push_back(st->returnType);
+		print(st->returnType);
+	}
+
+}
+void print(Class_method_impl_list_st* st) {
+	ids[st] = getNextId();
+	labels[st] = "Class method impls";
+	auto next = st;
+	while (next) {
+		if (st->method) {
+			g[st].push_back(st->method);
+			print(st->method);
+		}
+		next = st->next;
+	}
+}
+
 void print( Class_impl_st* st ) {
     if (st != NULL) {
 		ids[st] = getNextId();
 		labels[st] = "Class_impl class " + string(st->name);
-		g[st].push_back(st->methods);
-        // print(st->methods);
+		if (st->methods) {
+			g[st].push_back(st->methods);
+			print(st->methods);
+		}
 	}
 }
 
