@@ -295,6 +295,14 @@ void print( Expression_st* st) {
                 }
 				break;
             }
+            case EXPR_INVAR_CALL: {
+                labels[st] = "invar_call: " + string(st->identifier);
+                if( st->object){
+                    g[st].push_back( st->object);
+                    print(st->object);
+                }
+                break;
+            }
         }
     }
 }

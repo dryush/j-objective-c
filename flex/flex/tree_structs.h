@@ -29,6 +29,7 @@ enum OperationType
 enum ExprType {
 	EXPR_OPERATION,
 	EXPR_METHOD_CALL,
+	EXPR_INVAR_CALL,
 	EXPR_FUNC_CALL,
 	EXPR_ARRAY_ELEM_CALL
 };
@@ -822,7 +823,8 @@ struct Expression_st* createInvariantCall(
   struct Expression_st* object, char * name )
 {
     struct Expression_st* st = (struct Expression_st*) malloc(sizeof(struct Expression_st));
-    st->identifier = name;
+    st->exprType = EXPR_INVAR_CALL;
+	st->identifier = name;
     st->object = object;
     printf("createInvariantCall\n");
     return st;
