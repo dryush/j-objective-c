@@ -160,7 +160,7 @@ struct Func_impl_st* createFuncImpl(struct Func_declaration_st* decl, struct Sta
 struct Func_call_arg_list_st* createFuncCallArgsList(struct Expression_st* arg);
 struct Func_call_arg_list_st* addToFuncCallArgList( 
   struct Func_call_arg_list_st* root, struct Expression_st* arg );
-struct Expression_st* createFuncCall( char* name, struct Func_call_arg_list_st* args);
+struct Expression_st* createFuncCall( char* name, struct Expr_list_st* args);
 struct Expr_list_st* createExprList( struct Expression_st* elem);
 struct Expr_list_st* addToExprList( 
     struct Expr_list_st* root, struct Expression_st * elem);

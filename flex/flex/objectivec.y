@@ -268,7 +268,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
     | expr '[' expr ']' 							{ $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
     | expr ARROW ID 								{ $$ = createInvariantCall($1, $3); } /* Обращение к полю */
 	| ID '(' expr_list ')' 							{ $$ = createFuncCall($1, $3); } /* Вызов функции */
-	| ID '(' ')'									{ /* $$ = createFuncCallNoArgs($1); */ } /* Вызов функции */
+	| ID '(' ')'									{  $$ = createFuncCall($1, NULL);  } /* Вызов функции */
     ;
 
 enum_declaration: ENUM ID '{' enumerator_list '}' ';' { $$ = CreateEnumDeclaration($2, $4); }
@@ -395,8 +395,11 @@ class_methods_declaration_or_empty: class_methods_declaration_with_access_list {
     | /* empty */	{ $$ = NULL; }
     ;
 
-class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END 	{ $$ = createClassDeclaration($2, $4, $5, $6); }
-	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END 					{ $$ = createClassDeclaration($2, NULL, $3, $4); }
+class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, $4, $5, $6); }
+	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, $3, $4); }
+	|  INTERFACE ID ':' ID  class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, $4, NULL, $5); }
+	|  INTERFACE ID class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, NULL, $3); }
+   
     ;
 
 class_method_implementation: class_method compound_stmt { $$ = createClassMethodImpl($1, $2); }
