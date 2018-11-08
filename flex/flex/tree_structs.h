@@ -294,6 +294,7 @@ enum StatementType
 	STMT_IF,
 	STMT_EXPR,
 	STMT_VAR_DECL,
+	STMT_ARRAY_DECL,
 	STMT_RETURN,
 	STMT_COMPOUND
 };
@@ -308,6 +309,8 @@ struct Statement_st
 	struct Statements_List_st *stmt_list; /* compound*/
 	/* Для var_decl */
 	struct Type_st *var_type; 
+	int array_size;
+	struct Expr_list_st* array_elems;
 	char *identifier; 
 };
 
@@ -397,14 +400,26 @@ struct Statement_st* CreateVarDeclWithInit(struct Type_st *var_type, char *ident
 	return cur;
 }
 /* Нужно разобраться с объявлением массива */
-struct Expression_st *CreateArrayInitStatement(struct Expression_st* left, struct Expr_list_st* elems)
+struct Statement_st *CreateArrayDeclWithInit(struct Type_st *var_type, char *identifier, int ar_size, struct Expr_list_st *exprs)
+{
+	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
+    cur->stmt_type =  STMT_ARRAY_DECL;
+	cur->var_type = var_type;
+	cur->identifier = identifier;
+	cur->array_elems = exprs;
+	cur->array_size = ar_size;
+    printf("CreateArrayDeclWithInit\n");
+	return cur;
+}
+/* Нужно разобраться с объявлением массива */
+struct Expression_st *CreateArrayInitExpr(struct Expression_st* left, struct Expr_list_st* elems)
 {
 	struct Expression_st *expr = (struct Expression_st*)malloc(sizeof(struct Expression_st));
 	expr->exprType = EXPR_OPERATION;
 	expr->operationType = OP_ASSIGN_ARRAY;
     expr->left = left;
     expr->array_elems = elems;
-    printf("CreateArrayInitStatement\n");
+    printf("CreateArrayInitExpr\n");
 	return expr;
 }
 

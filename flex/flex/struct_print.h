@@ -370,6 +370,20 @@ void print( Statement_st* st) {
 				}
                 break;
             }
+			case STMT_ARRAY_DECL: {
+				ids[st] = getNextId();
+				labels[st] = "array_decl: " + string(st->identifier) + "[" + to_string((ll)st->array_size ) + "]";
+				if (st->var_type) {
+					g[st].push_back(Edge(st->var_type, "type"));
+					print(st->var_type);
+				}
+
+				if (st->expr) {
+                    g[st].push_back(Edge(st->array_elems, "val"));
+                    print(st->array_elems);
+				}
+                break;
+			}
             case STMT_RETURN: {
                 printf("Return_stmt\n");
                 labels[st] = "Return_stmt";
@@ -440,8 +454,8 @@ void print(Class_methods_declaration_block_st* st) {
 		acs = "PRIVATE";
 	else if (st->access == A_PROTECTED)
 		acs = "PROTECTED";
-	else if (st->access == A_PRIVATE)
-		acs = "PRIVATE";
+	else if (st->access == A_PUBLIC)
+		acs = "PUBLIC";
 
 	labels[st] = acs;
 	auto next = st->list;

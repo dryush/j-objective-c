@@ -223,7 +223,8 @@ while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhileStatement($3, $5); }
 	
 var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
 	| type ID ';'						{ $$ = CreateVarDeclWithInit($1, $2, NULL); }
-	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  {;}
+	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  { $$ = CreateArrayDeclWithInit($1, $2, $4, NULL);}
+	| type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'	/*Массивы*/ { $$ = CreateArrayDeclWithInit($1, $2, $4, $8);}
 	;
 
 type: default_type { $$ = $1; } 
@@ -245,7 +246,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
     | expr '/' expr 				{ $$ = CreateExpression(OP_DIV, $1, $3); }
 	| expr '%' expr 				{ $$ = CreateExpression(OP_MOD, $1, $3); }
 	| expr '=' expr 				{ $$ = CreateExpression(OP_ASSIGN, $1, $3); }
-	| expr '=' '{' array_elems_or_empty '}' { $$ = CreateArrayInitStatement($1, $4);} /*Присвоение константы массива*/
+	| expr '=' '{' array_elems_or_empty '}' { $$ = CreateArrayInitExpr($1, $4);} /*Присвоение константы массива*/
 	| expr '<' expr 				{ $$ = CreateExpression(OP_LESS, $1, $3); }
 	| expr LESS_OR_EQUAL expr 		{ $$ = CreateExpression(OP_LESS_OR_EQUAL, $1, $3); }
 	| expr '>' expr 				{ $$ = CreateExpression(OP_GREATER, $1, $3); }
