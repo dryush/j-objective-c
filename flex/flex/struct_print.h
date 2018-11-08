@@ -148,8 +148,6 @@ void print( Expression_st* st) {
 						g[st].push_back(Edge::left(st->left));
 						g[st].push_back(Edge::right(st->array_elems));
 						print(st->left);
-						// ������������
-						// print(st->array_elems);
 						break;
                     }
                     case OP_LESS: {
@@ -480,7 +478,7 @@ void print(Class_methods_declaration_block_st* st) {
 	ids[st] = getNextId();
 	string acs;
 	if (st->access == A_NOT_SET)
-		acs = "ACSESS NOT SET";
+		acs = "ACСESS NOT SET";
 	else if (st->access == A_PRIVATE)
 		acs = "PRIVATE";
 	else if (st->access == A_PROTECTED)
