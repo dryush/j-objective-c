@@ -157,9 +157,6 @@ struct Func_arg_list_st* addToFuncArgList( struct Func_arg_list_st* root, struct
 struct Func_declaration_st* createFuncDeclaration(
   struct Type_st* return_type, char*name, struct Func_arg_list_st * args );
 struct Func_impl_st* createFuncImpl(struct Func_declaration_st* decl, struct Statement_st* body);
-struct Func_call_arg_list_st* createFuncCallArgsList(struct Expression_st* arg);
-struct Func_call_arg_list_st* addToFuncCallArgList( 
-  struct Func_call_arg_list_st* root, struct Expression_st* arg );
 struct Expression_st* createFuncCall( char* name, struct Expr_list_st* args);
 struct Expr_list_st* createExprList( struct Expression_st* elem);
 struct Expr_list_st* addToExprList( 

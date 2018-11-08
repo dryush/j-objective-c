@@ -125,7 +125,7 @@ void print( Expression_st* st) {
 						g[st].push_back(Edge::left(st->left));
 						g[st].push_back(Edge::right(st->array_elems));
 						print(st->left);
-						// ÐÀÑÊÎÌÅÍÒÈÒÜ
+						// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						// print(st->array_elems);
 						break;
                     }
