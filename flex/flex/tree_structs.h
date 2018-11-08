@@ -1004,6 +1004,7 @@ struct Expression_st* createArrayElemCall(
   struct Expression_st* array_exp, struct Expression_st* index )
 {
     struct Expression_st* st = (struct Expression_st*)malloc(sizeof(struct Expression_st));
+	st->exprType = EXPR_ARRAY_ELEM_CALL;
     st->left = array_exp;
     st->right = index;
     printf("createArrayElemCall\n");

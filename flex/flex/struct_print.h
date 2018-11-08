@@ -273,6 +273,10 @@ void print( Expression_st* st) {
             }
             case EXPR_ARRAY_ELEM_CALL: {
                 labels[st] = "Array_elem_call ";
+                g[st].push_back(Edge(st->left, "array" ));
+                print(st->left);
+                g[st].push_back(Edge(st->right, "index"));
+                print(st->right);
 				break;
             }
             case EXPR_FUNC_CALL: {
