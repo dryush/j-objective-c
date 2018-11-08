@@ -81,36 +81,22 @@ struct Func_impl_st* createFuncImpl(struct Func_declaration_st* decl, struct Sta
     return st;
 }
 
-struct Func_call_arg_list_st
-{
-    struct Expression_st* arg;
-    struct Func_call_arg_list_st* next;
-};
-
-struct Func_call_arg_list_st* createFuncCallArgsList(struct Expression_st* arg)
-{
-    struct Func_call_arg_list_st* st = (struct Func_call_arg_list_st*) malloc(sizeof(struct Func_call_arg_list_st));
-    st->arg = arg;
-    st->next = NULL;
-    return st;
-}
-
-struct Func_call_arg_list_st* addToFuncCallArgList( 
-  struct Func_call_arg_list_st* root, struct Expression_st* arg )
-{
-    struct Func_call_arg_list_st* last = root;
-    while (last->next != NULL)
-        last = last->next;
-    last->next = createFuncCallArgsList(arg);
-    return root;
-}
-
-
-struct Expression_st* createFuncCall( char* name, struct Func_call_arg_list_st* args)
+struct Expression_st* createFuncCall( char* name, struct Expr_list_st* args)
 {
     struct Expression_st* st = (struct Expression_st*) malloc ( sizeof(struct Expression_st));
     st->exprType = EXPR_FUNC_CALL;
     st->identifier = name;
     st->func_args = args;
+    printf("createFuncCall\n");
+    return st;
+}
+
+struct Expression_st* createFuncCallNoArgs( char* name)
+{
+    struct Expression_st* st = (struct Expression_st*) malloc ( sizeof(struct Expression_st));
+    st->exprType = EXPR_FUNC_CALL;
+    st->identifier = name;
+    st->func_args = NULL;
+    printf("createFuncCallNoArgs\n");
     return st;
 }

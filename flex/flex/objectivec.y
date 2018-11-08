@@ -264,12 +264,11 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
 	| BOOL_CONST					{ $$ = CreateBoolValueExpression($1); }
 	| CHAR_CONST					{ $$ = CreateCharValueExpression($1); }
 	| STRING_CONST 					{ $$ = CreateStringValueExpression($1); }
-	/* [receiver methodWithFirstArgument: 10 andSecondArgument: 20]; */
-	| '['expr ID ':' method_call_args_or_empty']' { $$ =createMethodCall($2, $3, $5);} /*Вызов метода*/
-    | expr '[' expr ']' { $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
-    | expr ARROW ID { $$ = createInvariantCall($1, $3);} /* Обращение к полю */
-	| ID '(' expr_list ')' { $$ = createFuncCall($1, $3); } /* Вызов функции */
-	| ID '(' ')'	{ /*$$ = createFuncCall($1, NULL); */} /* Вызов функции */
+	| '['expr ID ':' method_call_args_or_empty']' 	{ $$ = createMethodCall($2, $3, $5); } /*Вызов метода*/
+    | expr '[' expr ']' 							{ $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
+    | expr ARROW ID 								{ $$ = createInvariantCall($1, $3); } /* Обращение к полю */
+	| ID '(' expr_list ')' 							{ $$ = createFuncCall($1, $3); } /* Вызов функции */
+	| ID '(' ')'									{ /* $$ = createFuncCallNoArgs($1); */ } /* Вызов функции */
     ;
 
 enum_declaration: ENUM ID '{' enumerator_list '}' ';' { $$ = CreateEnumDeclaration($2, $4); }
@@ -279,8 +278,8 @@ enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
-enumerator: ID { $$ = CreateEnumerator($1, NULL); }
-	| ID '=' INT_CONST { $$ = CreateEnumerator($1, $3); }
+enumerator: ID 			{ $$ = CreateEnumerator($1, NULL); }
+	| ID '=' INT_CONST 	{ $$ = CreateEnumerator($1, $3); }
 	;
 	
 	
@@ -307,8 +306,8 @@ enumerator: ID { $$ = CreateEnumerator($1, NULL); }
 */
 
 class_fields_access: PUBLIC { $$ = A_PUBLIC; } 
-	| PROTECTED { $$ = A_PROTECTED; }
-	| PRIVATE	{ $$ = A_PRIVATE; }
+	| PROTECTED 			{ $$ = A_PROTECTED; }
+	| PRIVATE				{ $$ = A_PRIVATE; }
 	;
 
 class_invariant_declaration: type ID ';' { $$ = createClassInvariantDeclaration($1, $2); }
@@ -328,11 +327,11 @@ class_invariant_declaration_with_access_list:
 	| class_invariant_declaration_with_access_list class_invariant_declaration_with_access { $$ = addToClassInvariantsDeclarationBlockList($1, $2); }
 	;
 
-class_invariants_declaration: '{' '}' 	{ $$ = NULL; }
-    | '{' class_invariant_declaration_with_access_list '}' { $$ = $2; }
+class_invariants_declaration: '{' '}' 						{ $$ = NULL; }
+    | '{' class_invariant_declaration_with_access_list '}' 	{ $$ = $2; }
 	;
 
-class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclaration( NULL, $2, $4 );}
+class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclaration( NULL, $2, $4 ); }
 	;
 	
 /*Параметры, начиная со второго могут либо все объявляться с именем 
@@ -342,22 +341,22 @@ class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclarati
 class_method_other_param_named: ID ':' '(' type ')' ID { $$ = createClassMethodParamDeclaration($1, $4, $6); }
 	;
 
-class_method_other_params_named: class_method_other_param_named  { $$ = createClassMethodParamDeclarationList($1); }
-	| class_method_other_params_named class_method_other_param_named { $$ = addToClassMethodParamDeclarationList($1, $2); }
+class_method_other_params_named: class_method_other_param_named  		{ $$ = createClassMethodParamDeclarationList($1); }
+	| class_method_other_params_named class_method_other_param_named 	{ $$ = addToClassMethodParamDeclarationList($1, $2); }
 	;
 
-class_method_params_nonamed: class_method_first_param { $$ = createClassMethodParamDeclarationList($1); }
-	| class_method_params_nonamed class_method_first_param { $$ = addToClassMethodParamDeclarationList($1, $2); }
+class_method_params_nonamed: class_method_first_param 		{ $$ = createClassMethodParamDeclarationList($1); }
+	| class_method_params_nonamed class_method_first_param 	{ $$ = addToClassMethodParamDeclarationList($1, $2); }
 	;
 	
 
 class_method_all_params: class_method_first_param class_method_other_params_named { $$ = addToFrontClassMethodParamDeclarationList($2, $1); }
-	| class_method_params_nonamed {$$ = $1; }
+	| class_method_params_nonamed { $$ = $1; }
 	;
 	
 /*Список параметров метода может быть пустым */
-class_method_params: class_method_all_params {$$ = $1; }
-	| /*Пусто*/	{$$ = NULL; }
+class_method_params: class_method_all_params 	{ $$ = $1; }
+	| /*Пусто*/									{ $$ = NULL; }
 	;
 	
 /*Объявление метода без завершающей ';', чтоб переиспользовать в реализации метода */
@@ -368,10 +367,10 @@ class_method_params: class_method_all_params {$$ = $1; }
 … ]
 */
 
-class_method: '-' '(' type ')' ID ':' class_method_params { $$ = createMethodDeclaration(NON_STATIC, $3, $5, $7);}
-    | '+' '(' type ')' ID ':' class_method_params { $$ = createMethodDeclaration(STATIC, $3, $5, $7);}
-    | '-' '(' type ')' ID { $$ = createMethodDeclaration(NON_STATIC, $3, $5, NULL);}
-    | '+' '(' type ')' ID { $$ = createMethodDeclaration(STATIC, $3, $5, NULL);}
+class_method: '-' '(' type ')' ID ':' class_method_params 	{ $$ = createMethodDeclaration(NON_STATIC, $3, $5, $7); }
+    | '+' '(' type ')' ID ':' class_method_params 			{ $$ = createMethodDeclaration(STATIC, $3, $5, $7); }
+    | '-' '(' type ')' ID 									{ $$ = createMethodDeclaration(NON_STATIC, $3, $5, NULL); }
+    | '+' '(' type ')' ID 									{ $$ = createMethodDeclaration(STATIC, $3, $5, NULL); }
     ;
 
 class_method_declaration: class_method ';' { $$ = $1; }
@@ -384,31 +383,31 @@ class_methods_declaration: class_method_declaration 		{ $$ = createMethodsDeclar
     ;
 
 
-class_methods_declaration_with_access:  class_methods_declaration { $$ = createClassMethodsDeclarationBlock(A_NOT_SET, $1); }
-	| class_fields_access class_methods_declaration { $$ = createClassMethodsDeclarationBlock( $1, $2); }
+class_methods_declaration_with_access:  class_methods_declaration 	{ $$ = createClassMethodsDeclarationBlock(A_NOT_SET, $1); }
+	| class_fields_access class_methods_declaration 				{ $$ = createClassMethodsDeclarationBlock( $1, $2); }
 	;
 
-class_methods_declaration_with_access_list: class_methods_declaration_with_access { $$ = createClassMethodsDeclarationBlockList( $1); }
-	| class_methods_declaration_with_access_list class_methods_declaration_with_access { $$ = addToClassMethodsDeclarationBlockList( $1, $2); }
+class_methods_declaration_with_access_list: class_methods_declaration_with_access 		{ $$ = createClassMethodsDeclarationBlockList( $1); }
+	| class_methods_declaration_with_access_list class_methods_declaration_with_access 	{ $$ = addToClassMethodsDeclarationBlockList( $1, $2); }
 	;
 
 class_methods_declaration_or_empty: class_methods_declaration_with_access_list { $$ = $1; }
-    | /* empty */	{$$ = NULL; }
+    | /* empty */	{ $$ = NULL; }
     ;
 
-class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, $4, $5, $6); }
-	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END { $$ = createClassDeclaration($2, NULL, $3, $4); }
+class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END 	{ $$ = createClassDeclaration($2, $4, $5, $6); }
+	|  INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END 					{ $$ = createClassDeclaration($2, NULL, $3, $4); }
     ;
 
 class_method_implementation: class_method compound_stmt { $$ = createClassMethodImpl($1, $2); }
     ;
 	
 /*Список методов может быть пустым */
-class_methods_implementation: class_method_implementation { $$ = createClassMethodImplList($1); }
-    | class_methods_implementation class_method_implementation { $$ = addToClassMethodImplList($1, $2); }
+class_methods_implementation: class_method_implementation 		{ $$ = createClassMethodImplList($1); }
+    | class_methods_implementation class_method_implementation 	{ $$ = addToClassMethodImplList($1, $2); }
     ;
 	
-class_methods_implementation_or_empty: class_methods_implementation {$$ = $1; }
+class_methods_implementation_or_empty: class_methods_implementation { $$ = $1; }
     | /* empty */	{$$ = NULL; }
     ;
 
@@ -417,32 +416,32 @@ class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty EN
 	
 /*ВЫЗОВ МЕТОДА*/
 /*Аргументы могут быть именованными и нет, первый аргумент вегда без имени */
-method_call_noname_arg: ':' expr	{ $$ = createMethodCallArg(NULL, $2);}
+method_call_noname_arg: ':' expr	{ $$ = createMethodCallArg(NULL, $2); }
     ;  
 
-method_call_name_arg: ID ':' expr { $$ = createMethodCallArg($1,$3);}
+method_call_name_arg: ID ':' expr 	{ $$ = createMethodCallArg($1,$3); }
     ;
 
 method_call_noname_args: method_call_noname_arg			{ $$ = createMethodCallArgList($1); }
-    | method_call_noname_args method_call_noname_arg	{ $$ = addToMethodCallArgList($1, $2);}
+    | method_call_noname_args method_call_noname_arg	{ $$ = addToMethodCallArgList($1, $2); }
     ;
 
 method_call_name_args: method_call_name_arg				{ $$ = createMethodCallArgList($1); }
-    | method_call_name_args method_call_name_arg		{ $$ = addToMethodCallArgList($1, $2);}
+    | method_call_name_args method_call_name_arg		{ $$ = addToMethodCallArgList($1, $2); }
     ;
 
 /*Список аргументов может быть пустым */
-method_call_args: method_call_noname_arg method_call_name_args	{ $$ = addToFrontMethodCallArgList($2, $1);}
+method_call_args: method_call_noname_arg method_call_name_args	{ $$ = addToFrontMethodCallArgList($2, $1); }
     | method_call_noname_args		{ $$ = $1; }
     ;
 
-method_call_args_or_empty: method_call_args { $$ = $1;}
+method_call_args_or_empty: method_call_args { $$ = $1; }
     | /*empty*/	{ $$ = NULL; }
     ;
 
 
-expr_list: expr 			{ $$ = createExprList($1);}
-    | expr_list ',' expr  { $$ = addToExprList($1, $3);}
+expr_list: expr 			{ $$ = createExprList($1); }
+    | expr_list ',' expr  	{ $$ = addToExprList($1, $3); }
     ;
 
 /*МАССИВЫ */
@@ -472,8 +471,5 @@ func_declaration: func_header ';' { $$ = $1; }
 
 func_implementation: func_header compound_stmt { $$ = createFuncImpl($1, $2); }
     ;
-
-
-	
 	
 %%
