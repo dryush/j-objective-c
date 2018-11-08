@@ -316,6 +316,7 @@ void print(Type_st * st) {
             }
             case TYPE_POINTER: {
                 labels[st] += "* (pointer)";
+				g[st].push_back(st->childType);
 				print(st->childType);
 				break;
             } 
@@ -389,9 +390,9 @@ void print( Statement_st* st) {
 
 void print(Class_method_param_declaration_st* st) {
 	ids[st] = getNextId();
-	labels[st] = "param name out: " + string(st->outerName) + " in " + string(st->innerName) ;
+	labels[st] = "param name out: " + (st->outerName ? string(st->outerName) : "<no-name>") + " in: " + string(st->innerName) ;
 	if (st->val_type) {
-		g[st].push_back(st);
+		g[st].push_back(st->val_type);
 		print(st->val_type);
 	}
 }
@@ -400,8 +401,9 @@ void print(Class_method_param_declaration_list_st* st) {
 	ids[st] = getNextId();
 	labels[st] = "params";
 	auto next = st;
+	int i = 1;
 	while (next) {
-		g[st].push_back(next->param);
+		g[st].push_back(Edge::numb(next->param, i++));
 		print(next->param);
 		next = next->next;
 	}
@@ -419,7 +421,7 @@ void print(Class_method_declaration_st* st) {
 	lbl += st->name;
 	labels[st] = lbl;
 	if (st->returnType) {
-		g[st].push_back(st->returnType);
+		g[st].push_back(Edge(st->returnType, "return"));
 		print(st->returnType);
 	}
 
@@ -565,11 +567,11 @@ void print(Class_method_impl_list_st* st) {
 	labels[st] = "Class method impls";
 	auto next = st;
 	while (next) {
-		if (st->method) {
-			g[st].push_back(st->method);
-			print(st->method);
+		if (next->method) {
+			g[st].push_back(next->method);
+			print(next->method);
 		}
-		next = st->next;
+		next = next->next;
 	}
 }
 

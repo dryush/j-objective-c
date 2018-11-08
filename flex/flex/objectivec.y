@@ -319,11 +319,11 @@ class_invariants_declarations: class_invariant_declaration 		{ $$ = createClassI
 
 class_invariant_declaration_with_access:
 	  class_fields_access class_invariants_declarations { $$ = createClassInvariantsDeclarationBlock($1, $2); }
-	| class_invariants_declarations { $$ = createClassInvariantsDeclarationBlock(A_NOT_SET, $1); }
 	;
 
 class_invariant_declaration_with_access_list: 
-	  class_invariant_declaration_with_access { $$ = createClassInvariantsDeclarationBlockList($1); }
+	  class_invariants_declarations { $$ = createClassInvariantsDeclarationBlockList( createClassInvariantsDeclarationBlock(A_NOT_SET, $1)); }
+	| class_invariant_declaration_with_access { $$ = createClassInvariantsDeclarationBlockList($1); }
 	| class_invariant_declaration_with_access_list class_invariant_declaration_with_access { $$ = addToClassInvariantsDeclarationBlockList($1, $2); }
 	;
 
@@ -383,11 +383,13 @@ class_methods_declaration: class_method_declaration 		{ $$ = createMethodsDeclar
     ;
 
 
-class_methods_declaration_with_access:  class_methods_declaration 	{ $$ = createClassMethodsDeclarationBlock(A_NOT_SET, $1); }
-	| class_fields_access class_methods_declaration 				{ $$ = createClassMethodsDeclarationBlock( $1, $2); }
+class_methods_declaration_with_access:  
+	  class_fields_access class_methods_declaration 				{ $$ = createClassMethodsDeclarationBlock( $1, $2); }
 	;
 
-class_methods_declaration_with_access_list: class_methods_declaration_with_access 		{ $$ = createClassMethodsDeclarationBlockList( $1); }
+class_methods_declaration_with_access_list: 
+	  class_methods_declaration 	{ $$ = createClassMethodsDeclarationBlockList(createClassMethodsDeclarationBlock(A_NOT_SET, $1)); }
+	| class_methods_declaration_with_access 		{ $$ = createClassMethodsDeclarationBlockList( $1); }
 	| class_methods_declaration_with_access_list class_methods_declaration_with_access 	{ $$ = addToClassMethodsDeclarationBlockList( $1, $2); }
 	;
 

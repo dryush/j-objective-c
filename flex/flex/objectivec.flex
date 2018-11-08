@@ -117,6 +117,7 @@ ONE_LINE_COMMENT \/\/.*\n
 "@private" 		{ return PRIVATE; }
 "@protected" 	{ return PROTECTED; }
 "@public" 		{ return PUBLIC; }
+":"				{ return ':'; }
 
 "YES" 			{ yylval.bool_const = 1; return BOOL_CONST; }
 "NO" 			{ yylval.bool_const = 0; return BOOL_CONST; }
