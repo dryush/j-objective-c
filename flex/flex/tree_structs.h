@@ -885,6 +885,7 @@ struct Expression_st* createMethodCall(
   struct Method_call_arg_list_st* args)
 {
 	struct Expression_st * st = (struct Expression_st*) malloc(sizeof(struct Expression_st));
+	st->exprType = EXPR_METHOD_CALL;
 	st->method_args = args;
 	st->identifier = name;
 	st->object = object;

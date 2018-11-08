@@ -54,7 +54,7 @@ void print(Expression_st* st);
 void print(Expr_list_st* st) {
     if (st != NULL) {
         ids[st] = getNextId();
-        labels[st] = "Func_call_arg_list";
+        labels[st] = string("Func_call_arg_list");
         Expr_list_st* next = st;
 		int number = 1;
         while( next){
@@ -63,6 +63,29 @@ void print(Expr_list_st* st) {
             next = next->next;
 			number++;
         }
+    }
+}
+
+void print( Method_call_arg_st* st){
+    ids[st] = getNextId();
+    string lbl = string("method_arg_out_name: ") + (st->outer_name ? string(st->outer_name) : string("<no-out-name>"));
+    labels[st] = lbl;
+    if( st->value) {
+        g[st].push_back( st->value);
+        print( st->value);
+    }
+}
+
+
+void print( Method_call_arg_list_st* st){
+    ids[st] = getNextId();
+    labels[st] = "args";
+    auto next = st;
+    int i = 1;
+    while( next){
+        g[st].push_back(Edge::numb(next->arg, i++));
+        print(next->arg);
+        next = next->next;
     }
 }
 
@@ -259,7 +282,15 @@ void print( Expression_st* st) {
 				break;
             }
             case EXPR_METHOD_CALL: {
-                labels[st] = "Method_call ";
+                labels[st] = "Method_call: " + string(st->identifier);
+                if ( st->object) {
+                    g[st].push_back(Edge(st->object,"object"));
+                    print(st->object);
+                }
+                if ( st->method_args) {
+                    g[st].push_back(Edge(st->method_args, "args"));
+                    print(st->method_args);
+                }
 				break;
             }
         }

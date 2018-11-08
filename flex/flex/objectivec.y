@@ -141,7 +141,6 @@
 %type <method_call_arg_list_st> method_call_noname_args
 %type <method_call_arg_list_st> method_call_name_args
 %type <method_call_arg_list_st> method_call_args
-%type <method_call_arg_list_st> method_call_args_or_empty
 
 %type <extern_code_st> extern_code
 %type <program_st> prog
@@ -265,8 +264,9 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
 	| BOOL_CONST					{ $$ = CreateBoolValueExpression($1); }
 	| CHAR_CONST					{ $$ = CreateCharValueExpression($1); }
 	| STRING_CONST 					{ $$ = CreateStringValueExpression($1); }
-	| '['expr ID ':' method_call_args_or_empty']' 	{ $$ = createMethodCall($2, $3, $5); } /*Вызов метода*/
-    | expr '[' expr ']' 							{ $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
+	| '['expr ID method_call_args']' 	{ $$ = createMethodCall($2, $3, $4); } /*Вызов метода*/
+    | '['expr ID ']' 	{ $$ = createMethodCall($2, $3, NULL); } /*Вызов метода*/
+	| expr '[' expr ']' 							{ $$ = createArrayElemCall($1, $3); } /* Обращение к элементу массива */
     | expr ARROW ID 								{ $$ = createInvariantCall($1, $3); } /* Обращение к полю */
 	| ID '(' expr_list ')' 							{ $$ = createFuncCall($1, $3); } /* Вызов функции */
 	| ID '(' ')'									{ $$ = createFuncCall($1, NULL); } /* Вызов функции */
@@ -441,9 +441,6 @@ method_call_args: method_call_noname_arg method_call_name_args	{ $$ = addToFront
     | method_call_noname_args		{ $$ = $1; }
     ;
 
-method_call_args_or_empty: method_call_args { $$ = $1; }
-    | /*empty*/	{ $$ = NULL; }
-    ;
 
 
 expr_list: expr 			{ $$ = createExprList($1); }
