@@ -208,6 +208,7 @@ stmt: RETURN expr ';' 	{ $$ = CreateReturnStatement($2);}
 	| if_stmt 			{ $$ = $1; }
 	| var_decl 			{ $$ = $1; }
 	| compound_stmt		{ $$ = $1; }
+	| ';'				{ }
     ;
 
 compound_stmt: '{' stmt_list_or_empty '}' { $$ = CreateCompoundStatement($2); }

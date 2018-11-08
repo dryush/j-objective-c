@@ -367,11 +367,9 @@ void print(Type_st * st) {
 
 void print( Statement_st* st) {
     if (st != NULL) {
-
         ids[st] = getNextId();
         switch(st->stmt_type) {
             case STMT_WHILE: {
-                printf("While_stmt\n");
                 labels[st] = "While_stmt";
 		        g[st].push_back(Edge(st->condition, "condition"));
                 g[st].push_back(Edge(st->truth_stmt, "true"));
@@ -380,7 +378,6 @@ void print( Statement_st* st) {
                 break;
             }
             case STMT_IF: {
-                printf("If_stmt\n");
                 labels[st] = "If_stmt";
 		        g[st].push_back(Edge(st->condition, "condition"));
                 g[st].push_back(Edge(st->truth_stmt, "true"));
@@ -391,14 +388,12 @@ void print( Statement_st* st) {
                 break;
             }
             case STMT_EXPR: {
-                printf("Expr\n");
                 labels[st] = "Expr";
 		        g[st].push_back(st->expr);
                 print(st->expr);
                 break;
             }
             case STMT_VAR_DECL: {
-                printf("Var_decl_stmt %s\n", st->identifier);
                 labels[st] = "Var_decl_stmt " + string(st->identifier);
 				if (st->var_type) {
 					g[st].push_back(Edge(st->var_type, "type"));
@@ -426,17 +421,19 @@ void print( Statement_st* st) {
                 break;
 			}
             case STMT_RETURN: {
-                printf("Return_stmt\n");
                 labels[st] = "Return_stmt";
 		        g[st].push_back(st->expr);
                 print(st->expr);
                 break;
             }
             case STMT_COMPOUND: {
-                printf("Compound_stmt\n");
                 labels[st] = "Compound_stmt";
 		        g[st].push_back(st->stmt_list);
                 print(st->stmt_list);
+                break;
+            }
+            default: {
+                labels[st] = "Empty_stmt";
                 break;
             }
         }
