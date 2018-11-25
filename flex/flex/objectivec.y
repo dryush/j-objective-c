@@ -95,6 +95,7 @@
 %type <_stmt> while_stmt
 %type <_expr> expr
 %type <_type> type
+%type <_type> pointer_custom_type
 %type <_type> default_type
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
@@ -227,8 +228,10 @@ var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
 	| type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'	/*Массивы*/ { $$ = CreateArrayDeclWithInit($1, $2, $4, $8);}
 	;
 
+pointer_custom_type: ID '*' { $$ = createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
+	;
+
 type: default_type { $$ = $1; } 
-	| ID '*' { $$ = createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
 	| ID { $$ = createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
 	;
 
@@ -243,6 +246,7 @@ default_type:  INT { $$ = createType(TYPE_INT, NULL, NULL);}
 expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
     | expr '-' expr 				{ $$ = CreateExpression(OP_SUB, $1, $3); }
     | expr '*' expr 				{ $$ = CreateExpression(OP_MUL, $1, $3); }
+    | pointer_custom_type expr 		{ $$ = CreateMulFromPointer( $1, $2); }
     | expr '/' expr 				{ $$ = CreateExpression(OP_DIV, $1, $3); }
 	| expr '%' expr 				{ $$ = CreateExpression(OP_MOD, $1, $3); }
 	| expr '=' expr 				{ $$ = CreateExpression(OP_ASSIGN, $1, $3); }

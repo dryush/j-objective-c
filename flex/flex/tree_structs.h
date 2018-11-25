@@ -207,6 +207,13 @@ struct Expr_list_st
     struct Expr_list_st * next;
 };
 
+struct Expression_st *CreateMulFromPointer(struct Type_st *left, struct Expression_st *right){
+	struct Expression_st* l = CreateIDExpression( left->childType->name);
+	struct Expression_st* mul = CreateExpression( OP_MUL, l, right);
+	return mul;
+	printf("CreateExpression Mull From Pointer\n");
+}
+
 struct Expression_st *CreateExpression(enum OperationType operationType, struct Expression_st *left, struct Expression_st *right) {
 	struct Expression_st *cur = (struct Expression_st *)malloc(sizeof(struct Expression_st));
 	cur->exprType = EXPR_OPERATION;
