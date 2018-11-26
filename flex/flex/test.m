@@ -1,3 +1,3 @@
 void foo () {
-    a * a * a * a * a;
+    int c = a * a * a;
 }

@@ -2,6 +2,7 @@
 #define TREE_STRUCTS_H
 
 #include <stdlib.h>
+#include <stdio.h>
 
 enum OperationType 
 {
