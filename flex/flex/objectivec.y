@@ -96,6 +96,7 @@
 %type <_expr> expr
 %type <_type> type
 %type <_type> pointer_custom_type
+%type <_type> enum_type
 %type <_type> default_type
 %type <_enum_decl> enum_declaration
 %type <_enum_list> enumerator_list
@@ -231,8 +232,13 @@ var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
 pointer_custom_type: ID '*' { $$ = createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
 	;
 
-type: default_type { $$ = $1; } 
-	| ID { $$ = createType(TYPE_CUSTOM, $1, NULL); } /*Могут быть и enum*/
+enum_type:
+	ENUM ID { $$ = createType(TYPE_CUSTOM, $2, NULL); } 
+	;
+
+type: default_type { $$ = $1; } 	
+	| pointer_custom_type { $$ = $1; }
+	| enum_type { $$ = $1; }
 	;
 
 default_type:  INT { $$ = createType(TYPE_INT, NULL, NULL);}
@@ -277,7 +283,7 @@ expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
 	| ID '(' ')'									{ $$ = createFuncCall($1, NULL); } /* Вызов функции */
     ;
 
-enum_declaration: ENUM ID '{' enumerator_list '}' ';' { $$ = CreateEnumDeclaration($2, $4); }
+enum_declaration: enum_type '{' enumerator_list '}' ';' { $$ = CreateEnumDeclaration($1->name, $3); }
 	;
 
 enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1, $3); }
