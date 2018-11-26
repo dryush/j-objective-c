@@ -8,6 +8,8 @@ class ExternCode : public Node {
 class ProgramNode : public Node {
 public:
 	list<FunctionNode*> functions;
+	list<ClassDeclarationNode*> classDeclarations;
+	list<ClassImplementationNode*> classImplementations;
 	ProgramNode(Program_st* st) {
 		auto last = st;
 		while (last) {

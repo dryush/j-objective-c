@@ -2,13 +2,13 @@
 #include "TreeClass.h"
 
 /// <summary>
-/// При объявлении
+/// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 /// </summary>
-class FunctionParam : public Node {
+class FunctionParamNode : public Node {
 public:
 	TypeNode* type;
 	string name;
-	FunctionParam(Func_arg_st* st) {
+	FunctionParamNode(Func_arg_st* st) {
 		this->type = new TypeNode(st->val_type);
 		this->name = name;
 	}
@@ -19,7 +19,7 @@ public:
 	TypeNode* returnType;
 	string name;
 	StatementNode* body;
-	list<FunctionParam*> params;
+	list<FunctionParamNode*> params;
 
 
 	FunctionNode(Func_impl_st* st) {
@@ -28,7 +28,7 @@ public:
 		
 		auto last = st->args;
 		while (last) {
-			this->params.push_back(new FunctionParam(last->arg));
+			this->params.push_back(new FunctionParamNode(last->arg));
 			last = last->next;
 		}
 		this->body = new StatementNode(st->body);

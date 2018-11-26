@@ -142,7 +142,7 @@ class ClassMethodImplementationNode : public Node {
     list<ClassMethodParamNode*> params;
     TypeNode* returnType;
     StatementNode* body;
-    ClassMethodDeclarationNode(Class_method_impl_st* st){
+    ClassMethodImplementationNode(Class_method_impl_st* st){
         this->methodType = st->methodType == STATIC ? METHOD_STATIC : METHOD_LOCAL;
         this->name = st->name;
         this->return_type = new TypeNode( st->returnType);
@@ -150,8 +150,8 @@ class ClassMethodImplementationNode : public Node {
         this->body = new StatementNode( st->body);  
     }
 
-    ClassMethodDeclarationNode(Class_method_impl_st* st, Field_access_en access){
-        ClassMethodDeclarationNode( st);
+    ClassMethodImplementationNode(Class_method_impl_st* st, Field_access_en access){
+        ClassMethodImplementationNode( st);
         st->access = 
             blockLast->access == A_PUBLIC ? ACCESS_PUBLIC :
             blockLast->access == A_PROTECTED ? ACCESS_PROTECTED :
@@ -171,7 +171,7 @@ class ClassMethodImplementationNode : public Node {
 class ClassImplementationNode : public Node {
 public:
     string name;
-    list<ClassMethodDeclarationNode*> methods;
+    list<ClassMethodImplementationNode*> methods;
     ClassImplementationNode( Class_impl_st* st){
         this->name = st->name;
         ClassMethodImplementationNode.FillFrom( st->methods);
