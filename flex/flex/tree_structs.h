@@ -47,37 +47,36 @@ enum VarType
 	TYPE_POINTER
 };
 
-struct Type_st;
-struct Expression_st;
-struct Expr_list_st;
-struct Statement_st;
-struct Statements_List_st;
+struct Type_st;	/* + */
+struct Expression_st; /* +- */
+struct Expr_list_st; /* + */
+struct Statement_st; /* + */
+struct Statements_List_st; /* + */
 struct Enum_declaration_st;
 struct Enumerator_list_st;
 struct Enumerator_st;
-struct Class_method_param_declaration_st;
-struct Class_method_param_declaration_list_st;
-struct Class_method_declaration_st;
-struct Class_methods_declaration_list_st;
-struct Class_methods_declaration_block_st;
-struct Class_methods_declaration_block_list_st;
-struct Class_method_impl_st;
-struct Class_invariant_declaration_st;
-struct Class_invariants_declaration_list_st;
-struct Class_invariants_declaration_block_st;
-struct Class_invariants_declaration_block_list_st;
-struct Class_declaration_st;
-struct Class_declaration_st;
-struct Class_impl_st;
-struct Method_call_arg_st;
-struct Method_call_arg_list_st;
-struct Func_arg_st;
-struct Func_arg_list_st;
-struct Func_declaration_st;
-struct Func_impl_st;
-struct Func_call_arg_list_st;
-struct Extern_code_st;
-struct Program_st;
+struct Class_method_param_declaration_st; /* + */
+struct Class_method_param_declaration_list_st; /* + */
+struct Class_method_declaration_st; /* + */
+struct Class_methods_declaration_list_st; /* + */
+struct Class_methods_declaration_block_st; /* + */
+struct Class_methods_declaration_block_list_st; /* + */
+struct Class_method_impl_st; /* + */
+struct Class_invariant_declaration_st; /* + */
+struct Class_invariants_declaration_list_st; /* + */
+struct Class_invariants_declaration_block_st; /* + */
+struct Class_invariants_declaration_block_list_st; /* + */
+struct Class_declaration_st; /* + */
+struct Class_impl_st; /* + */
+struct Method_call_arg_st; /* + */
+struct Method_call_arg_list_st; /* + */
+struct Func_arg_st; /* + */
+struct Func_arg_list_st; /* + */
+struct Func_declaration_st; /* - !!!И не будет !!! */
+struct Func_impl_st; /* + */
+struct Func_call_arg_list_st; /* + */
+struct Extern_code_st; /* + */
+struct Program_st; /* + */
 
 struct Expression_st *CreateExpression(enum OperationType operationType, struct Expression_st *left, struct Expression_st *right);
 struct Expression_st *CreateIDExpression(char *identifier);

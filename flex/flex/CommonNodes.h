@@ -51,17 +51,20 @@ public:
 	ExprNode* right;
 
 	ExprListNode* arrayElems;
-	string name; /* имя / имя функции / имя вызываемого поля / имя вызываемого метода */
+	string name; /* пїЅпїЅпїЅ / пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ / пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ / пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
 	int intVal;
 	double floatVal;
 	bool boolVal;
 	char charVal;
 	string strVal;
-	/* Вызов метода */
-	ExprNode* object; /* объект у которого вызывается поле или метод */
+	/* пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ */
+	ExprNode* object; /* пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ */
 	/// TODO:: struct Method_call_arg_list_st* method_args; 
+	//list<ExprNode*> methodArgs;
+	// TODO:: replace args and convert to exprNode
+	//list<MethodCallArgNode*> methodCallArgs;
 	/*!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-	/* Вызов функции*/
+	/* пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ*/
 	ExprListNode* funcArgs;
 	ExprNode() {
 		this->left = nullptr;
@@ -132,7 +135,7 @@ public:
 			this->object = new ExprNode(st->object);
 			this->name = st->identifier;
 			/// TODO::
-			//this->methodArgs = 
+			MethodCallArgNode.FillFrom(this->methodCallArgs, st->method_args)
 		}
 	}
 
@@ -157,10 +160,10 @@ public:
 	StatementNode* wrongStmt;
 	list<StatementNode*> childs;
 
-	/*Объявление переменной*/
+	/*пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ*/
 	TypeNode* varType;
 	string name;
-	///TODO:: Массив с присвоением
+	///TODO:: пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 	StatementNode(Statement_st* st) {
 		this->expr = nullptr;
@@ -178,11 +181,11 @@ public:
 		}
 		else if (this->stmtType == STMT_COMPOUND) {
 			auto last = st->stmt_list;
-			/// TODO: разбить на методы, сделать красиво
+			/// TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			while (last) {
 				auto child = new StatementNode(last->stmt);
 				this->childs.push_back( child);
-				// Разбиваем объявление с присвоением на два отдельных узла
+				// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 				if (child->stmtType == STMT_VAR_DECL || child->stmtType == STMT_ARRAY_DECL) {
 					Expression_st* left  = CreateIDExpression(last->stmt->identifier);
 					Expression_st* expr;
