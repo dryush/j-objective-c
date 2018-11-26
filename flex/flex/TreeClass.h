@@ -28,3 +28,6 @@ void Node::visit(NodeVisiter& visiter) {
 }
 
 #include "CommonNodes.h"
+#include "ClassNodes.h"
+#include "FunctionNodes.h"
+#include "ProgramNode.h"
