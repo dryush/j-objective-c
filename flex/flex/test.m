@@ -4,3 +4,12 @@ void foo () {
         int b = 2;
     }
 }
+
+@implementation MyClass 
+    - (type*) method {
+        int ma;
+        {
+            int as;
+        }
+    }
+@end

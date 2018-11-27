@@ -19,13 +19,13 @@ class Node;
 class NodeVisiter {
 public:
 
-	void visit( TypeNode* node){
+	virtual void visit( TypeNode* node){
 		RETURN_IF_NODE_NULL;
         if( node->childType)
             ((node->childType))->visit( this);
 	}
 
-	void visit( ExprListNode* node){
+	virtual void visit( ExprListNode* node){
 		RETURN_IF_NODE_NULL;
         for( auto iexpr = node->exprs.begin(); iexpr != node->exprs.end(); iexpr++){
             auto expr = *iexpr;
@@ -34,7 +34,7 @@ public:
         }
 	}
 
-	void visit( ExprNode* node) {
+	virtual void visit( ExprNode* node) {
 		RETURN_IF_NODE_NULL;
         if( node->left)
             (node->left)->visit( this);
@@ -49,7 +49,7 @@ public:
 	}
 
 
-	void visit( StatementNode* node){
+	virtual void visit( StatementNode* node){
 		RETURN_IF_NODE_NULL;
 		if( node->expr)
             ( node->expr)->visit( this);
@@ -67,13 +67,13 @@ public:
         }
 	}
 
-	void visit ( FunctionParamNode* node){
+	virtual void visit ( FunctionParamNode* node){
 		RETURN_IF_NODE_NULL;
 		if( node->type)
             ( node->type)->visit( this);
 	}
 
-	void visit( FunctionNode* node){
+	virtual void visit( FunctionNode* node){
 		RETURN_IF_NODE_NULL
 		if( node->returnType)
             ( node->returnType)->visit( this);
@@ -86,13 +86,13 @@ public:
         }
 	} 
 
-	void visit( ClassMethodParamNode* node){
+	virtual void visit( ClassMethodParamNode* node){
 		RETURN_IF_NODE_NULL;
 		if( node->type)
             ( node->type)->visit( this);
 	}
 
-	void visit( ClassMethodDeclarationNode* node){ 
+	virtual void visit( ClassMethodDeclarationNode* node){ 
 		RETURN_IF_NODE_NULL;
             
 		for( auto iparam = node->params.begin(); iparam != node->params.end(); iparam++){
@@ -102,13 +102,13 @@ public:
         }
 	}
 
-	void visit( ClassFieldDeclarationNode * node){
+	virtual void visit( ClassFieldDeclarationNode * node){
 		RETURN_IF_NODE_NULL;
 		if( node->type) 
             ( node->type)->visit( this);
 	}
 
-	void visit( ClassDeclarationNode* node){
+	virtual void visit( ClassDeclarationNode* node){
 		RETURN_IF_NODE_NULL;
 		for( auto ifield = node->fields.begin(); ifield != node->fields.end(); ifield++){
 			auto field = * ifield;
@@ -123,7 +123,7 @@ public:
         }
 	}
 
-	void visit( ClassMethodImplementationNode* node) {
+	virtual void visit( ClassMethodImplementationNode* node) {
 		RETURN_IF_NODE_NULL;
 		if( node->returnType)
             ( node->returnType)->visit( this);
@@ -138,7 +138,7 @@ public:
         }
 	}
 
-	void visit( ClassImplementationNode* node){
+	virtual void visit( ClassImplementationNode* node){
 		RETURN_IF_NODE_NULL;
         for( auto imethod = node->methods.begin(); imethod != node->methods.end(); imethod++){
 			auto method = *imethod;
@@ -147,7 +147,7 @@ public:
         }
 	}
 
-	void visit(ProgramNode * node){
+	virtual void visit(ProgramNode * node){
 		RETURN_IF_NODE_NULL;
 		
 		for( auto ifunc = node->functions.begin(); ifunc != node->functions.end(); ifunc++ ){
@@ -159,14 +159,14 @@ public:
 			auto classDecl = *iclassDecl;
             (classDecl)->visit( this);
         }
-        for( auto iimplDecl = node->classImplementations.begin(); iimplDecl != node->classImplementations.end(); iimplDecl++){
-			auto implDecl = *iimplDecl;
-            (implDecl)->visit( this);
+        for( auto iclassImpl = node->classImplementations.begin(); iclassImpl != node->classImplementations.end(); iclassImpl++){
+			auto classImpl = *iclassImpl;
+            (classImpl)->visit( this);
         }
 	}
 	
-    void visit(Node*) {
-        std::cout <<"visit default Node";
+    virtual void visit(Node*) {
+        std::cout <<"!!!! visit default Node" << endl;
     }
 
 };
@@ -203,3 +203,43 @@ void ProgramNode::visit(NodeVisiter* visiter){
 void StatementNode::visit(NodeVisiter* visiter){
     visiter->visit(this);
 }
+
+
+void ClassDeclarationNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+
+void ClassMethodDeclarationNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+
+void ClassMethodParamNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+
+void ClassFieldDeclarationNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+void ClassImplementationNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+void ClassMethodImplementationNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+void MethodCallArgNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+
+
+
+
+
+
+

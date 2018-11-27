@@ -25,15 +25,15 @@ class FunctionAndMethodsLocalVarChecker : public NodeVisiter {
 
 public:
 
-    void visit(StatementNode* node) {
+    void visit(StatementNode* node) override {
         RETURN_IF_NODE_NULL
         
-        if( node->stmtType == STMT_ARRAY_DECL || node->stmtType == STMT_ARRAY_DECL ){
+        if( node->stmtType == STMT_ARRAY_DECL || node->stmtType == STMT_VAR_DECL){
             this->genError( node->name);
         }
     }
 
-    void visit( ClassMethodImplementationNode* node) {
+    void visit( ClassMethodImplementationNode* node) override {
 		RETURN_IF_NODE_NULL
         
         this->isMethod = true;
@@ -50,7 +50,7 @@ public:
         }
 	}
 
-    void visit(FunctionNode* node) {
+    void visit(FunctionNode* node) override {
 		RETURN_IF_NODE_NULL
         
         this->isMethod = false;
@@ -69,7 +69,7 @@ public:
         //VISIT_IF_NOT_NULL( node->body);
 	}
 
-    void visit( ClassImplementationNode* node) {
+    void visit( ClassImplementationNode* node) override {
 		RETURN_IF_NODE_NULL
 
         this->className = node->name;
@@ -80,7 +80,7 @@ public:
         }
 	}
 
-	void visit(ProgramNode* node) {
+	void visit(ProgramNode* node) override {
 		RETURN_IF_NODE_NULL;
 		
 		for( auto ifunc = node->functions.begin(); ifunc != node->functions.end(); ifunc++){

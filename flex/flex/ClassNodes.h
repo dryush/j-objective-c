@@ -20,6 +20,9 @@ public:
     string outerName;
     string innerName;
     TypeNode* type;
+
+    void visit(NodeVisiter*) override;
+
     ClassMethodParamNode( Class_method_param_declaration_st* st){
         this->outerName = st->outerName;
         this->innerName = st->innerName;
@@ -42,6 +45,8 @@ public:
     string name;
     list<ClassMethodParamNode*> params;
     TypeNode* returnType;
+
+    void visit(NodeVisiter*) override;
 
     ClassMethodDeclarationNode() {
         this->access = DEF_METHOD_ACCESS;
@@ -87,6 +92,8 @@ public:
     string name;
     TypeNode* type;
 
+    void visit(NodeVisiter*) override;
+
     ClassFieldDeclarationNode(){
         this->access = DEF_FIELD_ACCESS;
         this->name = "";
@@ -128,6 +135,9 @@ public:
     string parentName;
     list<ClassFieldDeclarationNode*> fields;
     list<ClassMethodDeclarationNode*> methods;
+    
+    void visit(NodeVisiter*) override;
+
     ClassDeclarationNode( Class_declaration_st* st ){
         this->name = st->name;
         this->parentName = st->parentName;
@@ -140,13 +150,14 @@ public:
 // TODO::???Возможно отнаследовать от объявления???
 class ClassMethodImplementationNode : public Node {
 public:    
-    FieldAccess access;
     MethodType methodType;
     string name;
     list<ClassMethodParamNode*> params;
     TypeNode* returnType;
     StatementNode* body;
     
+    void visit(NodeVisiter*) override;
+
     ClassMethodImplementationNode(){
         this->methodType = METHOD_LOCAL;
         this->name = "";
@@ -154,7 +165,7 @@ public:
         this->body = nullptr;  
     }
     
-    ClassMethodImplementationNode(Class_method_impl_st* st, Field_access_en access){
+    ClassMethodImplementationNode(Class_method_impl_st* st){
 
         this->methodType = st->methodType == STATIC ? METHOD_STATIC : METHOD_LOCAL;
         this->name = st->name;
@@ -162,20 +173,15 @@ public:
         ClassMethodParamNode::FillFrom( this->params, st->params);
         this->body = new StatementNode( st->body);  
         
-        this->access = 
-            access == A_PUBLIC ? ACCESS_PUBLIC :
-            access == A_PROTECTED ? ACCESS_PROTECTED :
-            access == A_PRIVATE ? ACCESS_PRIVATE :
-            DEF_METHOD_ACCESS;
     }
 
-    static void FillFrom(list<ClassMethodImplementationNode*>& list, Class_method_param_declaration_list_st* st, Field_access_en access) {
+    static void FillFrom(list<ClassMethodImplementationNode*>& list, Class_method_impl_list_st* st) {
      /// TODO:: осмыслить и сделать
-     //   auto last = st;
-     //   while( last){
-     //       list.push_back(new ClassMethodImplementationNode( last->param, access));
-     //       last = last->next;
-     //   }
+     auto last = st;
+        while( last){
+            list.push_back(new ClassMethodImplementationNode( last->method));
+            last = last->next;
+        }
     }
 };
 
@@ -183,10 +189,13 @@ class ClassImplementationNode : public Node {
 public:
     string name;
     list<ClassMethodImplementationNode*> methods;
+    
+    void visit(NodeVisiter*) override;
+    
     ClassImplementationNode( Class_impl_st* st){
         this->name = st->name;
-        /// TODO:: Осмыслить
-        // ClassMethodImplementationNode::FillFrom(this->methods, st->methods);
+
+        ClassMethodImplementationNode::FillFrom(this->methods, st->methods);
     }
 };
 
@@ -194,6 +203,9 @@ public:
 class MethodCallArgNode : public ExprNode {
 public:
     string outerName;
+    
+    void visit(NodeVisiter*) override;
+    
     MethodCallArgNode( Method_call_arg_st* st) : ExprNode(st->value){
         this->outerName = st->outer_name;
     }

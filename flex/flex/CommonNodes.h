@@ -6,6 +6,8 @@
 
 using namespace std;
 
+class MethodCallArgNode;
+
 class TypeNode : public Node {
 public:
 	VarType varType;
@@ -63,9 +65,9 @@ public:
 	/* ����� ������ */
 	ExprNode* object; /* ������ � �������� ���������� ���� ��� ����� */
 	/// TODO:: struct Method_call_arg_list_st* method_args; 
-	//list<ExprNode*> methodArgs;
+	list<ExprNode*> methodArgs;
 	// TODO:: replace args and convert to exprNode
-	//list<MethodCallArgNode*> methodCallArgs;
+	list<MethodCallArgNode*> methodCallArgs;
 	/*!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 	/* ����� �������*/
 	ExprListNode* funcArgs;
@@ -82,68 +84,7 @@ public:
 		this->funcArgs = nullptr;
 	}
 
-	ExprNode(Expression_st* st) {
-		this->left = nullptr;
-		this->right = nullptr;
-		this->arrayElems = nullptr;
-		this->name = "";
-		this->strVal = "";
-		this->object = nullptr;
-		this->funcArgs = nullptr;
-
-		this->exprType = st->exprType;
-		this->operationType = st->operationType;
-		this->constType = st->const_type;
-		if (st->exprType == EXPR_ARRAY_ELEM_CALL) {
-			this->arrayElems = new ExprListNode(st->array_elems);
-		}
-		else if (this->exprType == EXPR_OPERATION) {
-			if (this->operationType == OP_VALUE) {
-				if (this->constType == TYPE_CUSTOM) {
-					this->name = st->identifier;
-				}
-				else if (this->constType == TYPE_BOOL) {
-					this->boolVal = st->bool_value;
-				}
-				else if (this->constType == TYPE_CHAR) {
-					this->charVal = st->char_value;
-				}
-				else if (this->constType == TYPE_FLOAT) {
-					this->floatVal = st->float_value;
-				}
-				else if (this->constType == TYPE_INT) {
-					this->intVal = st->int_value;
-				}
-				else if (this->constType == TYPE_STRING) {
-					this->strVal = st->string_value;
-				}
-			}
-			else if (this->operationType == OP_UPLUS
-				|| this->operationType == OP_UMINUS
-				|| this->operationType == OP_LOGICAL_NOT
-				) {
-				this->left = new ExprNode(st->left);
-			}
-			else  {
-				this->left = new ExprNode(st->left);
-				this->right = new ExprNode(st->right);
-			}
-		}
-		else if (this->exprType == EXPR_FUNC_CALL) {
-			this->name = st->identifier;
-			this->funcArgs = new ExprListNode(st->func_args);
-		}
-		else if (this->exprType == EXPR_INVAR_CALL) {
-			this->object = new ExprNode(st->object);
-			this->name = st->identifier;
-		}
-		else if (this->exprType == EXPR_METHOD_CALL) {
-			this->object = new ExprNode(st->object);
-			this->name = st->identifier;
-			/// TODO::
-			//MethodCallArgNode::FillFrom(this->methodCallArgs, st->method_args)
-		}
-	}
+	ExprNode(Expression_st* st);
 
 };
 
@@ -193,7 +134,7 @@ public:
 				auto child = new StatementNode(last->stmt);
 				this->childs.push_back( child);
 				// ��������� ���������� � ����������� �� ��� ��������� ����
-				if (child->stmtType == STMT_VAR_DECL || child->stmtType == STMT_ARRAY_DECL) {
+                if ( (child->stmtType == STMT_VAR_DECL || child->stmtType == STMT_ARRAY_DECL) && last->stmt->expr) {
 					Expression_st* left  = CreateIDExpression(last->stmt->identifier);
 					Expression_st* expr;
 					if (child->stmtType == STMT_ARRAY_DECL) {
@@ -228,3 +169,67 @@ public:
 };
 
 	
+#include "ClassNodes.h"
+
+ExprNode::ExprNode(Expression_st* st) {
+	this->left = nullptr;
+	this->right = nullptr;
+	this->arrayElems = nullptr;
+	this->name = "";
+	this->strVal = "";
+	this->object = nullptr;
+	this->funcArgs = nullptr;
+
+	this->exprType = st->exprType;
+	this->operationType = st->operationType;
+	this->constType = st->const_type;
+	if (st->exprType == EXPR_ARRAY_ELEM_CALL) {
+		this->arrayElems = new ExprListNode(st->array_elems);
+	}
+	else if (this->exprType == EXPR_OPERATION) {
+		if (this->operationType == OP_VALUE) {
+			if (this->constType == TYPE_CUSTOM) {
+				this->name = st->identifier;
+			}
+			else if (this->constType == TYPE_BOOL) {
+				this->boolVal = st->bool_value;
+			}
+			else if (this->constType == TYPE_CHAR) {
+				this->charVal = st->char_value;
+			}
+			else if (this->constType == TYPE_FLOAT) {
+				this->floatVal = st->float_value;
+			}
+			else if (this->constType == TYPE_INT) {
+				this->intVal = st->int_value;
+			}
+			else if (this->constType == TYPE_STRING) {
+				this->strVal = st->string_value;
+			}
+		}
+		else if (this->operationType == OP_UPLUS
+			|| this->operationType == OP_UMINUS
+			|| this->operationType == OP_LOGICAL_NOT
+			) {
+			this->left = new ExprNode(st->left);
+		}
+		else  {
+			this->left = new ExprNode(st->left);
+			this->right = new ExprNode(st->right);
+		}
+	}
+	else if (this->exprType == EXPR_FUNC_CALL) {
+		this->name = st->identifier;
+		this->funcArgs = new ExprListNode(st->func_args);
+	}
+	else if (this->exprType == EXPR_INVAR_CALL) {
+		this->object = new ExprNode(st->object);
+		this->name = st->identifier;
+	}
+	else if (this->exprType == EXPR_METHOD_CALL) {
+		this->object = new ExprNode(st->object);
+		this->name = st->identifier;
+		/// TODO::
+		MethodCallArgNode::FillFrom(this->methodCallArgs, st->method_args);
+	}
+}

@@ -22,7 +22,7 @@ class NodeVisiter;
 
 class Node {
 public:
-	void visit(NodeVisiter*);
+	virtual void visit(NodeVisiter*);
 };
 
 

@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     FunctionAndMethodsLocalVarChecker lvc;
     prog->visit(&lvc);
     if( errors.size() > 0){
-        for( auto ierror = errors.begin(); ierror != errors.end(); ierror){
+        for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
             cout << *ierror << endl;
         }
     }

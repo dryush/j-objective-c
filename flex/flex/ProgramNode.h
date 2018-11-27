@@ -15,8 +15,16 @@ public:
 		auto last = st;
 		while (last) {
 			if (last->code->func_impl) {
-				FunctionNode* func = new FunctionNode(st->code->func_impl);
+				FunctionNode* func = new FunctionNode(last->code->func_impl);
 				functions.push_back(func);
+			}
+			else if (last->code->class_decl) {
+				ClassDeclarationNode* decl = new ClassDeclarationNode(last->code->class_decl);
+				classDeclarations.push_back(decl);
+			}
+			else if (last->code->class_impl) {
+				ClassImplementationNode* impl = new ClassImplementationNode(last->code->class_impl);
+				classImplementations.push_back(impl);
 			}
 			last = last->next;
 		}
