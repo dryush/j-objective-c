@@ -10,8 +10,10 @@ class TypeNode : public Node {
 public:
 	VarType varType;
 	TypeNode* childType;
-
 	string name;
+    
+    void visit(NodeVisiter* visiter);
+
 	TypeNode() {
 		this->name = "";
 		this->childType = NULL;
@@ -34,11 +36,12 @@ public:
 
 class ExprNode;
 
-class ExprListNode
-{
+class ExprListNode : public Node {
 public:
 	list<ExprNode*> exprs;
 	ExprListNode(Expr_list_st* st);
+
+    void visit(NodeVisiter* visiter);
 };
 
 class ExprNode : public Node {
@@ -66,7 +69,10 @@ public:
 	/*!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 	/* ����� �������*/
 	ExprListNode* funcArgs;
-	ExprNode() {
+
+    void visit(NodeVisiter* visiter);
+    
+    ExprNode() {
 		this->left = nullptr;
 		this->right = nullptr;
 		this->arrayElems = nullptr;
@@ -135,13 +141,11 @@ public:
 			this->object = new ExprNode(st->object);
 			this->name = st->identifier;
 			/// TODO::
-			MethodCallArgNode.FillFrom(this->methodCallArgs, st->method_args)
+			//MethodCallArgNode::FillFrom(this->methodCallArgs, st->method_args)
 		}
 	}
 
 };
-
-
 
 ExprListNode::ExprListNode(Expr_list_st* st) {
 	auto last = st;
@@ -164,6 +168,9 @@ public:
 	TypeNode* varType;
 	string name;
 	///TODO:: ������ � �����������
+
+
+    void visit(NodeVisiter* visiter);
 
 	StatementNode(Statement_st* st) {
 		this->expr = nullptr;
@@ -219,3 +226,5 @@ public:
 		}
 	}
 };
+
+	

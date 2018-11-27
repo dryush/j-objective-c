@@ -1,16 +1,17 @@
 #pragma once
-#include "TreeClass.h"
 #include "FunctionNodes.h"
-class ExternCode : public Node {
+#include "ClassNodes.h"
 
-};
 
 class ProgramNode : public Node {
 public:
 	list<FunctionNode*> functions;
 	list<ClassDeclarationNode*> classDeclarations;
 	list<ClassImplementationNode*> classImplementations;
-	ProgramNode(Program_st* st) {
+
+    void visit(NodeVisiter* visiter);
+
+    ProgramNode(Program_st* st) {
 		auto last = st;
 		while (last) {
 			if (last->code->func_impl) {

@@ -1,122 +1,205 @@
 #pragma once
 
 class Node;
+#include <iostream>
 
 #include "TreeClass.h"
 
+
+#include "CommonNodes.h"
+#include "ClassNodes.h"
+#include "FunctionNodes.h"
+#include "ProgramNode.h"
+
+
 #define RETURN_IF_FALSE(var) if(!var) return;
-#define RETURN_IF_NODE_NULL RETURN_IF_FALSE(node) 
-#define VISIT_IF_NOT_NULL(childnode) this->visit(childnode);
+#define RETURN_IF_NODE_NULL RETURN_IF_FALSE(node);
+#define VISIT_IF_NOT_NULL(childnode) childnode->visit(this);
+
 class NodeVisiter {
 public:
 
 	void visit( TypeNode* node){
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->childType);
-	}
-
-	void visit( ExprNode* node) {
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->left);
-		VISIT_IF_NOT_NULL( node->right);
-		VISIT_IF_NOT_NULL( node->arrayElems);
-		VISIT_IF_NOT_NULL( node->object);
-		VISIT_IF_NOT_NULL( node->funcArgs);
+		RETURN_IF_NODE_NULL;
+        if( node->childType)
+            ((node->childType))->visit( this);
 	}
 
 	void visit( ExprListNode* node){
-		RETURN_IF_NODE_NULL
-		for( auto expr : node->exprs)
-			VISIT_IF_NOT_NULL( expr);
+		RETURN_IF_NODE_NULL;
+        for( auto iexpr = node->exprs.begin(); iexpr != node->exprs.end(); iexpr++){
+            auto expr = *iexpr;
+            if( expr)
+                ( expr)->visit( this);
+        }
 	}
+
+	void visit( ExprNode* node) {
+		RETURN_IF_NODE_NULL;
+        if( node->left)
+            (node->left)->visit( this);
+		if( node->right)
+            ( node->right)->visit( this);
+        if( node->arrayElems)
+            ( node->arrayElems)->visit( this);
+        if( node->object)
+            ( node->object)->visit( this);
+		if( node->funcArgs)
+            ( node->funcArgs)->visit( this);
+	}
+
 
 	void visit( StatementNode* node){
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->expr);
-		VISIT_IF_NOT_NULL( node->condition);
-		VISIT_IF_NOT_NULL( node->truthStmt);
-		VISIT_IF_NOT_NULL( node->wrongStmt);
-		for( auto childStmt : node->childs)
-			VISIT_IF_NOT_NULL( childStmt);
+		RETURN_IF_NODE_NULL;
+		if( node->expr)
+            ( node->expr)->visit( this);
+		if( node->condition)
+            ( node->condition)->visit( this);
+        if( node->truthStmt)
+            ( node->truthStmt)->visit( this);
+		if( node->wrongStmt)
+            ( node->wrongStmt)->visit( this);
+
+        for( auto ichildStmt = node->childs.begin(); ichildStmt != node->childs.end(); ichildStmt++){
+            auto childStmt = *ichildStmt;
+			if( childStmt)
+                ( childStmt)->visit( this);
+        }
 	}
 
-	void visit( FunctionParamNode* node){
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->type);
+	void visit ( FunctionParamNode* node){
+		RETURN_IF_NODE_NULL;
+		if( node->type)
+            ( node->type)->visit( this);
 	}
 
 	void visit( FunctionNode* node){
 		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->returnType);
-		VISIT_IF_NOT_NULL( node->body);
-		for( auto param : node->params)
-			VISIT_IF_NOT_NULL( param);
+		if( node->returnType)
+            ( node->returnType)->visit( this);
+		if( node->body)
+            ( node->body)->visit( this);
+        for( auto iparam = node->params.begin(); iparam != node->params.end(); iparam++){
+			auto param = *iparam;
+            if( param)
+                ( param)->visit( this);
+        }
 	} 
 
 	void visit( ClassMethodParamNode* node){
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->type);
+		RETURN_IF_NODE_NULL;
+		if( node->type)
+            ( node->type)->visit( this);
 	}
 
 	void visit( ClassMethodDeclarationNode* node){ 
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL(type);
-		for( auto param : node->params)
-			VISIT_IF_NOT_NULL( param);
+		RETURN_IF_NODE_NULL;
+            
+		for( auto iparam = node->params.begin(); iparam != node->params.end(); iparam++){
+			auto param = *iparam;
+            if( param)
+                ( param)->visit( this);
+        }
 	}
 
 	void visit( ClassFieldDeclarationNode * node){
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( type);
+		RETURN_IF_NODE_NULL;
+		if( node->type) 
+            ( node->type)->visit( this);
 	}
 
 	void visit( ClassDeclarationNode* node){
-		RETURN_IF_NODE_NULL
-		for( auto field : node->fields)
-			VISIT_IF_NOT_NULL( field);
-		for( auto method : node->methods)
-			VISIT_IF_NOT_NULL( method);
+		RETURN_IF_NODE_NULL;
+		for( auto ifield = node->fields.begin(); ifield != node->fields.end(); ifield++){
+			auto field = * ifield;
+            if( field)
+                ( field)->visit( this);
+        }
+
+        for( auto imethod = node->methods.begin(); imethod != node->methods.end(); imethod++){
+			auto method = *imethod;
+            if( method)
+                ( method)->visit( this);
+        }
 	}
 
 	void visit( ClassMethodImplementationNode* node) {
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->returnType);
-		VISIT_IF_NOT_NULL( node->body);
-		for( auto param : node->params)
-			VISIT_IF_NOT_NULL( param);
+		RETURN_IF_NODE_NULL;
+		if( node->returnType)
+            ( node->returnType)->visit( this);
+
+		if( node->body)
+            ( node->body)->visit( this);
+
+		for( auto iparam = node->params.begin(); iparam != node->params.end(); iparam++){
+			auto param = *iparam;
+            if( param)
+                ( param)->visit( this);
+        }
 	}
 
 	void visit( ClassImplementationNode* node){
-		RETURN_IF_NODE_NULL
-		for( auto method : node)
-			VISIT_IF_NOT_NULL( method);
-	}
-
-	void visit( FunctionParam* node){
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->type);
-	}
-
-	void visit(FunctionNode* node){
-		RETURN_IF_NODE_NULL
-		VISIT_IF_NOT_NULL( node->returnType);
-		VISIT_IF_NOT_NULL( node->body);
-		for( auto param : node->params)
-			VISIT_IF_NOT_NULL( param);
+		RETURN_IF_NODE_NULL;
+        for( auto imethod = node->methods.begin(); imethod != node->methods.end(); imethod++){
+			auto method = *imethod;
+            if( method)
+                ( method)->visit( this);
+        }
 	}
 
 	void visit(ProgramNode * node){
-		RETURN_IF_NODE_NULL
+		RETURN_IF_NODE_NULL;
 		
-		for( auto func : node->functions)
-			VISIT_IF_NOT_NULL(func);
-		for( auto classDecl : node->classDeclarations)
-			VISIT_IF_NOT_NULL(classDecl);
-		for( auto implDecl : node->classImplementations)
-			VISIT_IF_NOT_NULL(implDecl);
+		for( auto ifunc = node->functions.begin(); ifunc != node->functions.end(); ifunc++ ){
+			auto func = *ifunc;
+            if( func)
+                ( func)->visit( this);
+        }
+        for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
+			auto classDecl = *iclassDecl;
+            (classDecl)->visit( this);
+        }
+        for( auto iimplDecl = node->classImplementations.begin(); iimplDecl != node->classImplementations.end(); iimplDecl++){
+			auto implDecl = *iimplDecl;
+            (implDecl)->visit( this);
+        }
 	}
 	
-	void visit(Node* node) {
-	}
+    void visit(Node*) {
+        std::cout <<"visit default Node";
+    }
 
 };
+
+void FunctionNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+	
+void FunctionParamNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+void Node::visit(NodeVisiter* visiter) {
+    visiter->visit(this);
+}
+
+void TypeNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+void ExprNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+void ExprListNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+	
+void ProgramNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
+
+
+void StatementNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}

@@ -1,5 +1,7 @@
 #pragma once
-#include "TreeClass.h"
+#include "tree_structs.h"
+#include "CommonNodes.h"
+class Node;
 
 /// <summary>
 /// ��� ����������
@@ -8,10 +10,9 @@ class FunctionParamNode : public Node {
 public:
 	TypeNode* type;
 	string name;
-	FunctionParamNode(Func_arg_st* st) {
-		this->type = new TypeNode(st->val_type);
-		this->name = name;
-	}
+	FunctionParamNode(Func_arg_st* st);
+
+    void visit(NodeVisiter* visiter);
 };
 
 class FunctionNode : public Node {
@@ -21,16 +22,28 @@ public:
 	StatementNode* body;
 	list<FunctionParamNode*> params;
 
-
-	FunctionNode(Func_impl_st* st) {
-		this->name = st->name;
-		this->returnType = new TypeNode(st->return_type);
-		
-		auto last = st->args;
-		while (last) {
-			this->params.push_back(new FunctionParamNode(last->arg));
-			last = last->next;
-		}
-		this->body = new StatementNode(st->body);
-	}
+    FunctionNode(Func_impl_st* st);
+	
+    void visit(NodeVisiter* visiter);
 };
+
+#include "TreeClass.h"
+
+FunctionNode::FunctionNode(Func_impl_st* st) {
+	this->name = st->name;
+	this->returnType = new TypeNode(st->return_type);
+		
+	auto last = st->args;
+	while (last) {
+		this->params.push_back(new FunctionParamNode(last->arg));
+		last = last->next;
+	}
+	this->body = new StatementNode(st->body);
+}
+
+
+FunctionParamNode::FunctionParamNode(Func_arg_st* st) {
+    this->type = new TypeNode(st->val_type);
+    this->name = name;
+}
+

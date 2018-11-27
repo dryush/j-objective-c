@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "TreeClass.h"
+#include "CommonNodes.h"
 
 enum FieldAccess {
     ACCESS_PUBLIC,
@@ -9,7 +9,7 @@ enum FieldAccess {
 enum MethodType {
     METHOD_STATIC,
     METHOD_LOCAL
-}
+};
 
 FieldAccess DEF_FIELD_ACCESS = ACCESS_PROTECTED;
 FieldAccess DEF_METHOD_ACCESS = ACCESS_PROTECTED;
@@ -42,35 +42,38 @@ public:
     string name;
     list<ClassMethodParamNode*> params;
     TypeNode* returnType;
-    ClassMethodDeclarationNode(Class_method_declaration_st* st){
-        this->methodType = st->methodType == STATIC ? METHOD_STATIC : METHOD_LOCAL;
-        this->name = st->name;
-        this->return_type = new TypeNode( st->returnType);
 
-        ClassMethodParamNode.FillFrom( this.params, st->params);
+    ClassMethodDeclarationNode() {
+        this->access = DEF_METHOD_ACCESS;
+        this->methodType = METHOD_LOCAL;
+        this->name = "";
+        this->returnType = nullptr;
     }
 
     ClassMethodDeclarationNode(Class_method_declaration_st* st, Field_access_en access){
-        ClassMethodDeclarationNode( st);
-        st->access = 
-            blockLast->access == A_PUBLIC ? ACCESS_PUBLIC :
-            blockLast->access == A_PROTECTED ? ACCESS_PROTECTED :
-            blockLast->access == A_PRIVATE ? ACCESS_PRIVATE :
+        
+        this->methodType = st->methodType == STATIC ? METHOD_STATIC : METHOD_LOCAL;
+        this->name = st->name;
+        this->returnType = new TypeNode( st->returnType);
+
+        ClassMethodParamNode::FillFrom( this->params, st->params);
+
+        this->access = 
+            access == A_PUBLIC ? ACCESS_PUBLIC :
+            access == A_PROTECTED ? ACCESS_PROTECTED :
+            access == A_PRIVATE ? ACCESS_PRIVATE :
             DEF_METHOD_ACCESS;
     }
 
-    static void FillFrom(list<ClassMethodDeclarationNode*> list, Class_methods_declaration_block_list_st* st) {
+    static void FillFrom(list<ClassMethodDeclarationNode*>& list, Class_methods_declaration_block_list_st* st) {
         auto blockListLast = st;
         while( blockListLast){
             auto blockLast = blockListLast->list;
-            while( blockLast){
-                Field_access_en access = blockLast->access;
-                auto last = blockLast->list;
-                while( last){
-                    fields.push_back(new ClassMethodDeclarationNode(last->method, access));
-                    last = last->next;
-                }
-                blockLast = blockLast->next;
+            Field_access_en access = blockLast->access;
+            auto last = blockLast->list;
+            while( last){
+                list.push_back(new ClassMethodDeclarationNode(last->method, access));
+                last = last->next;
             }
             blockListLast = blockListLast->next;
         } 
@@ -84,17 +87,20 @@ public:
     string name;
     TypeNode* type;
 
-    ClassFieldDeclarationNode( Class_invariant_declaration_st* st){
-        this->name = st->name;
-        this->type = new TypeNode(st->val_type);
+    ClassFieldDeclarationNode(){
+        this->access = DEF_FIELD_ACCESS;
+        this->name = "";
+        this->type = nullptr;
     }
 
     ClassFieldDeclarationNode( Class_invariant_declaration_st* st, Field_access_en access){
-        ClassFieldDeclarationNode( st);
-        st->access = 
-            blockLast->access == A_PUBLIC ? ACCESS_PUBLIC :
-            blockLast->access == A_PROTECTED ? ACCESS_PROTECTED :
-            blockLast->access == A_PRIVATE ? ACCESS_PRIVATE :
+        this->name = st->name;
+        this->type = new TypeNode(st->val_type);
+    
+        this->access = 
+            access == A_PUBLIC ? ACCESS_PUBLIC :
+            access == A_PROTECTED ? ACCESS_PROTECTED :
+            access == A_PRIVATE ? ACCESS_PRIVATE :
             DEF_FIELD_ACCESS;
     }
 
@@ -103,15 +109,13 @@ public:
         auto blockListLast = st;
         while( blockListLast){
             auto blockLast = blockListLast->list;
-            while( blockLast){
-                Field_access_en access = blockLast->access;
-                auto last = blockLast->list;
-                while( last){
-                    fields.push_back(new ClassFieldDeclarationNode(last->invariant, access));
-                    last = last->next;
-                }
-                blockLast = blockLast->next;
+            Field_access_en access = blockLast->access;
+            auto last = blockLast->list;
+            while( last){
+                fields.push_back(new ClassFieldDeclarationNode(last->invariant, access));
+                last = last->next;
             }
+            
             blockListLast = blockListLast->next;
         } 
     }
@@ -127,46 +131,53 @@ public:
     ClassDeclarationNode( Class_declaration_st* st ){
         this->name = st->name;
         this->parentName = st->parentName;
-        ClassFieldDeclarationNode.FillFrom( st->invariants_declaration_list);
-        ClassMethodDeclarationNode.FillFrom( st->methods_declaraion_list);
+        ClassFieldDeclarationNode::FillFrom( this->fields, st->invariants_declaration_list);
+        ClassMethodDeclarationNode::FillFrom( this->methods, st->methods_declaraion_list);
     }
 };
 
 
 // TODO::???Возможно отнаследовать от объявления???
 class ClassMethodImplementationNode : public Node {
-    
+public:    
     FieldAccess access;
     MethodType methodType;
     string name;
     list<ClassMethodParamNode*> params;
     TypeNode* returnType;
     StatementNode* body;
-    ClassMethodImplementationNode(Class_method_impl_st* st){
+    
+    ClassMethodImplementationNode(){
+        this->methodType = METHOD_LOCAL;
+        this->name = "";
+        this->returnType = nullptr;
+        this->body = nullptr;  
+    }
+    
+    ClassMethodImplementationNode(Class_method_impl_st* st, Field_access_en access){
+
         this->methodType = st->methodType == STATIC ? METHOD_STATIC : METHOD_LOCAL;
         this->name = st->name;
-        this->return_type = new TypeNode( st->returnType);
-        ClassMethodParamNode.FillFrom( this.params, st->params);
+        this->returnType = new TypeNode( st->returnType);
+        ClassMethodParamNode::FillFrom( this->params, st->params);
         this->body = new StatementNode( st->body);  
-    }
-
-    ClassMethodImplementationNode(Class_method_impl_st* st, Field_access_en access){
-        ClassMethodImplementationNode( st);
-        st->access = 
-            blockLast->access == A_PUBLIC ? ACCESS_PUBLIC :
-            blockLast->access == A_PROTECTED ? ACCESS_PROTECTED :
-            blockLast->access == A_PRIVATE ? ACCESS_PRIVATE :
+        
+        this->access = 
+            access == A_PUBLIC ? ACCESS_PUBLIC :
+            access == A_PROTECTED ? ACCESS_PROTECTED :
+            access == A_PRIVATE ? ACCESS_PRIVATE :
             DEF_METHOD_ACCESS;
     }
 
-    static void FillFrom(list<ClassMethodImplementationNode*> list, Class_method_param_declaration_list_st* st) {
-        auto last = st;
-        while( last){
-            fields.push_back(new ClassMethodImplementationNode(last->method, access));
-            last = last->next;
-        }
+    static void FillFrom(list<ClassMethodImplementationNode*>& list, Class_method_param_declaration_list_st* st, Field_access_en access) {
+     /// TODO:: осмыслить и сделать
+     //   auto last = st;
+     //   while( last){
+     //       list.push_back(new ClassMethodImplementationNode( last->param, access));
+     //       last = last->next;
+     //   }
     }
-}
+};
 
 class ClassImplementationNode : public Node {
 public:
@@ -174,15 +185,16 @@ public:
     list<ClassMethodImplementationNode*> methods;
     ClassImplementationNode( Class_impl_st* st){
         this->name = st->name;
-        ClassMethodImplementationNode.FillFrom( st->methods);
+        /// TODO:: Осмыслить
+        // ClassMethodImplementationNode::FillFrom(this->methods, st->methods);
     }
-}
+};
 
 
 class MethodCallArgNode : public ExprNode {
 public:
     string outerName;
-    MethodCallArgNode( method_call_arg_st* st) : ExprNode(st->var_type){
+    MethodCallArgNode( Method_call_arg_st* st) : ExprNode(st->value){
         this->outerName = st->outer_name;
     }
 
@@ -193,4 +205,4 @@ public:
             last = last->next;
         }
     }
-}
+};

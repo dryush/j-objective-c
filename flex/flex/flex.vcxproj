@@ -79,8 +79,15 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassNodes.h" />
+    <ClInclude Include="CommonNodes.h" />
+    <ClInclude Include="FunctionLocalVarChecker.h" />
+    <ClInclude Include="FunctionNodes.h" />
+    <ClInclude Include="NodeVisiter.h" />
     <ClInclude Include="objectivec.tab.h" />
+    <ClInclude Include="ProgramNode.h" />
     <ClInclude Include="struct_print.h" />
+    <ClInclude Include="TreeClass.h" />
     <ClInclude Include="tree_structs.h" />
   </ItemGroup>
   <ItemGroup>
