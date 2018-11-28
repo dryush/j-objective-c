@@ -185,8 +185,9 @@ ExprNode::ExprNode(Expression_st* st) {
 	this->exprType = st->exprType;
 	this->operationType = st->operationType;
 	this->constType = st->const_type;
-	if (st->exprType == EXPR_ARRAY_ELEM_CALL) {
-		this->arrayElems = new ExprListNode(st->array_elems);
+	if (st->exprType == EXPR_ARRAY_ELEM_CALL){
+		this->left = new ExprNode(st->left);
+		this->right = new ExprNode(st->right);  
 	}
 	else if (this->exprType == EXPR_OPERATION) {
 		if (this->operationType == OP_VALUE) {

@@ -25,6 +25,7 @@ enum OperationType
 	OP_UPLUS,
 	OP_UMINUS,
 	OP_VALUE
+
 };
 
 enum ExprType {
@@ -32,7 +33,11 @@ enum ExprType {
 	EXPR_METHOD_CALL,
 	EXPR_INVAR_CALL,
 	EXPR_FUNC_CALL,
-	EXPR_ARRAY_ELEM_CALL
+	EXPR_ARRAY_ELEM_CALL,
+
+	
+	EXPRE_ARRAY_ELEM_ASSIGN,
+	EXPRE_CLASS_FIELD_ASSIGN,
 };
 
 enum VarType
