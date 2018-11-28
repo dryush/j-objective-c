@@ -290,8 +290,8 @@ enumerator_list: enumerator_list ',' enumerator { $$ = AppendEnumeratorToList($1
 	| enumerator								{ $$ = CreateEnumeratorList($1); }
 	;
 
-enumerator: ID 			{ $$ = CreateEnumerator($1, NULL); }
-	| ID '=' INT_CONST 	{ $$ = CreateEnumerator($1, $3); }
+enumerator: ID 			{ $$ = CreateEnumerator($1); }
+	| ID '=' INT_CONST 	{ $$ = CreateEnumeratorWithVal($1, $3); }
 	;
 	
 	

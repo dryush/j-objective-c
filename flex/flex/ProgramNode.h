@@ -8,6 +8,7 @@ public:
 	list<FunctionNode*> functions;
 	list<ClassDeclarationNode*> classDeclarations;
 	list<ClassImplementationNode*> classImplementations;
+	list<EnumNode*> enums;
 
     void visit(NodeVisiter* visiter);
 
@@ -25,6 +26,9 @@ public:
 			else if (last->code->class_impl) {
 				ClassImplementationNode* impl = new ClassImplementationNode(last->code->class_impl);
 				classImplementations.push_back(impl);
+			}
+			else if (last->code->enum_decl){
+				this->enums.push_back( new EnumNode(last->code->enum_decl));
 			}
 			last = last->next;
 		}

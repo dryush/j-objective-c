@@ -176,7 +176,6 @@ public:
     }
 
     static void FillFrom(list<ClassMethodImplementationNode*>& list, Class_method_impl_list_st* st) {
-     /// TODO:: осмыслить и сделать
      auto last = st;
         while( last){
             list.push_back(new ClassMethodImplementationNode( last->method));
@@ -218,3 +217,33 @@ public:
         }
     }
 };
+
+class EnumElem {
+public:
+    string name;
+    int value;
+    EnumElem(string n, int val){
+        this->name = n;
+        this->value = val;
+    }
+}
+class EnumNode : public ExprNode{
+    string name;
+    list<EnumElem> elems;
+    void visit(NodeVisiter*) override;
+
+    EnumNode( Enum_declaration_st* st){
+        this->name = st->identifier;
+        int curVal = 0;
+        auto last = st->enumerator_list;
+        while( last){
+            if( last->enumerator->isValueSet ){
+                curVal = last->enumerator->value;
+            }
+            this->elems.push_back( EnumElem(last->enumerator->identifier, curVal));
+            curVal++;
+            last = last->next;
+        }
+    }
+
+}

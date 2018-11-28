@@ -236,6 +236,9 @@ void MethodCallArgNode::visit(NodeVisiter* visiter){
     visiter->visit(this);
 }
 
+void EnumNode::visit(NodeVisiter* visiter){
+    visiter->visit(this);
+}
 
 
 
