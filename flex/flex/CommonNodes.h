@@ -126,7 +126,7 @@ public:
 
 		if (this->stmtType == STMT_ARRAY_DECL) {
 			/// TODO::
-			this->name = st->name;
+			this->name = st->identifier;
 			this->varType = new TypeNode(st->var_type);
 		}
 		else if (this->stmtType == STMT_COMPOUND) {
@@ -218,7 +218,7 @@ ExprNode::ExprNode(Expression_st* st) {
 		}
 		else if (this->operationType == OP_ASSIGN_ARRAY) {
 			this->left = new ExprNode(st->left);
-			this->arrayElems = new ExprListNode(st->right);
+			this->arrayElems = new ExprListNode(st->array_elems);
 		}
 		else {
 			this->left = new ExprNode(st->left);

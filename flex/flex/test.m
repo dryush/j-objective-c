@@ -1,27 +1,3 @@
-enum testenum{
-    a,
-    b,
-    c,
-    d = 1,
-    e = 10,
-    f,
-    g,
-    h,
-    i = 0,
-    k,
-    l
-};
-
-enum testenum2{
-    a,
-    b,
-    c,
-    d = 1,
-    e = 10,
-    f,
-    g,
-    h,
-    i = 0,
-    k,
-    l
-};
+void foo() {
+    int a[4] = {1,2,3,4};
+}
