@@ -126,6 +126,7 @@ public:
         this->currentFunction = new FunctionInfo();
 
         this->currentFunction->returnType = TypeInfo( node->returnType);
+		this->currentFunction->name = node->name;
 
         for( auto iparam = node->params.begin(); iparam != node->params.end(); iparam++){
 			auto param = *iparam;

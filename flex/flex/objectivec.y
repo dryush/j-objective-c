@@ -469,7 +469,7 @@ array_elems_or_empty: expr_list { $$ = $1; }
 
 /*ФУНКЦИИ */
 func_arg: type ID { $$ =  createFuncArg($1, $2); }
-		| type ID '['']' { $$ =  createFuncArg($1, createType(TYPE_ARRAY, NULL, $2)); }
+		| type ID '['']' { $$ =  createFuncArg(createType(TYPE_ARRAY, NULL, $1), $2); }
     ;
 
 func_args: func_arg 			{ $$ = createFuncArgList($1); }
