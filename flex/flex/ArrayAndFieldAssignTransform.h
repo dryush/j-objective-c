@@ -21,7 +21,7 @@ public:
                     auto newNode = new ExprNode();
                     newNode->exprType = EXPRE_CLASS_FIELD_ASSIGN;
                     newNode->object = node->left->object;
-                    newNode->name = node->name;
+                    newNode->name = node->left->name;
                     newNode->right = node->right;
                     *node = *newNode;
                 }
@@ -30,4 +30,4 @@ public:
         NodeVisiter::visit(node);
 	}
 
-}
+};
