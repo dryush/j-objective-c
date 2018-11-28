@@ -485,7 +485,7 @@ struct Enumerator_st
 {
 	char *identifier;
 	int value;
-	bool isValueSet;
+	char isValueSet;
 };
 
 struct Enumerator_st *CreateEnumeratorWithVal(char *identifier, int value)
@@ -493,7 +493,7 @@ struct Enumerator_st *CreateEnumeratorWithVal(char *identifier, int value)
 	struct Enumerator_st *cur = (struct Enumerator_st *)malloc(sizeof(struct Enumerator_st));
 	cur->identifier = identifier;
 	cur->value = value;
-	cur->isValueSet = true;
+	cur->isValueSet = 1;
     printf("CreateEnumenator\n");
 	return cur;
 }
@@ -503,7 +503,7 @@ struct Enumerator_st *CreateEnumerator(char *identifier)
 {
 	struct Enumerator_st *cur = (struct Enumerator_st *)malloc(sizeof(struct Enumerator_st));
 	cur->identifier = identifier;
-	cur->isValueSet = false;
+	cur->isValueSet = 0;
     printf("CreateEnumenator\n");
 	return cur;
 }

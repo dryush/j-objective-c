@@ -226,8 +226,10 @@ public:
         this->name = n;
         this->value = val;
     }
-}
+};
+
 class EnumNode : public ExprNode{
+public:
     string name;
     list<EnumElem> elems;
     void visit(NodeVisiter*) override;
@@ -246,4 +248,4 @@ class EnumNode : public ExprNode{
         }
     }
 
-}
+};
