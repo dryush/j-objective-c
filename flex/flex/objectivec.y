@@ -344,6 +344,7 @@ class_invariants_declaration: '{' '}' 						{ $$ = NULL; }
 	;
 
 class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclaration( NULL, $2, $4 ); }
+						| '(' type '['']' ')' ID { $$ = createClassMethodParamDeclaration( NULL, createType(TYPE_ARRAY, NULL, $2), $6 ); }
 	;
 	
 /*Параметры, начиная со второго могут либо все объявляться с именем 
@@ -351,6 +352,7 @@ class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclarati
 */
 
 class_method_other_param_named: ID ':' '(' type ')' ID { $$ = createClassMethodParamDeclaration($1, $4, $6); }
+							| ID ':' '(' type '['']' ')' ID { $$ = createClassMethodParamDeclaration($1, createType(TYPE_ARRAY, NULL, $4), $8); }
 	;
 
 class_method_other_params_named: class_method_other_param_named  		{ $$ = createClassMethodParamDeclarationList($1); }
@@ -467,6 +469,7 @@ array_elems_or_empty: expr_list { $$ = $1; }
 
 /*ФУНКЦИИ */
 func_arg: type ID { $$ =  createFuncArg($1, $2); }
+		| type ID '['']' { $$ =  createFuncArg($1, createType(TYPE_ARRAY, NULL, $2)); }
     ;
 
 func_args: func_arg 			{ $$ = createFuncArgList($1); }

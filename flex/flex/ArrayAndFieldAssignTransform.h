@@ -1,7 +1,7 @@
 ﻿#include "NodeVisiter.h"
 
 /**
- *  Cheks for var eclration in first statment of function and methods
+ *  
  * 
  */
 class ArrayAndFieldAssignTransform : public NodeVisiter {

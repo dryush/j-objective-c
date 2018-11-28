@@ -94,7 +94,9 @@ public:
 
 	virtual void visit( ClassMethodDeclarationNode* node){ 
 		RETURN_IF_NODE_NULL;
-            
+        if( node->returnType){
+            node->returnType->visit( this);
+        }
 		for( auto iparam = node->params.begin(); iparam != node->params.end(); iparam++){
 			auto param = *iparam;
             if( param)
@@ -147,6 +149,10 @@ public:
         }
 	}
 
+    virtual void visit(EnumNode* node){
+        RETURN_IF_NODE_NULL;
+    }
+
 	virtual void visit(ProgramNode * node){
 		RETURN_IF_NODE_NULL;
 		
@@ -162,6 +168,10 @@ public:
         for( auto iclassImpl = node->classImplementations.begin(); iclassImpl != node->classImplementations.end(); iclassImpl++){
 			auto classImpl = *iclassImpl;
             (classImpl)->visit( this);
+        }
+        for( auto ienum = node->enums.begin(); ienum != node->enums.end(); ienum++){
+			auto _enum = *ienum;
+            (_enum)->visit( this);
         }
 	}
 	
