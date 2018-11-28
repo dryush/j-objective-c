@@ -126,6 +126,8 @@ public:
 
 		if (this->stmtType == STMT_ARRAY_DECL) {
 			/// TODO::
+			this->name = st->name;
+			this->varType = new TypeNode(st->var_type);
 		}
 		else if (this->stmtType == STMT_COMPOUND) {
 			auto last = st->stmt_list;
@@ -136,11 +138,11 @@ public:
 				// ��������� ���������� � ����������� �� ��� ��������� ����
                 if ( (child->stmtType == STMT_VAR_DECL || child->stmtType == STMT_ARRAY_DECL) && last->stmt->expr) {
 					Expression_st* left  = CreateIDExpression(last->stmt->identifier);
-					Expression_st* expr;
+					Expression_st* expr = nullptr;
 					if (child->stmtType == STMT_ARRAY_DECL) {
 						expr = CreateArrayInitExpr(left, last->stmt->array_elems);
 					}
-					else if (child->stmtType = STMT_VAR_DECL) {
+					else if (child->stmtType == STMT_VAR_DECL) {
 						expr = CreateExpression(OP_ASSIGN, left, last->stmt->expr);
 					}
 					StatementNode* assign = new StatementNode( CreateExpressionStatement(expr));
@@ -213,7 +215,11 @@ ExprNode::ExprNode(Expression_st* st) {
 			) {
 			this->left = new ExprNode(st->left);
 		}
-		else  {
+		else if (this->operationType == OP_ASSIGN_ARRAY) {
+			this->left = new ExprNode(st->left);
+			this->arrayElems = new ExprListNode(st->right);
+		}
+		else {
 			this->left = new ExprNode(st->left);
 			this->right = new ExprNode(st->right);
 		}
