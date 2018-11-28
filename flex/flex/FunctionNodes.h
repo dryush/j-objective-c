@@ -12,7 +12,7 @@ public:
 	string name;
 	FunctionParamNode(Func_arg_st* st);
 
-    void visit(NodeVisiter* visiter);
+    void visit(NodeVisiter* visiter) override;
 };
 
 class FunctionNode : public Node {
@@ -24,7 +24,7 @@ public:
 
     FunctionNode(Func_impl_st* st);
 	
-    void visit(NodeVisiter* visiter);
+    void visit(NodeVisiter* visiter) override;
 };
 
 #include "TreeClass.h"

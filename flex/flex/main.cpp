@@ -14,6 +14,8 @@
 #include "lex.yy.c"
 
 #include "FunctionLocalVarChecker.h"
+#include "ArrayAndFieldAssignTransform.h"
+#include "TableFiller.h"
 
 using namespace std;
 
@@ -28,7 +30,11 @@ int main(int argc, char *argv[]) {
 	print(root);
 	ProgramNode* prog = new ProgramNode(root);
     FunctionAndMethodsLocalVarChecker lvc;
+	ArrayAndFieldAssignTransform aafat;
+	TableFiller tf;
     prog->visit(&lvc);
+	prog->visit(&aafat);
+	prog->visit(&tf);
     if( errors.size() > 0){
         for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
             cout << *ierror << endl;

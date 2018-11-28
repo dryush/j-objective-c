@@ -222,6 +222,10 @@ class EnumElem {
 public:
     string name;
     int value;
+    EnumElem() {
+        name = "";
+        value = 0;
+    }
     EnumElem(string n, int val){
         this->name = n;
         this->value = val;

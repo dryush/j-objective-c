@@ -9,41 +9,46 @@ class EnumInfo {
 public: 
     string name;
     unordered_map<string, EnumElem> elems ;
-}
+};
 
 class TypeInfo {
 public:
     VarType type;
     VarType arrayType;
     string name;
+	TypeInfo() {
+	}
     TypeInfo( VarType vt, string n){
         this->type =vt;
         this->name = n;
     }
     TypeInfo( TypeNode* node){
-        this->type = node->type->varType;
-        if( node->returnType->varType == TYPE_CUSTOM){
-            this->name = node->type->name;
-        } else if ( node->returnType->varType == TYPE_ARRAY){
-            this->arrayType = node->returnType->childType->varType;
-            this->name = node->returnType->childType->name;
-        } else if ( node->type->varType == TYPE_POINTER){
-            this->name = node->returnType->childType->name;
+        this->type = node->varType;
+        if( node->varType == TYPE_CUSTOM){
+            this->name = node->name;
+        } else if ( node->varType == TYPE_ARRAY){
+            this->arrayType = node->childType->varType;
+            this->name = node->childType->name;
+        } else if ( node->varType == TYPE_POINTER){
+            this->name = node->childType->name;
         }
     }
-}
+};
 
 class FunctionParamInfo {
 public:
     TypeInfo type;
     string name;
+	FunctionParamInfo() {
+
+	}
     FunctionParamInfo( FunctionParamNode* pn){
         this->name = pn->name;
         this->type = TypeInfo(pn->type);
     }
-}
+};
 
-class MethodParamInfo : public FuncParamInfo {
+class MethodParamInfo : public FunctionParamInfo {
 public: 
     string outerName;
     MethodParamInfo( ClassMethodParamNode* pn){
@@ -51,14 +56,14 @@ public:
         this->outerName = pn->outerName;
         this->type = TypeInfo(pn->type);
     }
-}
+};
 
 class FunctionInfo {
 public:
     string name;
     TypeInfo returnType;
     unordered_map<string, FunctionParamInfo*> params;
-}
+};
 
 class FieldInfo {
 public:
@@ -70,7 +75,7 @@ public:
         this->type = TypeInfo( node->type);
         this->access = node->access;
     }    
-}
+};
 
 
 class MethodInfo : public FunctionInfo {
@@ -79,8 +84,8 @@ public:
     TypeInfo returnType;
     MethodType methodType;
     FieldAccess access;
-    unordered_map<string, FuncParamInfo*> outerParams;
-}
+    unordered_map<string, MethodParamInfo*> outerParams;
+};
 
 class ClassInfo {
 public:
@@ -89,7 +94,7 @@ public:
     unordered_map<string, FieldInfo*> fields;
     unordered_map<string, MethodInfo*> staticMethods;
     unordered_map<string, MethodInfo*> localMethods;
-}
+};
 
 unordered_map<string, ClassInfo*> classes;
 unordered_map<string, FunctionInfo*> functions;
@@ -98,7 +103,7 @@ unordered_map<string, EnumInfo*> enums;
  *  
  * 
  */
-class TableFilller : public NodeVisiter {
+class TableFiller : public NodeVisiter {
 public:
 
     EnumInfo* currentEnum;
@@ -107,7 +112,7 @@ public:
 
         this->currentEnum = new EnumInfo();
         for( auto ielem = node->elems.begin(); ielem != node->elems.end(); ielem++){
-            this->currentNode->elems[ielem->name] = *ielem;
+            this->currentEnum->elems[ielem->name] = *ielem;
         }
 
         enums[ this->currentEnum->name] = this->currentEnum;
@@ -126,7 +131,7 @@ public:
 			auto param = *iparam;
             if( param){
                 auto p = new FunctionParamInfo( param);
-                this->currentFunction.params[p->name] = p;;
+                this->currentFunction->params[p->name] = p;;
             }
         }
 
@@ -163,15 +168,15 @@ public:
             }
         }
 
-        if( this->currentMethod == METHOD_LOCAL)
+        if( this->currentMethod->methodType == METHOD_LOCAL)
             this->currentClass->localMethods[ this->currentMethod->name] = this->currentMethod;
-        else if( this->currentMethod == METHOD_STATIC)
+        else if( this->currentMethod->methodType == METHOD_STATIC)
             this->currentClass->staticMethods[ this->currentMethod->name ] = this->currentMethod;
 	}
     
 	void visit( ClassFieldDeclarationNode * node) override {
 		RETURN_IF_NODE_NULL;
-        FieldInfo field( node);
+        auto field = new FieldInfo( node);
         this->currentClass->fields[field->name] = field;
 	}
 
@@ -223,4 +228,4 @@ public:
 	}
 	
 
-}
+};
