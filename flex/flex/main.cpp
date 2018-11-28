@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 	yyin = fopen("test.m", "r");
 	yyparse();
 	printf("\n\n");
-	//print(root);
+	print(root);
 	ProgramNode* prog = new ProgramNode(root);
     FunctionAndMethodsLocalVarChecker lvc;
     prog->visit(&lvc);

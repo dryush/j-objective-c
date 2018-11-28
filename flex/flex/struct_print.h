@@ -54,7 +54,7 @@ void print(Expression_st* st);
 void print(Expr_list_st* st) {
     if (st != NULL) {
         ids[st] = getNextId();
-        labels[st] = string("Func_call_arg_list");
+        labels[st] = string("Func_call_arg_list / array_elems");
         Expr_list_st* next = st;
 		int number = 1;
         while( next){
