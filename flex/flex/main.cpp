@@ -1,5 +1,3 @@
-
-
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -16,6 +14,7 @@
 #include "FunctionLocalVarChecker.h"
 #include "ArrayAndFieldAssignTransform.h"
 #include "TableFiller.h"
+#include "PrintNodes.h"
 
 using namespace std;
 
@@ -32,14 +31,17 @@ int main(int argc, char *argv[]) {
     FunctionAndMethodsLocalVarChecker lvc;
 	ArrayAndFieldAssignTransform aafat;
 	TableFiller tf;
+	PrintNodes printNodes;
     prog->visit(&lvc);
 	prog->visit(&aafat);
 	prog->visit(&tf);
+	prog->visit(&printNodes);
     if( errors.size() > 0){
         for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
             cout << *ierror << endl;
         }
     }
-    execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
+    //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
+	execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
 	return 0;
 }

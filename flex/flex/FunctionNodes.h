@@ -20,7 +20,7 @@ public:
 	TypeNode* returnType;
 	string name;
 	StatementNode* body;
-	list<FunctionParamNode*> params;
+	vector<FunctionParamNode*> params;
 
     FunctionNode(Func_impl_st* st);
 	
@@ -44,6 +44,6 @@ FunctionNode::FunctionNode(Func_impl_st* st) {
 
 FunctionParamNode::FunctionParamNode(Func_arg_st* st) {
     this->type = new TypeNode(st->val_type);
-    this->name = name;
+    this->name = st->name;
 }
 

@@ -65,6 +65,78 @@ public:
         return max_id++;
     }
 
+	void visit( TypeNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			switch(node->varType) {
+				case TYPE_VOID: {
+					labels[node] = "void";
+					break;
+				}
+				case TYPE_INT: {
+					labels[node] = "int";
+					break;
+				}
+				case TYPE_FLOAT: {
+					labels[node] = "float";
+					break;
+				}
+				case TYPE_CHAR: {
+					labels[node] = "char";   
+					break;
+				}
+				case TYPE_STRING: {
+					labels[node] = "string";
+					break;
+				}
+				case TYPE_BOOL: {
+					labels[node] = "bool";  
+					break;
+				}
+				case TYPE_CUSTOM: {
+					labels[node] = string(node->name);   
+					break;
+				}
+				case TYPE_POINTER: {
+					labels[node] += "* (pointer)";
+					g[node].push_back(node->childType);
+					visit(node->childType);
+					break;
+				} 
+			}
+		}
+		NodeVisiter::visit(node);
+	}
+
+	void visit( FunctionParamNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = node->name;
+			g[node].push_back(Edge(node->type, "type"));
+			visit(node->type);
+		}
+		NodeVisiter::visit(node);
+	}
+	
+	void visit( FunctionNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = "Func_impl function " + node->name + "()" ;
+			
+			g[node].push_back(&(node->params));
+			ids[&(node->params)] = getNextId();
+			labels[&(node->params)] = "Func_arg_list";
+			
+			int number = 1;
+			for (int i = 0; i < node->params.size(); i++) {
+				g[&(node->params)].push_back(Edge::numb(node->params[i], number));
+				visit(node->params[i]);
+				number++;
+			}
+		}
+		NodeVisiter::visit(node);
+	}
+
 	void print( EnumElem* node ) {
 		if (node != NULL) {
 			ids[node] = getNextId();
@@ -96,6 +168,12 @@ public:
 			for (int i = 0; i < node->enums.size(); i++) {
 				g[ node ].push_back(Edge::numb(node->enums[i], number));
 				visit(node->enums[i]);
+				number++;
+			}
+
+			for (int i = 0; i < node->functions.size(); i++) {
+				g[ node ].push_back(Edge::numb(node->functions[i], number));
+				visit(node->functions[i]);
 				number++;
 			}
 		}
