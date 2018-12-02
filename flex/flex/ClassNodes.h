@@ -235,7 +235,7 @@ public:
 class EnumNode : public ExprNode{
 public:
     string name;
-    list<EnumElem> elems;
+    vector<EnumElem> elems;
     void visit(NodeVisiter*) override;
 
     EnumNode( Enum_declaration_st* st){

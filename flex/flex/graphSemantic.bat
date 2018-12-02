@@ -1,0 +1,1 @@
+"./graphviz/bin/dot.exe" -Tpng graphSemantic.txt -o graphSemantic.png

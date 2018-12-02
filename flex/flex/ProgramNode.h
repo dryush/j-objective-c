@@ -5,10 +5,10 @@
 
 class ProgramNode : public Node {
 public:
-	list<FunctionNode*> functions;
-	list<ClassDeclarationNode*> classDeclarations;
-	list<ClassImplementationNode*> classImplementations;
-	list<EnumNode*> enums;
+	vector<FunctionNode*> functions;
+	vector<ClassDeclarationNode*> classDeclarations;
+	vector<ClassImplementationNode*> classImplementations;
+	vector<EnumNode*> enums;
 
     void visit(NodeVisiter* visiter);
 
