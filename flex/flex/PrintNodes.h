@@ -100,12 +100,11 @@ public:
 				case TYPE_POINTER: {
 					labels[node] += "* (pointer)";
 					g[node].push_back(node->childType);
-					visit(node->childType);
+					node->childType->visit(this);
 					break;
 				} 
 			}
 		}
-		NodeVisiter::visit(node);
 	}
 
 	void visit( FunctionParamNode* node ) override {
@@ -113,16 +112,15 @@ public:
 			ids[node] = getNextId();
 			labels[node] = node->name;
 			g[node].push_back(Edge(node->type, "type"));
-			visit(node->type);
+			node->type->visit(this);
 		}
-		NodeVisiter::visit(node);
 	}
 	
 	void visit( FunctionNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
 			labels[node] = "Func_impl function " + node->name + "()" ;
-			
+
 			g[node].push_back(&(node->params));
 			ids[&(node->params)] = getNextId();
 			labels[&(node->params)] = "Func_arg_list";
@@ -130,11 +128,10 @@ public:
 			int number = 1;
 			for (int i = 0; i < node->params.size(); i++) {
 				g[&(node->params)].push_back(Edge::numb(node->params[i], number));
-				visit(node->params[i]);
+				node->params[i]->visit(this);
 				number++;
 			}
 		}
-		NodeVisiter::visit(node);
 	}
 
 	void print( EnumElem* node ) {
@@ -156,7 +153,6 @@ public:
 				number++;
 			}
 		}
-		NodeVisiter::visit(node);
 	}
 
 	void visit( ProgramNode* node ) override {
@@ -167,17 +163,16 @@ public:
 			int number = 1;
 			for (int i = 0; i < node->enums.size(); i++) {
 				g[ node ].push_back(Edge::numb(node->enums[i], number));
-				visit(node->enums[i]);
+				node->enums[i]->visit(this);
 				number++;
 			}
 
 			for (int i = 0; i < node->functions.size(); i++) {
 				g[ node ].push_back(Edge::numb(node->functions[i], number));
-				visit(node->functions[i]);
+				node->functions[i]->visit(this);
 				number++;
 			}
 		}
 		printDot();
-		NodeVisiter::visit(node);
 	}
 };
