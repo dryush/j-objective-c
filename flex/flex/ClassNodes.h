@@ -24,7 +24,10 @@ public:
     void visit(NodeVisiter*) override;
 
     ClassMethodParamNode( Class_method_param_declaration_st* st){
-        this->outerName = st->outerName;
+        if ( st->outerName != NULL)
+			this->outerName = st->outerName;
+		else
+			this->outerName = "";
         this->innerName = st->innerName;
         this->type = new TypeNode(st->val_type);
     }
