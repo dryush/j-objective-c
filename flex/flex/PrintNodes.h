@@ -116,10 +116,14 @@ public:
 		}
 	}
 	
+	// Add statement body
 	void visit( FunctionNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
 			labels[node] = "Func_impl function " + node->name + "()" ;
+
+			g[node].push_back(Edge(node->returnType, "return type"));
+			node->returnType->visit(this);
 
 			g[node].push_back(&(node->params));
 			ids[&(node->params)] = getNextId();
@@ -131,10 +135,127 @@ public:
 				node->params[i]->visit(this);
 				number++;
 			}
+
+
+		}
+	}
+	
+	void printAccess( FieldAccess* access) {
+		if (access != NULL) { 
+			ids[access] = getNextId();
+			switch(*access) {
+				case ACCESS_PUBLIC: {
+					labels[access] = "Public";
+					break;
+				}
+				case ACCESS_PROTECTED: {
+					labels[access] = "Protected";
+					break;
+				}
+				case ACCESS_PRIVATE: {
+					labels[access] = "Private";
+					break;
+				}
+			}
 		}
 	}
 
-	void print( EnumElem* node ) {
+	void printMethodType( MethodType* type) {
+		if (type != NULL) { 
+			ids[type] = getNextId();
+			switch(*type) {
+				case METHOD_STATIC: {
+					labels[type] = "Static";
+					break;
+				}
+				case METHOD_LOCAL: {
+					labels[type] = "Local";
+					break;
+				}
+			}
+		}
+	}
+
+	void visit( ClassFieldDeclarationNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = node->name;
+			g[node].push_back(Edge(node->type, "type"));
+			node->type->visit(this);
+			
+			g[node].push_back(Edge(&(node->access), "access"));
+			printAccess(&(node->access));
+		}
+	}
+
+	void visit( ClassMethodParamNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = "inner name: " + node->innerName + ", outer name: " + node->outerName;
+			g[node].push_back(Edge(node->type, "type"));
+			node->type->visit(this);
+		}
+	}
+
+	void visit( ClassMethodDeclarationNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = node->name;
+			g[node].push_back(Edge(node->returnType, "return type"));
+			node->returnType->visit(this);
+			
+			g[node].push_back(Edge(&(node->access), "access"));
+			printAccess(&(node->access));
+
+			g[node].push_back(Edge(&(node->methodType), "method type"));
+			printMethodType(&(node->methodType));
+
+			g[node].push_back(&(node->params));
+			ids[&(node->params)] = getNextId();
+			labels[&(node->params)] = "Method_arg_list";
+			
+			int number = 1;
+			for (auto it = node->params.begin(); it != node->params.end(); it++) {
+				g[&(node->params)].push_back(Edge::numb(*it, number));
+				(*it)->visit(this);
+				number++;
+			}
+		}
+	}
+
+	void visit( ClassDeclarationNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = "Class_decl class " + node->name;
+			if (node->parentName != "") {
+				labels[node] += " : " + node->parentName;
+			}
+
+			g[node].push_back(&(node->fields));
+			ids[&(node->fields)] = getNextId();
+			labels[&(node->fields)] = "Fields";
+
+			int number = 1;
+			for (auto it = node->fields.begin(); it != node->fields.end(); it++) {
+				g[&(node->fields)].push_back(Edge::numb(*it, number));
+				(*it)->visit(this);
+				number++;
+			}
+
+			g[node].push_back(&(node->methods));
+			ids[&(node->methods)] = getNextId();
+			labels[&(node->methods)] = "Methods";
+
+			number = 1;
+			for (auto it = node->methods.begin(); it != node->methods.end(); it++) {
+				g[&(node->methods)].push_back(Edge::numb(*it, number));
+				(*it)->visit(this);
+				number++;
+			}
+		}
+	}
+
+	void printEnumElem( EnumElem* node ) {
 		if (node != NULL) {
 			ids[node] = getNextId();
 			labels[node] = "Enum element " + node->name + " = " + to_string((long long)node->value);
@@ -149,12 +270,13 @@ public:
 			int number = 1;
 			for (int i = 0; i < node->elems.size(); i++) {
 				g[node].push_back(Edge::numb(&(node->elems[i]), number));
-				print(&(node->elems[i]));
+				printEnumElem(&(node->elems[i]));
 				number++;
 			}
 		}
 	}
 
+	// add implem class
 	void visit( ProgramNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
@@ -167,11 +289,24 @@ public:
 				number++;
 			}
 
+			for (int i = 0; i < node->classDeclarations.size(); i++) {
+				g[ node ].push_back(Edge::numb(node->classDeclarations[i], number));
+				node->classDeclarations[i]->visit(this);
+				number++;
+			}
+
+			for (int i = 0; i < node->classImplementations.size(); i++) {
+				g[ node ].push_back(Edge::numb(node->classImplementations[i], number));
+				//node->classImplementations[i]->visit(this);
+				number++;
+			}
+
 			for (int i = 0; i < node->functions.size(); i++) {
 				g[ node ].push_back(Edge::numb(node->functions[i], number));
 				node->functions[i]->visit(this);
 				number++;
 			}
+
 		}
 		printDot();
 	}
