@@ -1,13 +1,12 @@
-@interface Man : NSObject
-{
-    @protected
-	int age;
+int main() {
 	
-	@public
-	char name;
+	if ( c == b)
+	{
+		return 0;
+	}
+	else if ( c > a)
+	{
+		d[2] = 2+3;
+	}
+	return 0;		
 }
-@public
-+ (void)setAge: (int)age;
-@private
-- (int)getAge;
-@end

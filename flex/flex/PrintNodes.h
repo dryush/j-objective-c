@@ -107,6 +107,315 @@ public:
 		}
 	}
 
+	void visit( ExprNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			switch(node->exprType) {
+				case EXPR_OPERATION: {
+					switch(node->operationType) {
+						case OP_ADD: {
+							labels[node] = "+";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_SUB: {
+							labels[node] = "-";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_MUL: {
+							labels[node] = "*";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_DIV: {
+							labels[node] = "/";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_MOD: {
+							labels[node] = "%";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_ASSIGN: {
+							labels[node] = "=";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_ASSIGN_ARRAY: {
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->arrayElems));
+							node->left->visit(this);
+							break;
+						}
+						case OP_LESS: {
+							labels[node] = "<";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_LESS_OR_EQUAL: {
+							labels[node] = "<=";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_GREATER: {
+							labels[node] = ">";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_GREATER_OR_EQUAL: {
+							labels[node] = ">=";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_EQUAL: {
+							labels[node] = "==";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_NOT_EQUAL: {
+							labels[node] = "!=";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_LOGICAL_NOT: {
+							labels[node] = "!";
+							g[node].push_back(Edge::left(node->left));
+							node->left->visit(this);
+							break;
+						}
+						case OP_AND: {
+							labels[node] = "&&";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_OR: {
+							labels[node] = "||";
+							g[node].push_back(Edge::left(node->left));
+							g[node].push_back(Edge::right(node->right));
+							node->left->visit(this);
+							node->right->visit(this);
+							break;
+						}
+						case OP_UPLUS: {
+							labels[node] = "UPLUS";
+							g[node].push_back(Edge::left(node->left));
+							node->left->visit(this);
+							break;
+						}
+						case OP_UMINUS: {
+							labels[node] = "UMINUS";
+							g[node].push_back(Edge::left(node->left));
+							node->left->visit(this);
+							break;
+						}
+						case OP_VALUE: {
+							labels[node] = "Value ";
+							switch(node->constType) {
+								case TYPE_INT: {
+									labels[node] += "Const_INT " + to_string((long long)node->intVal);
+									break;
+								}
+								case TYPE_FLOAT: {
+									labels[node] += "Const_FLOAT " + to_string((long double)node->floatVal);
+									break;
+								}
+								case TYPE_CHAR: {
+									labels[node] += "Const_CHAR \'" + string(1, node->charVal) + "\'";
+									break;
+								}
+								case TYPE_STRING: {
+									labels[node] += "Const_STRING \\\"" + node->strVal + "\\\"";
+									break;
+								}
+								case TYPE_BOOL: {
+									labels[node] += "Const_BOOL " + string(node->boolVal ? "true" : "false"); 
+									break;
+								}
+								case TYPE_CUSTOM: {
+									labels[node] += "Identifier " + node->name;
+									break;
+								}
+								case TYPE_POINTER: {
+									labels[node] += "Pointer ";
+									break;
+								}
+							}
+							break;
+						}
+					}
+					break;
+				}
+				case EXPR_ARRAY_ELEM_CALL: {
+					labels[node] = "Array_elem_call ";
+					g[node].push_back(Edge(node->left, "array" ));
+					node->left->visit(this);
+					g[node].push_back(Edge(node->right, "index"));
+					node->right->visit(this);
+					break;
+				}
+				case EXPR_FUNC_CALL: {
+					labels[node] = "Func_call " + node->name + "()";
+					//g[node].push_back(node->func_args);
+					//print(node->func_args);
+					break;
+				}
+				case EXPR_METHOD_CALL: {
+					labels[node] = "Method_call: " + node->name;
+					if ( node->object) {
+						g[node].push_back(Edge(node->object,"object"));
+						node->object->visit(this);
+					}
+					
+					g[node].push_back(&(node->methodArgs));
+					ids[&(node->methodArgs)] = getNextId();
+					labels[&(node->methodArgs)] = "Method Args";
+
+					int number = 1;
+					for (auto it = node->methodArgs.begin(); it != node->methodArgs.end(); it++) {
+						g[&(node->methodArgs)].push_back(Edge::numb(*it, number));
+						(*it)->visit(this);
+						number++;
+					}
+					break;
+				}
+				case EXPR_INVAR_CALL: {
+					labels[node] = "invar_call: " + node->name;
+					if( node->object){
+						g[node].push_back(Edge(node->object,"object"));
+						node->object->visit(this);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	void visit( StatementNode* node ) override {
+		if (node != NULL) {
+        ids[node] = getNextId();
+		switch(node->stmtType) {
+            case STMT_WHILE: {
+                labels[node] = "While_stmt";
+		        g[node].push_back(Edge(node->condition, "condition"));
+				g[node].push_back(Edge(node->truthStmt, "true"));
+				node->condition->visit(this);
+				node->truthStmt->visit(this);
+                break;
+            }
+            case STMT_IF: {
+                labels[node] = "If_stmt";
+		        g[node].push_back(Edge(node->condition, "condition"));
+                g[node].push_back(Edge(node->truthStmt, "true"));
+                g[node].push_back(Edge(node->wrongStmt, "false"));
+                node->condition->visit(this);
+				node->truthStmt->visit(this);
+				node->wrongStmt->visit(this);
+                break;
+            }
+            case STMT_EXPR: {
+                labels[node] = "Expr";
+		        g[node].push_back(node->expr);
+				node->expr->visit(this);
+                break;
+            }
+            case STMT_VAR_DECL: {
+                labels[node] = "Var_decl_stmt " + node->name;
+				
+				g[node].push_back(Edge(node->varType, "type"));
+				node->varType->visit(this);
+				
+				if (node->expr) {
+					g[node].push_back(node->expr);
+					node->expr->visit(this);
+				}
+                break;
+            }
+			case STMT_ARRAY_DECL: {
+				labels[node] = "array_decl: " + node->name + "[" + to_string((long long)node->arraySize ) + "]";
+				g[node].push_back(Edge(node->varType, "type"));
+				node->varType->visit(this);
+				
+				g[node].push_back(&(node->arrayElems));
+				ids[&(node->arrayElems)] = getNextId();
+				labels[&(node->arrayElems)] = "Array elements";
+
+				int number = 1;
+				for (auto it = node->arrayElems.begin(); it != node->arrayElems.end(); it++) {
+					g[&(node->arrayElems)].push_back(Edge::numb(*it, number));
+					(*it)->visit(this);
+					number++;
+				}
+                break;
+			}
+            case STMT_RETURN: {
+                labels[node] = "Return_stmt";
+		        g[node].push_back(node->expr);
+				node->expr->visit(this);
+                break;
+            }
+            case STMT_COMPOUND: {
+                labels[node] = "Compound_stmt";
+				g[node].push_back(&(node->childs));
+                ids[&(node->childs)] = getNextId();
+				labels[&(node->childs)] = "Statements_list";
+
+				int number = 1;
+				for (auto it = node->childs.begin(); it != node->childs.end(); it++) {
+					g[&(node->childs)].push_back(Edge::numb(*it, number));
+					(*it)->visit(this);
+					number++;
+				}
+                break;
+            }
+            default: {
+                labels[node] = "Empty_stmt";
+                break;
+            }
+        }
+    }
+	}
+
 	void visit( FunctionParamNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
@@ -116,7 +425,6 @@ public:
 		}
 	}
 	
-	// Add statement body
 	void visit( FunctionNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
@@ -136,7 +444,8 @@ public:
 				number++;
 			}
 
-
+			g[node].push_back(Edge(node->body, "body"));
+			node->body->visit(this);
 		}
 	}
 	
@@ -255,6 +564,50 @@ public:
 		}
 	}
 
+	void visit( ClassMethodImplementationNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = node->name;
+			g[node].push_back(Edge(node->returnType, "return type"));
+			node->returnType->visit(this);
+
+			g[node].push_back(Edge(&(node->methodType), "method type"));
+			printMethodType(&(node->methodType));
+
+			g[node].push_back(&(node->params));
+			ids[&(node->params)] = getNextId();
+			labels[&(node->params)] = "Method_arg_list";
+			
+			int number = 1;
+			for (auto it = node->params.begin(); it != node->params.end(); it++) {
+				g[&(node->params)].push_back(Edge::numb(*it, number));
+				(*it)->visit(this);
+				number++;
+			}
+
+			g[node].push_back(Edge(node->body, "body"));
+			node->body->visit(this);
+		}
+	}
+
+	void visit( ClassImplementationNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = "Class_impl class " + node->name;
+			
+			g[node].push_back(&(node->methods));
+			ids[&(node->methods)] = getNextId();
+			labels[&(node->methods)] = "Methods";
+
+			int number = 1;
+			for (auto it = node->methods.begin(); it != node->methods.end(); it++) {
+				g[&(node->methods)].push_back(Edge::numb(*it, number));
+				(*it)->visit(this);
+				number++;
+			}
+		}
+	}
+
 	void printEnumElem( EnumElem* node ) {
 		if (node != NULL) {
 			ids[node] = getNextId();
@@ -276,7 +629,6 @@ public:
 		}
 	}
 
-	// add implem class
 	void visit( ProgramNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
@@ -297,7 +649,7 @@ public:
 
 			for (int i = 0; i < node->classImplementations.size(); i++) {
 				g[ node ].push_back(Edge::numb(node->classImplementations[i], number));
-				//node->classImplementations[i]->visit(this);
+				node->classImplementations[i]->visit(this);
 				number++;
 			}
 
