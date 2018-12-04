@@ -6,5 +6,5 @@
 @end
 int main() 
 {
-	a = func(a, b);
+	FOOOO(a, FUUUU( 2, "hello"));
 }

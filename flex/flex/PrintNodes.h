@@ -107,6 +107,22 @@ public:
 		}
 	}
 
+	void visit( ExprListNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = "Func_call_arg_list";
+
+			int number = 1;
+			for (auto it = node->exprs.begin(); it != node->exprs.end(); it++)
+			{
+				g[node].push_back(Edge::numb(*it, number));
+				(*it)->visit(this);
+				number++;
+			}
+			
+		}
+	}
+
 	void visit( ExprNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
@@ -296,8 +312,8 @@ public:
 				}
 				case EXPR_FUNC_CALL: {
 					labels[node] = "Func_call " + node->name + "()";
-					//g[node].push_back(node->func_args);
-					//print(node->func_args);
+					g[node].push_back(node->funcArgs);
+					node->funcArgs->visit(this);
 					break;
 				}
 				case EXPR_METHOD_CALL: {
