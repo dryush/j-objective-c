@@ -102,7 +102,13 @@ public:
 					g[node].push_back(node->childType);
 					node->childType->visit(this);
 					break;
-				} 
+				}
+				case TYPE_ARRAY: {
+					labels[node] = "array";
+					g[node].push_back(Edge(node->childType, "type"));
+					node->childType->visit(this);
+					break;
+				}
 			}
 		}
 	}
