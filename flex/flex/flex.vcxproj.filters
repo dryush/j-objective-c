@@ -16,6 +16,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="test.m">
+      <Filter>Файлы исходного кода</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="struct_print.h">
@@ -59,5 +62,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Bison Include="objectivec.y">
+      <Filter>Файлы исходного кода</Filter>
+    </Bison>
   </ItemGroup>
 </Project>

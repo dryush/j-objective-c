@@ -143,7 +143,7 @@ public:
 
     ClassDeclarationNode( Class_declaration_st* st ){
         this->name = st->name;
-        this->parentName = st->parentName;
+        this->parentName = st->parentName ? st->parentName : "<Java.Lang.Object>";
         ClassFieldDeclarationNode::FillFrom( this->fields, st->invariants_declaration_list);
         ClassMethodDeclarationNode::FillFrom( this->methods, st->methods_declaraion_list);
     }

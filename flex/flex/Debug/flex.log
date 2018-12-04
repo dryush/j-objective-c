@@ -1,4 +1,4 @@
-﻿Build started 28.11.2018 0:26:41.
+﻿Build started 04.12.2018 14:40:08.
      1>Project "C:\Users\User\Desktop\_fflex\j-objective-c\flex\flex\flex.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\flex.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -6,11 +6,11 @@
          bison.bat
          :VCEnd
          objectivec.y: conflicts: 19 shift/reduce
+       BisonTarget:
+       Skipping target "BisonTarget" because all output files are up-to-date with respect to the input files.
        ClCompile:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /analyze- /errorReport:prompt lex.yy.c objectivec.tab.c
          objectivec.tab.c
-     1>objectivec.y(293): warning C4047: 'function' : 'int' differs in levels of indirection from 'void *'
-     1>objectivec.y(293): warning C4024: 'CreateEnumerator' : different types for formal and actual parameter 2
          lex.yy.c
      1>objectivec.flex(94): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
@@ -24,10 +24,10 @@
          Generating Code...
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\commonnodes.h(106): warning C4800: 'char' : forcing value to bool 'true' or 'false' (performance warning)
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\commonnodes.h(212): warning C4800: 'char' : forcing value to bool 'true' or 'false' (performance warning)
      1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\struct_print.h(45): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(249) : see declaration of 'freopen'
-     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\objectivec.tab.c(1475): warning C4065: switch statement contains 'default' but no 'case' labels
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\objectivec.tab.c(1482): warning C4065: switch statement contains 'default' but no 'case' labels
      1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\objectivec.flex(94): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : see declaration of 'strcpy'
      1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\objectivec.flex(126): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
@@ -37,9 +37,17 @@
      1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\objectivec.flex(184): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(110) : see declaration of 'strcat'
      1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\objectivec.flex(232): warning C4101: 'numstr' : unreferenced local variable
-     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\main.cpp(25): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\printnodes.h(59): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(249) : see declaration of 'freopen'
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\printnodes.h(442): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\printnodes.h(625): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\printnodes.h(639): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\printnodes.h(645): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\printnodes.h(651): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\printnodes.h(657): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\main.cpp(26): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\stdio.h(234) : see declaration of 'fopen'
-     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\main.cpp(37): warning C4996: 'execlpe': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _execlpe. See online help for details.
+     1>c:\users\user\desktop\_fflex\j-objective-c\flex\flex\main.cpp(45): warning C4996: 'execlpe': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _execlpe. See online help for details.
                  c:\program files (x86)\microsoft visual studio 10.0\vc\include\process.h(190) : see declaration of 'execlpe'
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\User\Desktop\_fflex\j-objective-c\flex\Debug\flex.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\flex.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\User\Desktop\_fflex\j-objective-c\flex\Debug\flex.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\User\Desktop\_fflex\j-objective-c\flex\Debug\flex.lib" /MACHINE:X86 Debug\lex.yy.obj
@@ -56,4 +64,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.95
+Time Elapsed 00:00:05.65

@@ -174,7 +174,7 @@ public:
 			this->truthStmt = new StatementNode(st->truth_stmt);
 		}
 		else if (this->stmtType == STMT_RETURN) {
-			this->expr = new ExprNode(st->condition);
+			this->expr = new ExprNode(st->expr);
 		}
 		else if (this->stmtType == STMT_VAR_DECL) {
 			this->varType = new TypeNode(st->var_type);

@@ -350,7 +350,8 @@ public:
                 g[node].push_back(Edge(node->wrongStmt, "false"));
                 node->condition->visit(this);
 				node->truthStmt->visit(this);
-				node->wrongStmt->visit(this);
+                VISIT_IF_NOT_NULL(node->wrongStmt);
+				//node->wrongStmt->visit(this);
                 break;
             }
             case STMT_EXPR: {

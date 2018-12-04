@@ -1,12 +1,10 @@
-int main() {
-	
-	if ( c == b)
-	{
-		return 0;
-	}
-	else if ( c > a)
-	{
-		d[2] = 2+3;
-	}
-	return 0;		
+@implementation class 
++ (MyType*) someFunc: (int []) someParam (MyType*[]) someOtherParam
+{
+	c + b;
+}
+@end
+int main() 
+{
+	a = func(a, b);
 }

@@ -1,0 +1,64 @@
+digraph Program {
+	30  [label="Value Identifier b"];
+	11  [label="Value Identifier b"];
+	10  [label="Value Identifier c"];
+	8  [label="Expr"];
+	9  [label="+"];
+	26  [label="Value Identifier a"];
+	12  [label="params"];
+	4  [label="Class method impls"];
+	7  [label="Statements_list"];
+	23  [label="Statements_list"];
+	19  [label="Extern code"];
+	18  [label="MyType"];
+	3  [label="Class_impl class class"];
+	6  [label="Compound_stmt"];
+	16  [label=""];
+	14  [label=""];
+	5  [label="impl:  static someFunc"];
+	29  [label="Value Identifier a"];
+	28  [label="Func_call_arg_list / array_elems"];
+	22  [label="Compound_stmt"];
+	17  [label="* (pointer)"];
+	2  [label="Extern code"];
+	27  [label="Func_call func()"];
+	25  [label="="];
+	24  [label="Expr"];
+	1  [label="Program"];
+	20  [label="Func_impl function main()"];
+	15  [label="param name out: <no-name> in: someOtherParam"];
+	13  [label="param name out: <no-name> in: someParam"];
+	21  [label="int"];
+
+
+
+	8->9[label=""];
+	9->10[label="left"];
+	9->11[label="right"];
+	12->13[label="1"];
+	12->15[label="2"];
+	4->5[label=""];
+	7->8[label="1"];
+	23->24[label="1"];
+	19->20[label=""];
+	3->4[label=""];
+	6->7[label=""];
+	5->6[label=""];
+	5->12[label=""];
+	5->17[label=""];
+	28->29[label="1"];
+	28->30[label="2"];
+	22->23[label=""];
+	17->18[label=""];
+	2->3[label=""];
+	27->28[label=""];
+	25->26[label="left"];
+	25->27[label="right"];
+	24->25[label=""];
+	1->2[label="1"];
+	1->19[label="2"];
+	20->21[label="type"];
+	20->22[label=""];
+	15->16[label=""];
+	13->14[label=""];
+}

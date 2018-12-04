@@ -77,6 +77,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
+    <None Include="test.m" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClassNodes.h" />
@@ -94,6 +95,9 @@
     <ClCompile Include="lex.yy.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="objectivec.tab.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <Bison Include="objectivec.y" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

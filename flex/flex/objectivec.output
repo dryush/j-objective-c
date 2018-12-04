@@ -9,7 +9,7 @@ Terminals unused in grammar
 State 63 conflicts: 1 shift/reduce
 State 80 conflicts: 1 shift/reduce
 State 123 conflicts: 16 shift/reduce
-State 211 conflicts: 1 shift/reduce
+State 213 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -129,87 +129,90 @@ Grammar
    88                             | '{' class_invariant_declaration_with_access_list '}'
 
    89 class_method_first_param: '(' type ')' ID
+   90                         | '(' type '[' ']' ')' ID
 
-   90 class_method_other_param_named: ID ':' '(' type ')' ID
+   91 class_method_other_param_named: ID ':' '(' type ')' ID
+   92                               | ID ':' '(' type '[' ']' ')' ID
 
-   91 class_method_other_params_named: class_method_other_param_named
-   92                                | class_method_other_params_named class_method_other_param_named
+   93 class_method_other_params_named: class_method_other_param_named
+   94                                | class_method_other_params_named class_method_other_param_named
 
-   93 class_method_params_nonamed: class_method_first_param
-   94                            | class_method_params_nonamed class_method_first_param
+   95 class_method_params_nonamed: class_method_first_param
+   96                            | class_method_params_nonamed class_method_first_param
 
-   95 class_method_all_params: class_method_first_param class_method_other_params_named
-   96                        | class_method_params_nonamed
+   97 class_method_all_params: class_method_first_param class_method_other_params_named
+   98                        | class_method_params_nonamed
 
-   97 class_method_params: class_method_all_params
-   98                    | /* empty */
+   99 class_method_params: class_method_all_params
+  100                    | /* empty */
 
-   99 class_method: '-' '(' type ')' ID ':' class_method_params
-  100             | '+' '(' type ')' ID ':' class_method_params
-  101             | '-' '(' type ')' ID
-  102             | '+' '(' type ')' ID
+  101 class_method: '-' '(' type ')' ID ':' class_method_params
+  102             | '+' '(' type ')' ID ':' class_method_params
+  103             | '-' '(' type ')' ID
+  104             | '+' '(' type ')' ID
 
-  103 class_method_declaration: class_method ';'
+  105 class_method_declaration: class_method ';'
 
-  104 class_methods_declaration: class_method_declaration
-  105                          | class_methods_declaration class_method_declaration
+  106 class_methods_declaration: class_method_declaration
+  107                          | class_methods_declaration class_method_declaration
 
-  106 class_methods_declaration_with_access: class_fields_access class_methods_declaration
+  108 class_methods_declaration_with_access: class_fields_access class_methods_declaration
 
-  107 class_methods_declaration_with_access_list: class_methods_declaration
-  108                                           | class_methods_declaration_with_access
-  109                                           | class_methods_declaration_with_access_list class_methods_declaration_with_access
+  109 class_methods_declaration_with_access_list: class_methods_declaration
+  110                                           | class_methods_declaration_with_access
+  111                                           | class_methods_declaration_with_access_list class_methods_declaration_with_access
 
-  110 class_methods_declaration_or_empty: class_methods_declaration_with_access_list
-  111                                   | /* empty */
+  112 class_methods_declaration_or_empty: class_methods_declaration_with_access_list
+  113                                   | /* empty */
 
-  112 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
-  113                  | INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END
-  114                  | INTERFACE ID ':' ID class_methods_declaration_or_empty END
-  115                  | INTERFACE ID class_methods_declaration_or_empty END
+  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
+  115                  | INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END
+  116                  | INTERFACE ID ':' ID class_methods_declaration_or_empty END
+  117                  | INTERFACE ID class_methods_declaration_or_empty END
 
-  116 class_method_implementation: class_method compound_stmt
+  118 class_method_implementation: class_method compound_stmt
 
-  117 class_methods_implementation: class_method_implementation
-  118                             | class_methods_implementation class_method_implementation
+  119 class_methods_implementation: class_method_implementation
+  120                             | class_methods_implementation class_method_implementation
 
-  119 class_methods_implementation_or_empty: class_methods_implementation
-  120                                      | /* empty */
+  121 class_methods_implementation_or_empty: class_methods_implementation
+  122                                      | /* empty */
 
-  121 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END
+  123 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END
 
-  122 method_call_noname_arg: ':' expr
+  124 method_call_noname_arg: ':' expr
 
-  123 method_call_name_arg: ID ':' expr
+  125 method_call_name_arg: ID ':' expr
 
-  124 method_call_noname_args: method_call_noname_arg
-  125                        | method_call_noname_args method_call_noname_arg
+  126 method_call_noname_args: method_call_noname_arg
+  127                        | method_call_noname_args method_call_noname_arg
 
-  126 method_call_name_args: method_call_name_arg
-  127                      | method_call_name_args method_call_name_arg
+  128 method_call_name_args: method_call_name_arg
+  129                      | method_call_name_args method_call_name_arg
 
-  128 method_call_args: method_call_noname_arg method_call_name_args
-  129                 | method_call_noname_args
+  130 method_call_args: method_call_noname_arg method_call_name_args
+  131                 | method_call_noname_args
 
-  130 expr_list: expr
-  131          | expr_list ',' expr
+  132 expr_list: expr
+  133          | expr_list ',' expr
 
-  132 array_elems_or_empty: expr_list
-  133                     | /* empty */
+  134 array_elems_or_empty: expr_list
+  135                     | /* empty */
 
-  134 func_arg: type ID
+  136 func_arg: type ID
+  137         | type ID '[' ']'
 
-  135 func_args: func_arg
-  136          | func_args ',' func_arg
+  138 func_args: func_arg
+  139          | func_args ',' func_arg
 
-  137 func_args_or_empty: func_args
-  138                   | /* empty */
+  140 func_args_or_empty: func_args
+  141                   | /* empty */
 
-  139 func_header: type ID '(' func_args_or_empty ')'
+  142 func_header: type ID '(' func_args_or_empty ')'
 
-  140 func_declaration: func_header ';'
+  143 func_declaration: func_header ';'
 
-  141 func_implementation: func_header compound_stmt
+  144 func_implementation: func_header compound_stmt
 
 
 Terminals, with rules where they appear
@@ -217,21 +220,21 @@ Terminals, with rules where they appear
 $end (0) 0
 '!' (33) 56
 '%' (37) 45
-'(' (40) 22 23 24 59 70 71 89 90 99 100 101 102 139
-')' (41) 22 23 24 59 70 71 89 90 99 100 101 102 139
+'(' (40) 22 23 24 59 70 71 89 90 91 92 101 102 103 104 142
+')' (41) 22 23 24 59 70 71 89 90 91 92 101 102 103 104 142
 '*' (42) 29 42
-'+' (43) 40 57 100 102
-',' (44) 73 131 136
-'-' (45) 41 58 99 101
+'+' (43) 40 57 102 104
+',' (44) 73 133 139
+'-' (45) 41 58 101 103
 '.' (46)
 '/' (47) 44
-':' (58) 90 99 100 112 114 122 123
-';' (59) 13 14 15 20 25 26 27 28 72 80 103 140
+':' (58) 91 92 101 102 114 116 124 125
+';' (59) 13 14 15 20 25 26 27 28 72 80 105 143
 '<' (60) 48
 '=' (61) 25 28 46 47 76
 '>' (62) 50
-'[' (91) 27 28 66 67 68
-']' (93) 27 28 66 67 68
+'[' (91) 27 28 66 67 68 90 92 137
+']' (93) 27 28 66 67 68 90 92 137
 '{' (123) 21 28 47 72 87 88
 '}' (125) 21 28 47 72 87 88
 error (256)
@@ -240,16 +243,16 @@ FLOAT_CONST (259) 62
 CHAR_CONST (260) 64
 BOOL_CONST (261) 63
 STRING_CONST (262) 65
-ID (263) 25 26 27 28 29 30 60 66 67 69 70 71 75 76 80 89 90 99 100
-    101 102 112 113 114 115 121 123 134 139
+ID (263) 25 26 27 28 29 30 60 66 67 69 70 71 75 76 80 89 90 91 92 101
+    102 103 104 114 115 116 117 123 125 136 137 142
 WHILE (264) 24
 DO (265)
 IF (266) 22 23
 ELSE (267) 23
-END (268) 112 113 114 115 121
+END (268) 114 115 116 117 123
 EXTERN (269)
-IMPLEMENTATION (270) 121
-INTERFACE (271) 112 113 114 115
+IMPLEMENTATION (270) 123
+INTERFACE (271) 114 115 116 117
 PUBLIC (272) 77
 PROTECTED (273) 78
 PRIVATE (274) 79
@@ -290,7 +293,7 @@ stmt_list_or_empty (62)
 stmt (63)
     on left: 13 14 15 16 17 18 19 20, on right: 9 10 22 23 24
 compound_stmt (64)
-    on left: 21, on right: 19 116 141
+    on left: 21, on right: 19 118 144
 if_stmt (65)
     on left: 22 23, on right: 17
 while_stmt (66)
@@ -302,15 +305,15 @@ pointer_custom_type (68)
 enum_type (69)
     on left: 30, on right: 33 72
 type (70)
-    on left: 31 32 33, on right: 25 26 27 28 80 89 90 99 100 101 102
-    134 139
+    on left: 31 32 33, on right: 25 26 27 28 80 89 90 91 92 101 102
+    103 104 136 137 142
 default_type (71)
     on left: 34 35 36 37 38 39, on right: 31
 expr (72)
     on left: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57
     58 59 60 61 62 63 64 65 66 67 68 69 70 71, on right: 13 15 22 23
     24 25 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58
-    59 66 67 68 69 122 123 130 131
+    59 66 67 68 69 124 125 132 133
 enum_declaration (73)
     on left: 72, on right: 5
 enumerator_list (74)
@@ -318,7 +321,7 @@ enumerator_list (74)
 enumerator (75)
     on left: 75 76, on right: 73 74
 class_fields_access (76)
-    on left: 77 78 79, on right: 83 106
+    on left: 77 78 79, on right: 83 108
 class_invariant_declaration (77)
     on left: 80, on right: 81 82
 class_invariants_declarations (78)
@@ -328,67 +331,67 @@ class_invariant_declaration_with_access (79)
 class_invariant_declaration_with_access_list (80)
     on left: 84 85 86, on right: 86 88
 class_invariants_declaration (81)
-    on left: 87 88, on right: 112 113
+    on left: 87 88, on right: 114 115
 class_method_first_param (82)
-    on left: 89, on right: 93 94 95
+    on left: 89 90, on right: 95 96 97
 class_method_other_param_named (83)
-    on left: 90, on right: 91 92
+    on left: 91 92, on right: 93 94
 class_method_other_params_named (84)
-    on left: 91 92, on right: 92 95
+    on left: 93 94, on right: 94 97
 class_method_params_nonamed (85)
-    on left: 93 94, on right: 94 96
+    on left: 95 96, on right: 96 98
 class_method_all_params (86)
-    on left: 95 96, on right: 97
+    on left: 97 98, on right: 99
 class_method_params (87)
-    on left: 97 98, on right: 99 100
+    on left: 99 100, on right: 101 102
 class_method (88)
-    on left: 99 100 101 102, on right: 103 116
+    on left: 101 102 103 104, on right: 105 118
 class_method_declaration (89)
-    on left: 103, on right: 104 105
+    on left: 105, on right: 106 107
 class_methods_declaration (90)
-    on left: 104 105, on right: 105 106 107
+    on left: 106 107, on right: 107 108 109
 class_methods_declaration_with_access (91)
-    on left: 106, on right: 108 109
+    on left: 108, on right: 110 111
 class_methods_declaration_with_access_list (92)
-    on left: 107 108 109, on right: 109 110
+    on left: 109 110 111, on right: 111 112
 class_methods_declaration_or_empty (93)
-    on left: 110 111, on right: 112 113 114 115
+    on left: 112 113, on right: 114 115 116 117
 class_declaration (94)
-    on left: 112 113 114 115, on right: 3
+    on left: 114 115 116 117, on right: 3
 class_method_implementation (95)
-    on left: 116, on right: 117 118
+    on left: 118, on right: 119 120
 class_methods_implementation (96)
-    on left: 117 118, on right: 118 119
+    on left: 119 120, on right: 120 121
 class_methods_implementation_or_empty (97)
-    on left: 119 120, on right: 121
+    on left: 121 122, on right: 123
 class_implementation (98)
-    on left: 121, on right: 4
+    on left: 123, on right: 4
 method_call_noname_arg (99)
-    on left: 122, on right: 124 125 128
+    on left: 124, on right: 126 127 130
 method_call_name_arg (100)
-    on left: 123, on right: 126 127
+    on left: 125, on right: 128 129
 method_call_noname_args (101)
-    on left: 124 125, on right: 125 129
+    on left: 126 127, on right: 127 131
 method_call_name_args (102)
-    on left: 126 127, on right: 127 128
+    on left: 128 129, on right: 129 130
 method_call_args (103)
-    on left: 128 129, on right: 66
+    on left: 130 131, on right: 66
 expr_list (104)
-    on left: 130 131, on right: 70 131 132
+    on left: 132 133, on right: 70 133 134
 array_elems_or_empty (105)
-    on left: 132 133, on right: 28 47
+    on left: 134 135, on right: 28 47
 func_arg (106)
-    on left: 134, on right: 135 136
+    on left: 136 137, on right: 138 139
 func_args (107)
-    on left: 135 136, on right: 136 137
+    on left: 138 139, on right: 139 140
 func_args_or_empty (108)
-    on left: 137 138, on right: 139
+    on left: 140 141, on right: 142
 func_header (109)
-    on left: 139, on right: 140 141
+    on left: 142, on right: 143 144
 func_declaration (110)
-    on left: 140, on right: 1
+    on left: 143, on right: 1
 func_implementation (111)
-    on left: 141, on right: 2
+    on left: 144, on right: 2
 
 
 State 0
@@ -430,17 +433,17 @@ State 1
 
 State 2
 
-  121 class_implementation: IMPLEMENTATION . ID class_methods_implementation_or_empty END
+  123 class_implementation: IMPLEMENTATION . ID class_methods_implementation_or_empty END
 
     ID  shift, and go to state 25
 
 
 State 3
 
-  112 class_declaration: INTERFACE . ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
-  113                  | INTERFACE . ID class_invariants_declaration class_methods_declaration_or_empty END
-  114                  | INTERFACE . ID ':' ID class_methods_declaration_or_empty END
-  115                  | INTERFACE . ID class_methods_declaration_or_empty END
+  114 class_declaration: INTERFACE . ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
+  115                  | INTERFACE . ID class_invariants_declaration class_methods_declaration_or_empty END
+  116                  | INTERFACE . ID ':' ID class_methods_declaration_or_empty END
+  117                  | INTERFACE . ID class_methods_declaration_or_empty END
 
     ID  shift, and go to state 26
 
@@ -558,7 +561,7 @@ State 15
 
 State 16
 
-  139 func_header: type . ID '(' func_args_or_empty ')'
+  142 func_header: type . ID '(' func_args_or_empty ')'
 
     ID  shift, and go to state 31
 
@@ -593,8 +596,8 @@ State 20
 
 State 21
 
-  140 func_declaration: func_header . ';'
-  141 func_implementation: func_header . compound_stmt
+  143 func_declaration: func_header . ';'
+  144 func_implementation: func_header . compound_stmt
 
     ';'  shift, and go to state 32
     '{'  shift, and go to state 33
@@ -625,12 +628,12 @@ State 24
 
 State 25
 
-  121 class_implementation: IMPLEMENTATION ID . class_methods_implementation_or_empty END
+  123 class_implementation: IMPLEMENTATION ID . class_methods_implementation_or_empty END
 
     '-'  shift, and go to state 35
     '+'  shift, and go to state 36
 
-    $default  reduce using rule 120 (class_methods_implementation_or_empty)
+    $default  reduce using rule 122 (class_methods_implementation_or_empty)
 
     class_method                           go to state 37
     class_method_implementation            go to state 38
@@ -640,10 +643,10 @@ State 25
 
 State 26
 
-  112 class_declaration: INTERFACE ID . ':' ID class_invariants_declaration class_methods_declaration_or_empty END
-  113                  | INTERFACE ID . class_invariants_declaration class_methods_declaration_or_empty END
-  114                  | INTERFACE ID . ':' ID class_methods_declaration_or_empty END
-  115                  | INTERFACE ID . class_methods_declaration_or_empty END
+  114 class_declaration: INTERFACE ID . ':' ID class_invariants_declaration class_methods_declaration_or_empty END
+  115                  | INTERFACE ID . class_invariants_declaration class_methods_declaration_or_empty END
+  116                  | INTERFACE ID . ':' ID class_methods_declaration_or_empty END
+  117                  | INTERFACE ID . class_methods_declaration_or_empty END
 
     PUBLIC     shift, and go to state 41
     PROTECTED  shift, and go to state 42
@@ -653,7 +656,7 @@ State 26
     '{'        shift, and go to state 44
     ':'        shift, and go to state 45
 
-    $default  reduce using rule 111 (class_methods_declaration_or_empty)
+    $default  reduce using rule 113 (class_methods_declaration_or_empty)
 
     class_fields_access                         go to state 46
     class_invariants_declaration                go to state 47
@@ -698,16 +701,16 @@ State 30
 
 State 31
 
-  139 func_header: type ID . '(' func_args_or_empty ')'
+  142 func_header: type ID . '(' func_args_or_empty ')'
 
     '('  shift, and go to state 57
 
 
 State 32
 
-  140 func_declaration: func_header ';' .
+  143 func_declaration: func_header ';' .
 
-    $default  reduce using rule 140 (func_declaration)
+    $default  reduce using rule 143 (func_declaration)
 
 
 State 33
@@ -756,30 +759,30 @@ State 33
 
 State 34
 
-  141 func_implementation: func_header compound_stmt .
+  144 func_implementation: func_header compound_stmt .
 
-    $default  reduce using rule 141 (func_implementation)
+    $default  reduce using rule 144 (func_implementation)
 
 
 State 35
 
-   99 class_method: '-' . '(' type ')' ID ':' class_method_params
-  101             | '-' . '(' type ')' ID
+  101 class_method: '-' . '(' type ')' ID ':' class_method_params
+  103             | '-' . '(' type ')' ID
 
     '('  shift, and go to state 84
 
 
 State 36
 
-  100 class_method: '+' . '(' type ')' ID ':' class_method_params
-  102             | '+' . '(' type ')' ID
+  102 class_method: '+' . '(' type ')' ID ':' class_method_params
+  104             | '+' . '(' type ')' ID
 
     '('  shift, and go to state 85
 
 
 State 37
 
-  116 class_method_implementation: class_method . compound_stmt
+  118 class_method_implementation: class_method . compound_stmt
 
     '{'  shift, and go to state 33
 
@@ -788,20 +791,20 @@ State 37
 
 State 38
 
-  117 class_methods_implementation: class_method_implementation .
+  119 class_methods_implementation: class_method_implementation .
 
-    $default  reduce using rule 117 (class_methods_implementation)
+    $default  reduce using rule 119 (class_methods_implementation)
 
 
 State 39
 
-  118 class_methods_implementation: class_methods_implementation . class_method_implementation
-  119 class_methods_implementation_or_empty: class_methods_implementation .
+  120 class_methods_implementation: class_methods_implementation . class_method_implementation
+  121 class_methods_implementation_or_empty: class_methods_implementation .
 
     '-'  shift, and go to state 35
     '+'  shift, and go to state 36
 
-    $default  reduce using rule 119 (class_methods_implementation_or_empty)
+    $default  reduce using rule 121 (class_methods_implementation_or_empty)
 
     class_method                 go to state 37
     class_method_implementation  go to state 87
@@ -809,7 +812,7 @@ State 39
 
 State 40
 
-  121 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty . END
+  123 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty . END
 
     END  shift, and go to state 88
 
@@ -866,15 +869,15 @@ State 44
 
 State 45
 
-  112 class_declaration: INTERFACE ID ':' . ID class_invariants_declaration class_methods_declaration_or_empty END
-  114                  | INTERFACE ID ':' . ID class_methods_declaration_or_empty END
+  114 class_declaration: INTERFACE ID ':' . ID class_invariants_declaration class_methods_declaration_or_empty END
+  116                  | INTERFACE ID ':' . ID class_methods_declaration_or_empty END
 
     ID  shift, and go to state 96
 
 
 State 46
 
-  106 class_methods_declaration_with_access: class_fields_access . class_methods_declaration
+  108 class_methods_declaration_with_access: class_fields_access . class_methods_declaration
 
     '-'  shift, and go to state 35
     '+'  shift, and go to state 36
@@ -886,7 +889,7 @@ State 46
 
 State 47
 
-  113 class_declaration: INTERFACE ID class_invariants_declaration . class_methods_declaration_or_empty END
+  115 class_declaration: INTERFACE ID class_invariants_declaration . class_methods_declaration_or_empty END
 
     PUBLIC     shift, and go to state 41
     PROTECTED  shift, and go to state 42
@@ -894,7 +897,7 @@ State 47
     '-'        shift, and go to state 35
     '+'        shift, and go to state 36
 
-    $default  reduce using rule 111 (class_methods_declaration_or_empty)
+    $default  reduce using rule 113 (class_methods_declaration_or_empty)
 
     class_fields_access                         go to state 46
     class_method                                go to state 48
@@ -907,27 +910,27 @@ State 47
 
 State 48
 
-  103 class_method_declaration: class_method . ';'
+  105 class_method_declaration: class_method . ';'
 
     ';'  shift, and go to state 99
 
 
 State 49
 
-  104 class_methods_declaration: class_method_declaration .
+  106 class_methods_declaration: class_method_declaration .
 
-    $default  reduce using rule 104 (class_methods_declaration)
+    $default  reduce using rule 106 (class_methods_declaration)
 
 
 State 50
 
-  105 class_methods_declaration: class_methods_declaration . class_method_declaration
-  107 class_methods_declaration_with_access_list: class_methods_declaration .
+  107 class_methods_declaration: class_methods_declaration . class_method_declaration
+  109 class_methods_declaration_with_access_list: class_methods_declaration .
 
     '-'  shift, and go to state 35
     '+'  shift, and go to state 36
 
-    $default  reduce using rule 107 (class_methods_declaration_with_access_list)
+    $default  reduce using rule 109 (class_methods_declaration_with_access_list)
 
     class_method              go to state 48
     class_method_declaration  go to state 100
@@ -935,21 +938,21 @@ State 50
 
 State 51
 
-  108 class_methods_declaration_with_access_list: class_methods_declaration_with_access .
+  110 class_methods_declaration_with_access_list: class_methods_declaration_with_access .
 
-    $default  reduce using rule 108 (class_methods_declaration_with_access_list)
+    $default  reduce using rule 110 (class_methods_declaration_with_access_list)
 
 
 State 52
 
-  109 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list . class_methods_declaration_with_access
-  110 class_methods_declaration_or_empty: class_methods_declaration_with_access_list .
+  111 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list . class_methods_declaration_with_access
+  112 class_methods_declaration_or_empty: class_methods_declaration_with_access_list .
 
     PUBLIC     shift, and go to state 41
     PROTECTED  shift, and go to state 42
     PRIVATE    shift, and go to state 43
 
-    $default  reduce using rule 110 (class_methods_declaration_or_empty)
+    $default  reduce using rule 112 (class_methods_declaration_or_empty)
 
     class_fields_access                    go to state 46
     class_methods_declaration_with_access  go to state 101
@@ -957,7 +960,7 @@ State 52
 
 State 53
 
-  115 class_declaration: INTERFACE ID class_methods_declaration_or_empty . END
+  117 class_declaration: INTERFACE ID class_methods_declaration_or_empty . END
 
     END  shift, and go to state 102
 
@@ -990,7 +993,7 @@ State 56
 
 State 57
 
-  139 func_header: type ID '(' . func_args_or_empty ')'
+  142 func_header: type ID '(' . func_args_or_empty ')'
 
     ID      shift, and go to state 1
     ENUM    shift, and go to state 4
@@ -1001,7 +1004,7 @@ State 57
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    $default  reduce using rule 138 (func_args_or_empty)
+    $default  reduce using rule 141 (func_args_or_empty)
 
     pointer_custom_type  go to state 14
     enum_type            go to state 81
@@ -1373,8 +1376,8 @@ State 83
 
 State 84
 
-   99 class_method: '-' '(' . type ')' ID ':' class_method_params
-  101             | '-' '(' . type ')' ID
+  101 class_method: '-' '(' . type ')' ID ':' class_method_params
+  103             | '-' '(' . type ')' ID
 
     ID      shift, and go to state 1
     ENUM    shift, and go to state 4
@@ -1393,8 +1396,8 @@ State 84
 
 State 85
 
-  100 class_method: '+' '(' . type ')' ID ':' class_method_params
-  102             | '+' '(' . type ')' ID
+  102 class_method: '+' '(' . type ')' ID ':' class_method_params
+  104             | '+' '(' . type ')' ID
 
     ID      shift, and go to state 1
     ENUM    shift, and go to state 4
@@ -1413,23 +1416,23 @@ State 85
 
 State 86
 
-  116 class_method_implementation: class_method compound_stmt .
+  118 class_method_implementation: class_method compound_stmt .
 
-    $default  reduce using rule 116 (class_method_implementation)
+    $default  reduce using rule 118 (class_method_implementation)
 
 
 State 87
 
-  118 class_methods_implementation: class_methods_implementation class_method_implementation .
+  120 class_methods_implementation: class_methods_implementation class_method_implementation .
 
-    $default  reduce using rule 118 (class_methods_implementation)
+    $default  reduce using rule 120 (class_methods_implementation)
 
 
 State 88
 
-  121 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END .
+  123 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END .
 
-    $default  reduce using rule 121 (class_implementation)
+    $default  reduce using rule 123 (class_implementation)
 
 
 State 89
@@ -1520,8 +1523,8 @@ State 95
 
 State 96
 
-  112 class_declaration: INTERFACE ID ':' ID . class_invariants_declaration class_methods_declaration_or_empty END
-  114                  | INTERFACE ID ':' ID . class_methods_declaration_or_empty END
+  114 class_declaration: INTERFACE ID ':' ID . class_invariants_declaration class_methods_declaration_or_empty END
+  116                  | INTERFACE ID ':' ID . class_methods_declaration_or_empty END
 
     PUBLIC     shift, and go to state 41
     PROTECTED  shift, and go to state 42
@@ -1530,7 +1533,7 @@ State 96
     '+'        shift, and go to state 36
     '{'        shift, and go to state 44
 
-    $default  reduce using rule 111 (class_methods_declaration_or_empty)
+    $default  reduce using rule 113 (class_methods_declaration_or_empty)
 
     class_fields_access                         go to state 46
     class_invariants_declaration                go to state 149
@@ -1544,13 +1547,13 @@ State 96
 
 State 97
 
-  105 class_methods_declaration: class_methods_declaration . class_method_declaration
-  106 class_methods_declaration_with_access: class_fields_access class_methods_declaration .
+  107 class_methods_declaration: class_methods_declaration . class_method_declaration
+  108 class_methods_declaration_with_access: class_fields_access class_methods_declaration .
 
     '-'  shift, and go to state 35
     '+'  shift, and go to state 36
 
-    $default  reduce using rule 106 (class_methods_declaration_with_access)
+    $default  reduce using rule 108 (class_methods_declaration_with_access)
 
     class_method              go to state 48
     class_method_declaration  go to state 100
@@ -1558,37 +1561,37 @@ State 97
 
 State 98
 
-  113 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty . END
+  115 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty . END
 
     END  shift, and go to state 151
 
 
 State 99
 
-  103 class_method_declaration: class_method ';' .
+  105 class_method_declaration: class_method ';' .
 
-    $default  reduce using rule 103 (class_method_declaration)
+    $default  reduce using rule 105 (class_method_declaration)
 
 
 State 100
 
-  105 class_methods_declaration: class_methods_declaration class_method_declaration .
+  107 class_methods_declaration: class_methods_declaration class_method_declaration .
 
-    $default  reduce using rule 105 (class_methods_declaration)
+    $default  reduce using rule 107 (class_methods_declaration)
 
 
 State 101
 
-  109 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list class_methods_declaration_with_access .
+  111 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list class_methods_declaration_with_access .
 
-    $default  reduce using rule 109 (class_methods_declaration_with_access_list)
+    $default  reduce using rule 111 (class_methods_declaration_with_access_list)
 
 
 State 102
 
-  115 class_declaration: INTERFACE ID class_methods_declaration_or_empty END .
+  117 class_declaration: INTERFACE ID class_methods_declaration_or_empty END .
 
-    $default  reduce using rule 115 (class_declaration)
+    $default  reduce using rule 117 (class_declaration)
 
 
 State 103
@@ -1616,31 +1619,32 @@ State 105
 
 State 106
 
-  134 func_arg: type . ID
+  136 func_arg: type . ID
+  137         | type . ID '[' ']'
 
     ID  shift, and go to state 155
 
 
 State 107
 
-  135 func_args: func_arg .
+  138 func_args: func_arg .
 
-    $default  reduce using rule 135 (func_args)
+    $default  reduce using rule 138 (func_args)
 
 
 State 108
 
-  136 func_args: func_args . ',' func_arg
-  137 func_args_or_empty: func_args .
+  139 func_args: func_args . ',' func_arg
+  140 func_args_or_empty: func_args .
 
     ','  shift, and go to state 156
 
-    $default  reduce using rule 137 (func_args_or_empty)
+    $default  reduce using rule 140 (func_args_or_empty)
 
 
 State 109
 
-  139 func_header: type ID '(' func_args_or_empty . ')'
+  142 func_header: type ID '(' func_args_or_empty . ')'
 
     ')'  shift, and go to state 157
 
@@ -2339,16 +2343,16 @@ State 141
 
 State 142
 
-   99 class_method: '-' '(' type . ')' ID ':' class_method_params
-  101             | '-' '(' type . ')' ID
+  101 class_method: '-' '(' type . ')' ID ':' class_method_params
+  103             | '-' '(' type . ')' ID
 
     ')'  shift, and go to state 186
 
 
 State 143
 
-  100 class_method: '+' '(' type . ')' ID ':' class_method_params
-  102             | '+' '(' type . ')' ID
+  102 class_method: '+' '(' type . ')' ID ':' class_method_params
+  104             | '+' '(' type . ')' ID
 
     ')'  shift, and go to state 187
 
@@ -2406,7 +2410,7 @@ State 148
 
 State 149
 
-  112 class_declaration: INTERFACE ID ':' ID class_invariants_declaration . class_methods_declaration_or_empty END
+  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration . class_methods_declaration_or_empty END
 
     PUBLIC     shift, and go to state 41
     PROTECTED  shift, and go to state 42
@@ -2414,7 +2418,7 @@ State 149
     '-'        shift, and go to state 35
     '+'        shift, and go to state 36
 
-    $default  reduce using rule 111 (class_methods_declaration_or_empty)
+    $default  reduce using rule 113 (class_methods_declaration_or_empty)
 
     class_fields_access                         go to state 46
     class_method                                go to state 48
@@ -2427,16 +2431,16 @@ State 149
 
 State 150
 
-  114 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty . END
+  116 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty . END
 
     END  shift, and go to state 190
 
 
 State 151
 
-  113 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END .
+  115 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END .
 
-    $default  reduce using rule 113 (class_declaration)
+    $default  reduce using rule 115 (class_declaration)
 
 
 State 152
@@ -2462,14 +2466,17 @@ State 154
 
 State 155
 
-  134 func_arg: type ID .
+  136 func_arg: type ID .
+  137         | type ID . '[' ']'
 
-    $default  reduce using rule 134 (func_arg)
+    '['  shift, and go to state 191
+
+    $default  reduce using rule 136 (func_arg)
 
 
 State 156
 
-  136 func_args: func_args ',' . func_arg
+  139 func_args: func_args ',' . func_arg
 
     ID      shift, and go to state 1
     ENUM    shift, and go to state 4
@@ -2484,14 +2491,14 @@ State 156
     enum_type            go to state 81
     type                 go to state 106
     default_type         go to state 17
-    func_arg             go to state 191
+    func_arg             go to state 192
 
 
 State 157
 
-  139 func_header: type ID '(' func_args_or_empty ')' .
+  142 func_header: type ID '(' func_args_or_empty ')' .
 
-    $default  reduce using rule 139 (func_header)
+    $default  reduce using rule 142 (func_header)
 
 
 State 158
@@ -2520,7 +2527,7 @@ State 159
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  130 expr_list: expr .
+  132 expr_list: expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -2539,16 +2546,16 @@ State 159
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 130 (expr_list)
+    $default  reduce using rule 132 (expr_list)
 
 
 State 160
 
    70 expr: ID '(' expr_list . ')'
-  131 expr_list: expr_list . ',' expr
+  133 expr_list: expr_list . ',' expr
 
-    ','  shift, and go to state 192
-    ')'  shift, and go to state 193
+    ','  shift, and go to state 193
+    ')'  shift, and go to state 194
 
 
 State 161
@@ -2588,7 +2595,7 @@ State 161
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ')'               shift, and go to state 194
+    ')'               shift, and go to state 195
 
 
 State 162
@@ -2629,7 +2636,7 @@ State 162
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ')'               shift, and go to state 195
+    ')'               shift, and go to state 196
 
 
 State 163
@@ -2644,12 +2651,12 @@ State 164
    66 expr: '[' expr ID . method_call_args ']'
    67     | '[' expr ID . ']'
 
-    ']'  shift, and go to state 196
-    ':'  shift, and go to state 197
+    ']'  shift, and go to state 197
+    ':'  shift, and go to state 198
 
-    method_call_noname_arg   go to state 198
-    method_call_noname_args  go to state 199
-    method_call_args         go to state 200
+    method_call_noname_arg   go to state 199
+    method_call_noname_args  go to state 200
+    method_call_args         go to state 201
 
 
 State 165
@@ -2676,7 +2683,7 @@ State 166
     '('           shift, and go to state 72
 
     pointer_custom_type  go to state 114
-    expr                 go to state 201
+    expr                 go to state 202
 
 
 State 167
@@ -2684,7 +2691,7 @@ State 167
    27 var_decl: type ID '[' . INT_CONST ']' ';'
    28         | type ID '[' . INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
 
-    INT_CONST  shift, and go to state 202
+    INT_CONST  shift, and go to state 203
 
 
 State 168
@@ -2710,12 +2717,12 @@ State 169
     '['           shift, and go to state 70
     '('           shift, and go to state 72
 
-    $default  reduce using rule 133 (array_elems_or_empty)
+    $default  reduce using rule 135 (array_elems_or_empty)
 
     pointer_custom_type   go to state 114
     expr                  go to state 159
-    expr_list             go to state 203
-    array_elems_or_empty  go to state 204
+    expr_list             go to state 204
+    array_elems_or_empty  go to state 205
 
 
 State 170
@@ -3221,23 +3228,23 @@ State 185
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ']'               shift, and go to state 205
+    ']'               shift, and go to state 206
 
 
 State 186
 
-   99 class_method: '-' '(' type ')' . ID ':' class_method_params
-  101             | '-' '(' type ')' . ID
+  101 class_method: '-' '(' type ')' . ID ':' class_method_params
+  103             | '-' '(' type ')' . ID
 
-    ID  shift, and go to state 206
+    ID  shift, and go to state 207
 
 
 State 187
 
-  100 class_method: '+' '(' type ')' . ID ':' class_method_params
-  102             | '+' '(' type ')' . ID
+  102 class_method: '+' '(' type ')' . ID ':' class_method_params
+  104             | '+' '(' type ')' . ID
 
-    ID  shift, and go to state 207
+    ID  shift, and go to state 208
 
 
 State 188
@@ -3249,28 +3256,35 @@ State 188
 
 State 189
 
-  112 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty . END
+  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty . END
 
-    END  shift, and go to state 208
+    END  shift, and go to state 209
 
 
 State 190
 
-  114 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty END .
+  116 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty END .
 
-    $default  reduce using rule 114 (class_declaration)
+    $default  reduce using rule 116 (class_declaration)
 
 
 State 191
 
-  136 func_args: func_args ',' func_arg .
+  137 func_arg: type ID '[' . ']'
 
-    $default  reduce using rule 136 (func_args)
+    ']'  shift, and go to state 210
 
 
 State 192
 
-  131 expr_list: expr_list ',' . expr
+  139 func_args: func_args ',' func_arg .
+
+    $default  reduce using rule 139 (func_args)
+
+
+State 193
+
+  133 expr_list: expr_list ',' . expr
 
     INT_CONST     shift, and go to state 58
     FLOAT_CONST   shift, and go to state 59
@@ -3285,17 +3299,17 @@ State 192
     '('           shift, and go to state 72
 
     pointer_custom_type  go to state 114
-    expr                 go to state 209
+    expr                 go to state 211
 
 
-State 193
+State 194
 
    70 expr: ID '(' expr_list ')' .
 
     $default  reduce using rule 70 (expr)
 
 
-State 194
+State 195
 
    24 while_stmt: WHILE '(' expr ')' . stmt
 
@@ -3323,7 +3337,7 @@ State 194
     '{'           shift, and go to state 33
     '('           shift, and go to state 72
 
-    stmt                 go to state 210
+    stmt                 go to state 212
     compound_stmt        go to state 76
     if_stmt              go to state 77
     while_stmt           go to state 78
@@ -3335,7 +3349,7 @@ State 194
     expr                 go to state 83
 
 
-State 195
+State 196
 
    22 if_stmt: IF '(' expr ')' . stmt
    23        | IF '(' expr ')' . stmt ELSE stmt
@@ -3364,7 +3378,7 @@ State 195
     '{'           shift, and go to state 33
     '('           shift, and go to state 72
 
-    stmt                 go to state 211
+    stmt                 go to state 213
     compound_stmt        go to state 76
     if_stmt              go to state 77
     while_stmt           go to state 78
@@ -3376,16 +3390,16 @@ State 195
     expr                 go to state 83
 
 
-State 196
+State 197
 
    67 expr: '[' expr ID ']' .
 
     $default  reduce using rule 67 (expr)
 
 
-State 197
+State 198
 
-  122 method_call_noname_arg: ':' . expr
+  124 method_call_noname_arg: ':' . expr
 
     INT_CONST     shift, and go to state 58
     FLOAT_CONST   shift, and go to state 59
@@ -3400,42 +3414,42 @@ State 197
     '('           shift, and go to state 72
 
     pointer_custom_type  go to state 114
-    expr                 go to state 212
-
-
-State 198
-
-  124 method_call_noname_args: method_call_noname_arg .
-  128 method_call_args: method_call_noname_arg . method_call_name_args
-
-    ID  shift, and go to state 213
-
-    $default  reduce using rule 124 (method_call_noname_args)
-
-    method_call_name_arg   go to state 214
-    method_call_name_args  go to state 215
+    expr                 go to state 214
 
 
 State 199
 
-  125 method_call_noname_args: method_call_noname_args . method_call_noname_arg
-  129 method_call_args: method_call_noname_args .
+  126 method_call_noname_args: method_call_noname_arg .
+  130 method_call_args: method_call_noname_arg . method_call_name_args
 
-    ':'  shift, and go to state 197
+    ID  shift, and go to state 215
 
-    $default  reduce using rule 129 (method_call_args)
+    $default  reduce using rule 126 (method_call_noname_args)
 
-    method_call_noname_arg  go to state 216
+    method_call_name_arg   go to state 216
+    method_call_name_args  go to state 217
 
 
 State 200
 
-   66 expr: '[' expr ID method_call_args . ']'
+  127 method_call_noname_args: method_call_noname_args . method_call_noname_arg
+  131 method_call_args: method_call_noname_args .
 
-    ']'  shift, and go to state 217
+    ':'  shift, and go to state 198
+
+    $default  reduce using rule 131 (method_call_args)
+
+    method_call_noname_arg  go to state 218
 
 
 State 201
+
+   66 expr: '[' expr ID method_call_args . ']'
+
+    ']'  shift, and go to state 219
+
+
+State 202
 
    25 var_decl: type ID '=' expr . ';'
    40 expr: expr . '+' expr
@@ -3472,69 +3486,76 @@ State 201
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ';'               shift, and go to state 218
-
-
-State 202
-
-   27 var_decl: type ID '[' INT_CONST . ']' ';'
-   28         | type ID '[' INT_CONST . ']' '=' '{' array_elems_or_empty '}' ';'
-
-    ']'  shift, and go to state 219
+    ';'               shift, and go to state 220
 
 
 State 203
 
-  131 expr_list: expr_list . ',' expr
-  132 array_elems_or_empty: expr_list .
+   27 var_decl: type ID '[' INT_CONST . ']' ';'
+   28         | type ID '[' INT_CONST . ']' '=' '{' array_elems_or_empty '}' ';'
 
-    ','  shift, and go to state 192
-
-    $default  reduce using rule 132 (array_elems_or_empty)
+    ']'  shift, and go to state 221
 
 
 State 204
 
-   47 expr: expr '=' '{' array_elems_or_empty . '}'
+  133 expr_list: expr_list . ',' expr
+  134 array_elems_or_empty: expr_list .
 
-    '}'  shift, and go to state 220
+    ','  shift, and go to state 193
+
+    $default  reduce using rule 134 (array_elems_or_empty)
 
 
 State 205
+
+   47 expr: expr '=' '{' array_elems_or_empty . '}'
+
+    '}'  shift, and go to state 222
+
+
+State 206
 
    68 expr: expr '[' expr ']' .
 
     $default  reduce using rule 68 (expr)
 
 
-State 206
-
-   99 class_method: '-' '(' type ')' ID . ':' class_method_params
-  101             | '-' '(' type ')' ID .
-
-    ':'  shift, and go to state 221
-
-    $default  reduce using rule 101 (class_method)
-
-
 State 207
 
-  100 class_method: '+' '(' type ')' ID . ':' class_method_params
-  102             | '+' '(' type ')' ID .
+  101 class_method: '-' '(' type ')' ID . ':' class_method_params
+  103             | '-' '(' type ')' ID .
 
-    ':'  shift, and go to state 222
+    ':'  shift, and go to state 223
 
-    $default  reduce using rule 102 (class_method)
+    $default  reduce using rule 103 (class_method)
 
 
 State 208
 
-  112 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END .
+  102 class_method: '+' '(' type ')' ID . ':' class_method_params
+  104             | '+' '(' type ')' ID .
 
-    $default  reduce using rule 112 (class_declaration)
+    ':'  shift, and go to state 224
+
+    $default  reduce using rule 104 (class_method)
 
 
 State 209
+
+  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END .
+
+    $default  reduce using rule 114 (class_declaration)
+
+
+State 210
+
+  137 func_arg: type ID '[' ']' .
+
+    $default  reduce using rule 137 (func_arg)
+
+
+State 211
 
    40 expr: expr . '+' expr
    41     | expr . '-' expr
@@ -3553,7 +3574,7 @@ State 209
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  131 expr_list: expr_list ',' expr .
+  133 expr_list: expr_list ',' expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -3572,28 +3593,28 @@ State 209
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 131 (expr_list)
+    $default  reduce using rule 133 (expr_list)
 
 
-State 210
+State 212
 
    24 while_stmt: WHILE '(' expr ')' stmt .
 
     $default  reduce using rule 24 (while_stmt)
 
 
-State 211
+State 213
 
    22 if_stmt: IF '(' expr ')' stmt .
    23        | IF '(' expr ')' stmt . ELSE stmt
 
-    ELSE  shift, and go to state 223
+    ELSE  shift, and go to state 225
 
     ELSE      [reduce using rule 22 (if_stmt)]
     $default  reduce using rule 22 (if_stmt)
 
 
-State 212
+State 214
 
    40 expr: expr . '+' expr
    41     | expr . '-' expr
@@ -3612,7 +3633,7 @@ State 212
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  122 method_call_noname_arg: ':' expr .
+  124 method_call_noname_arg: ':' expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -3631,101 +3652,101 @@ State 212
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 122 (method_call_noname_arg)
-
-
-State 213
-
-  123 method_call_name_arg: ID . ':' expr
-
-    ':'  shift, and go to state 224
-
-
-State 214
-
-  126 method_call_name_args: method_call_name_arg .
-
-    $default  reduce using rule 126 (method_call_name_args)
+    $default  reduce using rule 124 (method_call_noname_arg)
 
 
 State 215
 
-  127 method_call_name_args: method_call_name_args . method_call_name_arg
-  128 method_call_args: method_call_noname_arg method_call_name_args .
+  125 method_call_name_arg: ID . ':' expr
 
-    ID  shift, and go to state 213
-
-    $default  reduce using rule 128 (method_call_args)
-
-    method_call_name_arg  go to state 225
+    ':'  shift, and go to state 226
 
 
 State 216
 
-  125 method_call_noname_args: method_call_noname_args method_call_noname_arg .
+  128 method_call_name_args: method_call_name_arg .
 
-    $default  reduce using rule 125 (method_call_noname_args)
+    $default  reduce using rule 128 (method_call_name_args)
 
 
 State 217
+
+  129 method_call_name_args: method_call_name_args . method_call_name_arg
+  130 method_call_args: method_call_noname_arg method_call_name_args .
+
+    ID  shift, and go to state 215
+
+    $default  reduce using rule 130 (method_call_args)
+
+    method_call_name_arg  go to state 227
+
+
+State 218
+
+  127 method_call_noname_args: method_call_noname_args method_call_noname_arg .
+
+    $default  reduce using rule 127 (method_call_noname_args)
+
+
+State 219
 
    66 expr: '[' expr ID method_call_args ']' .
 
     $default  reduce using rule 66 (expr)
 
 
-State 218
+State 220
 
    25 var_decl: type ID '=' expr ';' .
 
     $default  reduce using rule 25 (var_decl)
 
 
-State 219
+State 221
 
    27 var_decl: type ID '[' INT_CONST ']' . ';'
    28         | type ID '[' INT_CONST ']' . '=' '{' array_elems_or_empty '}' ';'
 
-    '='  shift, and go to state 226
-    ';'  shift, and go to state 227
+    '='  shift, and go to state 228
+    ';'  shift, and go to state 229
 
 
-State 220
+State 222
 
    47 expr: expr '=' '{' array_elems_or_empty '}' .
 
     $default  reduce using rule 47 (expr)
 
 
-State 221
-
-   99 class_method: '-' '(' type ')' ID ':' . class_method_params
-
-    '('  shift, and go to state 228
-
-    $default  reduce using rule 98 (class_method_params)
-
-    class_method_first_param     go to state 229
-    class_method_params_nonamed  go to state 230
-    class_method_all_params      go to state 231
-    class_method_params          go to state 232
-
-
-State 222
-
-  100 class_method: '+' '(' type ')' ID ':' . class_method_params
-
-    '('  shift, and go to state 228
-
-    $default  reduce using rule 98 (class_method_params)
-
-    class_method_first_param     go to state 229
-    class_method_params_nonamed  go to state 230
-    class_method_all_params      go to state 231
-    class_method_params          go to state 233
-
-
 State 223
+
+  101 class_method: '-' '(' type ')' ID ':' . class_method_params
+
+    '('  shift, and go to state 230
+
+    $default  reduce using rule 100 (class_method_params)
+
+    class_method_first_param     go to state 231
+    class_method_params_nonamed  go to state 232
+    class_method_all_params      go to state 233
+    class_method_params          go to state 234
+
+
+State 224
+
+  102 class_method: '+' '(' type ')' ID ':' . class_method_params
+
+    '('  shift, and go to state 230
+
+    $default  reduce using rule 100 (class_method_params)
+
+    class_method_first_param     go to state 231
+    class_method_params_nonamed  go to state 232
+    class_method_all_params      go to state 233
+    class_method_params          go to state 235
+
+
+State 225
 
    23 if_stmt: IF '(' expr ')' stmt ELSE . stmt
 
@@ -3753,7 +3774,7 @@ State 223
     '{'           shift, and go to state 33
     '('           shift, and go to state 72
 
-    stmt                 go to state 234
+    stmt                 go to state 236
     compound_stmt        go to state 76
     if_stmt              go to state 77
     while_stmt           go to state 78
@@ -3765,9 +3786,9 @@ State 223
     expr                 go to state 83
 
 
-State 224
+State 226
 
-  123 method_call_name_arg: ID ':' . expr
+  125 method_call_name_arg: ID ':' . expr
 
     INT_CONST     shift, and go to state 58
     FLOAT_CONST   shift, and go to state 59
@@ -3782,33 +3803,34 @@ State 224
     '('           shift, and go to state 72
 
     pointer_custom_type  go to state 114
-    expr                 go to state 235
-
-
-State 225
-
-  127 method_call_name_args: method_call_name_args method_call_name_arg .
-
-    $default  reduce using rule 127 (method_call_name_args)
-
-
-State 226
-
-   28 var_decl: type ID '[' INT_CONST ']' '=' . '{' array_elems_or_empty '}' ';'
-
-    '{'  shift, and go to state 236
+    expr                 go to state 237
 
 
 State 227
+
+  129 method_call_name_args: method_call_name_args method_call_name_arg .
+
+    $default  reduce using rule 129 (method_call_name_args)
+
+
+State 228
+
+   28 var_decl: type ID '[' INT_CONST ']' '=' . '{' array_elems_or_empty '}' ';'
+
+    '{'  shift, and go to state 238
+
+
+State 229
 
    27 var_decl: type ID '[' INT_CONST ']' ';' .
 
     $default  reduce using rule 27 (var_decl)
 
 
-State 228
+State 230
 
    89 class_method_first_param: '(' . type ')' ID
+   90                         | '(' . type '[' ']' ')' ID
 
     ID      shift, and go to state 1
     ENUM    shift, and go to state 4
@@ -3821,64 +3843,64 @@ State 228
 
     pointer_custom_type  go to state 14
     enum_type            go to state 81
-    type                 go to state 237
+    type                 go to state 239
     default_type         go to state 17
-
-
-State 229
-
-   93 class_method_params_nonamed: class_method_first_param .
-   95 class_method_all_params: class_method_first_param . class_method_other_params_named
-
-    ID  shift, and go to state 238
-
-    $default  reduce using rule 93 (class_method_params_nonamed)
-
-    class_method_other_param_named   go to state 239
-    class_method_other_params_named  go to state 240
-
-
-State 230
-
-   94 class_method_params_nonamed: class_method_params_nonamed . class_method_first_param
-   96 class_method_all_params: class_method_params_nonamed .
-
-    '('  shift, and go to state 228
-
-    $default  reduce using rule 96 (class_method_all_params)
-
-    class_method_first_param  go to state 241
 
 
 State 231
 
-   97 class_method_params: class_method_all_params .
+   95 class_method_params_nonamed: class_method_first_param .
+   97 class_method_all_params: class_method_first_param . class_method_other_params_named
 
-    $default  reduce using rule 97 (class_method_params)
+    ID  shift, and go to state 240
+
+    $default  reduce using rule 95 (class_method_params_nonamed)
+
+    class_method_other_param_named   go to state 241
+    class_method_other_params_named  go to state 242
 
 
 State 232
 
-   99 class_method: '-' '(' type ')' ID ':' class_method_params .
+   96 class_method_params_nonamed: class_method_params_nonamed . class_method_first_param
+   98 class_method_all_params: class_method_params_nonamed .
 
-    $default  reduce using rule 99 (class_method)
+    '('  shift, and go to state 230
+
+    $default  reduce using rule 98 (class_method_all_params)
+
+    class_method_first_param  go to state 243
 
 
 State 233
 
-  100 class_method: '+' '(' type ')' ID ':' class_method_params .
+   99 class_method_params: class_method_all_params .
 
-    $default  reduce using rule 100 (class_method)
+    $default  reduce using rule 99 (class_method_params)
 
 
 State 234
+
+  101 class_method: '-' '(' type ')' ID ':' class_method_params .
+
+    $default  reduce using rule 101 (class_method)
+
+
+State 235
+
+  102 class_method: '+' '(' type ')' ID ':' class_method_params .
+
+    $default  reduce using rule 102 (class_method)
+
+
+State 236
 
    23 if_stmt: IF '(' expr ')' stmt ELSE stmt .
 
     $default  reduce using rule 23 (if_stmt)
 
 
-State 235
+State 237
 
    40 expr: expr . '+' expr
    41     | expr . '-' expr
@@ -3897,7 +3919,7 @@ State 235
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  123 method_call_name_arg: ID ':' expr .
+  125 method_call_name_arg: ID ':' expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -3916,10 +3938,10 @@ State 235
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 123 (method_call_name_arg)
+    $default  reduce using rule 125 (method_call_name_arg)
 
 
-State 236
+State 238
 
    28 var_decl: type ID '[' INT_CONST ']' '=' '{' . array_elems_or_empty '}' ';'
 
@@ -3935,99 +3957,118 @@ State 236
     '['           shift, and go to state 70
     '('           shift, and go to state 72
 
-    $default  reduce using rule 133 (array_elems_or_empty)
+    $default  reduce using rule 135 (array_elems_or_empty)
 
     pointer_custom_type   go to state 114
     expr                  go to state 159
-    expr_list             go to state 203
-    array_elems_or_empty  go to state 242
-
-
-State 237
-
-   89 class_method_first_param: '(' type . ')' ID
-
-    ')'  shift, and go to state 243
-
-
-State 238
-
-   90 class_method_other_param_named: ID . ':' '(' type ')' ID
-
-    ':'  shift, and go to state 244
+    expr_list             go to state 204
+    array_elems_or_empty  go to state 244
 
 
 State 239
 
-   91 class_method_other_params_named: class_method_other_param_named .
+   89 class_method_first_param: '(' type . ')' ID
+   90                         | '(' type . '[' ']' ')' ID
 
-    $default  reduce using rule 91 (class_method_other_params_named)
+    '['  shift, and go to state 245
+    ')'  shift, and go to state 246
 
 
 State 240
 
-   92 class_method_other_params_named: class_method_other_params_named . class_method_other_param_named
-   95 class_method_all_params: class_method_first_param class_method_other_params_named .
+   91 class_method_other_param_named: ID . ':' '(' type ')' ID
+   92                               | ID . ':' '(' type '[' ']' ')' ID
 
-    ID  shift, and go to state 238
-
-    $default  reduce using rule 95 (class_method_all_params)
-
-    class_method_other_param_named  go to state 245
+    ':'  shift, and go to state 247
 
 
 State 241
 
-   94 class_method_params_nonamed: class_method_params_nonamed class_method_first_param .
+   93 class_method_other_params_named: class_method_other_param_named .
 
-    $default  reduce using rule 94 (class_method_params_nonamed)
+    $default  reduce using rule 93 (class_method_other_params_named)
 
 
 State 242
 
-   28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty . '}' ';'
+   94 class_method_other_params_named: class_method_other_params_named . class_method_other_param_named
+   97 class_method_all_params: class_method_first_param class_method_other_params_named .
 
-    '}'  shift, and go to state 246
+    ID  shift, and go to state 240
+
+    $default  reduce using rule 97 (class_method_all_params)
+
+    class_method_other_param_named  go to state 248
 
 
 State 243
 
-   89 class_method_first_param: '(' type ')' . ID
+   96 class_method_params_nonamed: class_method_params_nonamed class_method_first_param .
 
-    ID  shift, and go to state 247
+    $default  reduce using rule 96 (class_method_params_nonamed)
 
 
 State 244
 
-   90 class_method_other_param_named: ID ':' . '(' type ')' ID
+   28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty . '}' ';'
 
-    '('  shift, and go to state 248
+    '}'  shift, and go to state 249
 
 
 State 245
 
-   92 class_method_other_params_named: class_method_other_params_named class_method_other_param_named .
+   90 class_method_first_param: '(' type '[' . ']' ')' ID
 
-    $default  reduce using rule 92 (class_method_other_params_named)
+    ']'  shift, and go to state 250
 
 
 State 246
 
-   28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' . ';'
+   89 class_method_first_param: '(' type ')' . ID
 
-    ';'  shift, and go to state 249
+    ID  shift, and go to state 251
 
 
 State 247
+
+   91 class_method_other_param_named: ID ':' . '(' type ')' ID
+   92                               | ID ':' . '(' type '[' ']' ')' ID
+
+    '('  shift, and go to state 252
+
+
+State 248
+
+   94 class_method_other_params_named: class_method_other_params_named class_method_other_param_named .
+
+    $default  reduce using rule 94 (class_method_other_params_named)
+
+
+State 249
+
+   28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' . ';'
+
+    ';'  shift, and go to state 253
+
+
+State 250
+
+   90 class_method_first_param: '(' type '[' ']' . ')' ID
+
+    ')'  shift, and go to state 254
+
+
+State 251
 
    89 class_method_first_param: '(' type ')' ID .
 
     $default  reduce using rule 89 (class_method_first_param)
 
 
-State 248
+State 252
 
-   90 class_method_other_param_named: ID ':' '(' . type ')' ID
+   91 class_method_other_param_named: ID ':' '(' . type ')' ID
+   92                               | ID ':' '(' . type '[' ']' ')' ID
 
     ID      shift, and go to state 1
     ENUM    shift, and go to state 4
@@ -4040,33 +4081,77 @@ State 248
 
     pointer_custom_type  go to state 14
     enum_type            go to state 81
-    type                 go to state 250
+    type                 go to state 255
     default_type         go to state 17
 
 
-State 249
+State 253
 
    28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';' .
 
     $default  reduce using rule 28 (var_decl)
 
 
-State 250
+State 254
 
-   90 class_method_other_param_named: ID ':' '(' type . ')' ID
+   90 class_method_first_param: '(' type '[' ']' ')' . ID
 
-    ')'  shift, and go to state 251
-
-
-State 251
-
-   90 class_method_other_param_named: ID ':' '(' type ')' . ID
-
-    ID  shift, and go to state 252
+    ID  shift, and go to state 256
 
 
-State 252
+State 255
 
-   90 class_method_other_param_named: ID ':' '(' type ')' ID .
+   91 class_method_other_param_named: ID ':' '(' type . ')' ID
+   92                               | ID ':' '(' type . '[' ']' ')' ID
 
-    $default  reduce using rule 90 (class_method_other_param_named)
+    '['  shift, and go to state 257
+    ')'  shift, and go to state 258
+
+
+State 256
+
+   90 class_method_first_param: '(' type '[' ']' ')' ID .
+
+    $default  reduce using rule 90 (class_method_first_param)
+
+
+State 257
+
+   92 class_method_other_param_named: ID ':' '(' type '[' . ']' ')' ID
+
+    ']'  shift, and go to state 259
+
+
+State 258
+
+   91 class_method_other_param_named: ID ':' '(' type ')' . ID
+
+    ID  shift, and go to state 260
+
+
+State 259
+
+   92 class_method_other_param_named: ID ':' '(' type '[' ']' . ')' ID
+
+    ')'  shift, and go to state 261
+
+
+State 260
+
+   91 class_method_other_param_named: ID ':' '(' type ')' ID .
+
+    $default  reduce using rule 91 (class_method_other_param_named)
+
+
+State 261
+
+   92 class_method_other_param_named: ID ':' '(' type '[' ']' ')' . ID
+
+    ID  shift, and go to state 262
+
+
+State 262
+
+   92 class_method_other_param_named: ID ':' '(' type '[' ']' ')' ID .
+
+    $default  reduce using rule 92 (class_method_other_param_named)
