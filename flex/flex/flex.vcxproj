@@ -86,6 +86,7 @@
     <ClInclude Include="FunctionNodes.h" />
     <ClInclude Include="NodeVisiter.h" />
     <ClInclude Include="objectivec.tab.h" />
+    <ClInclude Include="PrintNodes.h" />
     <ClInclude Include="ProgramNode.h" />
     <ClInclude Include="struct_print.h" />
     <ClInclude Include="TreeClass.h" />
