@@ -105,7 +105,8 @@ public:
 	StatementNode* truthStmt;
 	StatementNode* wrongStmt;
 	list<StatementNode*> childs;
-
+	list<ExprNode*> arrayElems;
+	int arraySize;
 	/*���������� ����������*/
 	TypeNode* varType;
 	string name;
@@ -122,13 +123,21 @@ public:
 
 		this->varType = nullptr;
 		this->name = "";
-
+		this->arraySize = 0;
 		this->stmtType = st->stmt_type;
 
 		if (this->stmtType == STMT_ARRAY_DECL) {
 			/// TODO::
 			this->name = st->identifier;
 			this->varType = new TypeNode(st->var_type);
+			this->arraySize = st->array_size;
+			auto last = st->array_elems;
+			
+			while (last != NULL) {
+				auto arrayElem = new ExprNode(last->expr);
+				this->arrayElems.push_back(arrayElem);
+				last = last->next;
+			}
 		}
 		else if (this->stmtType == STMT_COMPOUND) {
 			auto last = st->stmt_list;
@@ -160,13 +169,17 @@ public:
 			this->truthStmt = new StatementNode(st->truth_stmt);
 			this->wrongStmt = st->wrong_stmt ? new StatementNode(st->wrong_stmt) : nullptr;
 		}
+		else if (this->stmtType == STMT_WHILE) {
+			this->condition = new ExprNode(st->condition);
+			this->truthStmt = new StatementNode(st->truth_stmt);
+		}
 		else if (this->stmtType == STMT_RETURN) {
 			this->expr = new ExprNode(st->condition);
 		}
 		else if (this->stmtType == STMT_VAR_DECL) {
 			this->varType = new TypeNode(st->var_type);
 			this->name = st->identifier;
-			
+			this->expr = new ExprNode(st->expr);
 		}
 	}
 };
