@@ -75,6 +75,53 @@ public:
 
     void visit(NodeVisiter* visiter);
     
+    TypeNode* returnType; // 
+
+    bool isBinnaryLogical() {
+        return this->exprType == EXPR_OPERATION && (
+            this->operationType == OP_AND ||
+            this->operationType == OP_OR
+        );
+    }
+    
+    bool isBinnaryComparer () {
+        return this->exprType == EXPR_OPERATION && (
+            this->operationType == OP_EQUAL ||
+            this->operationType == OP_NOT_EQUAL ||
+            this->operationType == OP_LESS ||
+            this->operationType == OP_LESS_OR_EQUAL ||
+            this->operationType == OP_GREATER ||
+            this->operationType == OP_GREATER_OR_EQUAL
+        );
+    }
+
+    bool isBinnaryAssign() {
+        return this->exprType == EXPR_OPERATION && (
+            this->operationType == OP_ASSIGN );
+    }
+    
+    bool isBinnaryAssignArray() {
+        return this->exprType == EXPR_OPERATION && (
+            this->operationType == OP_ASSIGN_ARRAY );
+    }
+
+
+    bool isBinnaryMath () {
+        return this->exprType == EXPR_OPERATION && (
+            this->operationType == OP_ADD ||
+            this->operationType == OP_SUB ||
+            this->operationType == OP_DIV ||
+            this->operationType == OP_MUL ||
+            this->operationType == OP_MOD 
+        );
+    }
+
+    
+    bool isLeftRight(){
+        ///TODO::Порверить внимательнее
+        return this->left && this->right;
+    }
+
     ExprNode() {
 		this->left = nullptr;
 		this->right = nullptr;

@@ -63,6 +63,20 @@ public:
     string name;
     TypeInfo returnType;
     unordered_map<string, FunctionParamInfo*> params;
+    unordered_map<string, TypeInfo> localVars;
+
+    bool getVar( string& name, TypeInfo* type){
+        auto var = localVars.find( name);
+        if( var == localVars.end()){
+            auto param = params.find( name);
+            if( param == params.end())
+                return false;
+            *type = param->second->type;
+            return true;
+        }
+        *type = var->second;
+        return true;
+    }
 };
 
 class FieldInfo {
@@ -210,7 +224,7 @@ public:
         classes[ this->currentClass->name] = currentClass;
 	}
 
-	void visit(ProgramNode * node) override {
+	void visit( ProgramNode * node) override {
 		RETURN_IF_NODE_NULL;
 		
 		for( auto ifunc = node->functions.begin(); ifunc != node->functions.end(); ifunc++ ){
@@ -228,5 +242,10 @@ public:
         }
 	}
 	
+    void visit( StatementNode* node) override {
+        RETURN_IF_NODE_NULL;
 
+        auto body = node->childs.front();
+        
+    }
 };
