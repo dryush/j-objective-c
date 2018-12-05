@@ -33,6 +33,43 @@ public:
             this->name = node->childType->name;
         }
     }
+
+    TypeNode* toNode() {
+        auto retType = new TypeNode();
+        
+        retType->varType = this->type;
+        
+        if( retType->varType == VarType::TYPE_ARRAY) {
+            retType->childType = new TypeNode();
+            retType->childType->varType = this->arrayType;
+            retType->childType->name = this->name;
+        } else if ( retType->varType == VarType::TYPE_POINTER) {
+            retType->childType = new TypeNode();
+            retType->childType->varType = VarType::TYPE_CUSTOM;
+            retType->childType->name = this->name;
+        } else {
+            retType->name = this->name;
+        }
+        return retType;
+    }
+
+    bool isEqual( TypeInfo& other){
+
+        if ( this->type == other.type){
+            if( this->type == TYPE_CUSTOM || this->type == POINTER){
+                return this->name == other.name;
+            } else if ( this->type == TYPE_ARRAY){
+                return this->arrayType == other.arrayType && this->name == other.name;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool isEqual( TypeNode* node){
+        return this->isEqual( TypeInfo(node));
+    }
 };
 
 class FunctionParamInfo {
@@ -59,13 +96,19 @@ public:
 };
 
 class FunctionInfo {
+private:
+    int localVarNum;
 public:
+    FunctionInfo(){
+        this->localVarNum = 0;
+    }
     string name;
     TypeInfo returnType;
     unordered_map<string, FunctionParamInfo*> params;
     unordered_map<string, TypeInfo> localVars;
+    unordered_map<string, int> localVarsNumber;
 
-    bool getVar( string& name, TypeInfo* type){
+    bool getVar( string& name, TypeInfo* type = nullptr){
         auto var = localVars.find( name);
         if( var == localVars.end()){
             auto param = params.find( name);
@@ -76,6 +119,16 @@ public:
         }
         *type = var->second;
         return true;
+    }
+
+    
+    bool addLocalVar( string& name, TypeInfo& type){
+        if( !this->getVar(name) ){
+            this->localVars[name] = type;
+            this->localVarsNumber[name] = ++this->localVarNum;
+            return true;
+        }
+        return false;
     }
 };
 
@@ -108,9 +161,47 @@ public:
     unordered_map<string, FieldInfo*> fields;
     unordered_map<string, MethodInfo*> staticMethods;
     unordered_map<string, MethodInfo*> localMethods;
+
+    bool getMethod( string& name, MethodInfo* retMethod = nullptr){
+        auto m = this->staticMethods.find( name);
+        if ( m == this->staticMethods.end()) {
+            m = this->localMethods.find( name);
+            if ( m == this->localMethods.end()) {
+                return false;
+            }
+        }
+        if( retMethod)
+            *retMethod = *m->second;
+        return true;
+    }
+
+    MethodInfo* getMethod( ClassMethodImplementationNode* method){
+        if( method->methodType == MethodType::METHOD_LOCAL)
+            return localMethods[ method->name];
+        else
+            return staticMethods[ method->name];
+    }
+
 };
 
 unordered_map<string, ClassInfo*> classes;
+
+TypeInfo* getMethodVarType(string& classname, string& methodname, string& varname ){
+    auto c = classes[ classname];
+    MethodInfo m;
+    TypeInfo* t = new TypeInfo();
+    if( c->getMethod( methodname, &m) ){
+        m.getVar( varname, t);
+    } else {
+        delete t;
+        t = nullptr;
+        auto f = c->fields[ varname];
+        if( f)
+            t = new TypeInfo(f->type);
+    }
+    return t;
+}
+
 unordered_map<string, FunctionInfo*> functions;
 unordered_map<string, EnumInfo*> enums;
 /**

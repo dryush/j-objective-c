@@ -15,6 +15,8 @@ class Node;
 #define RETURN_IF_FALSE(var) if(!var) return;
 #define RETURN_IF_NODE_NULL RETURN_IF_FALSE(node);
 #define VISIT_IF_NOT_NULL(childnode) if(childnode) childnode->visit(this);
+#define FOR_EACH( elem, container) for( auto elem = container.begin(); elem != container.end(); elem++)
+
 
 class NodeVisiter {
 public:
