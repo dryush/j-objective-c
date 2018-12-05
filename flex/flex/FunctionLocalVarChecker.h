@@ -18,7 +18,7 @@ class FunctionAndMethodsLocalVarChecker : public NodeVisiter {
         } else {
             err += funcName + " (function)";
         }
-        err += " varaible name: " + varName;
+        err += " variable name: " + varName;
     
         addError(err);
     }

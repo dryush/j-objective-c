@@ -253,13 +253,11 @@ public:
 
         if ( node->methodType == METHOD_STATIC){
             if( this->currentClass->staticMethods.find(node->name) != this->currentClass->staticMethods.end())
-            ///TODO::Добавить ошибку
-                throw "static method redef";
+				addError("Static method " + node->name + " redef");
         } 
         else if ( node->methodType == METHOD_LOCAL){
             if( this->currentClass->localMethods.find(node->name) != this->currentClass->localMethods.end())
-            ///TODO::Добавить ошибку
-                throw "local method redef";
+				addError("Local method " + node->name + " redef");
         }
 
         this->currentMethod = new MethodInfo();

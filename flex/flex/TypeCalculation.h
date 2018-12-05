@@ -44,7 +44,7 @@ class TypeCalculation : public NodeVisiter {
         FunctionInfo * currentFuncOrMethod;
         if( this->isMethod){
 			if( classes.find(curClass->name) == classes.end()){
-				addError("Unknown class( There are not class in table)");
+				addError("Unknown class: " + curClass->name);
 				return;
 			}
 			else {
@@ -248,7 +248,7 @@ class TypeCalculation : public NodeVisiter {
                 if (imeth != iclassinfo->staticMethods.end()){
                     meth = imeth->second;
                 } else {
-                    addError(string("Unknown static method ") + iclassinfo->name + "::" + node->name );
+                    addError(string("Unknown static method: ") + iclassinfo->name + "::" + node->name );
                 }
             } else if(node->object->returnType->varType == TYPE_POINTER) {
                 string classname = node->object->returnType->childType->name;
@@ -257,10 +257,10 @@ class TypeCalculation : public NodeVisiter {
 				if (imeth != iclassinfo->localMethods.end() && imeth->second){
                     meth = imeth->second;
                 } else {
-                    addError(string("Unknown local method ") + iclassinfo->name + "::" + node->name );
+                    addError(string("Unknown local method: ") + iclassinfo->name + "::" + node->name );
                 }
             } else {
-                addError(string("can`t call method from not object"));
+				addError(string("Can`t call method " + node->name + " from variable " + node->object->name));
             }
             if( meth) {
                 retType = meth->returnType.toNode();
@@ -280,7 +280,7 @@ class TypeCalculation : public NodeVisiter {
                 if( ifield != iclassinfo->fields.end()){
                     retType = ifield->second->type.toNode();
                 } else {
-                    addError("Unknow field" + node->name);
+                    addError("Unknown field: " + iclassinfo->name + "::" + node->name);
                 }
             }
         }
