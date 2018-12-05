@@ -152,6 +152,7 @@ public:
 		this->arrayElems = nullptr;
 		this->name = "";
 		this->strVal = "";
+		this->charVal = 0;
 		this->object = nullptr;
 		this->funcArgs = nullptr;
 	}

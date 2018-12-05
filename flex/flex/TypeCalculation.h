@@ -163,8 +163,44 @@ class TypeCalculation : public NodeVisiter {
                 }
 
             } else if( node->isBinnaryLogical() ) {
-                //TODO:: Дима проверяй сам
+                //TODO:: Дима проверяй сам (a != nil) && YES
                 retType->varType = TYPE_BOOL;
+				if (node->left->returnType->varType == TYPE_BOOL && node->right->returnType->varType == TYPE_BOOL) {
+				
+				} else {
+					if (node->left->returnType->varType == TYPE_INT) {
+						node->left->boolVal = node->left->intVal != 0;
+					}
+					else if (node->left->returnType->varType == TYPE_FLOAT) {
+						node->left->boolVal = node->left->floatVal != 0;
+					}
+					else if (node->left->returnType->varType == TYPE_CHAR) {
+						node->left->boolVal = node->left->charVal != 0;
+					}
+					else if (node->left->returnType->varType == TYPE_STRING) {
+						node->left->boolVal = node->left->strVal != "";
+					}
+					else {
+						addError("Left expr can't compare");
+					}
+
+					if (node->right->returnType->varType == TYPE_INT) {
+						node->right->boolVal = node->right->intVal != 0;
+					}
+					else if (node->right->returnType->varType == TYPE_FLOAT) {
+						node->right->boolVal = node->right->floatVal != 0;
+					}
+					else if (node->right->returnType->varType == TYPE_CHAR) {
+						node->right->boolVal = node->right->charVal != 0;
+					}
+					else if (node->right->returnType->varType == TYPE_STRING) {
+						node->right->boolVal = node->right->strVal != "";
+					}
+					else {
+						addError("Right expr can't compare");
+					}
+				}
+
             } else if ( node->operationType == OperationType::OP_LOGICAL_NOT) {
                 //TODO:: Дима проверяй сам
             }
