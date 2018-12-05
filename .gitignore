@@ -1,6 +1,5 @@
 flex/flex/objectivec.tab.c
-flex/ipch/flex-4f97896/flex-3312f35b.ipch
-flex/ipch/flex-af8c2ac5/flex-3312f35b.ipch
+flex/ipch/
 flex/flex/objectivec.tab.h
 flex/flex/objectivec.tab.c
 flex/flex/lex.yy.c
