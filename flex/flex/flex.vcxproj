@@ -80,6 +80,7 @@
     <None Include="test.m" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArrayAndFieldAssignTransform.h" />
     <ClInclude Include="ClassNodes.h" />
     <ClInclude Include="CommonNodes.h" />
     <ClInclude Include="FunctionLocalVarChecker.h" />
@@ -91,6 +92,7 @@
     <ClInclude Include="struct_print.h" />
     <ClInclude Include="TreeClass.h" />
     <ClInclude Include="tree_structs.h" />
+    <ClInclude Include="TypeCalculation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lex.yy.c" />

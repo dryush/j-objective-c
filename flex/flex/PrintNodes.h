@@ -134,7 +134,7 @@ public:
 			ids[node] = getNextId();
 			if( node->returnType) {
 				labels[node] ="expr_ret_type";
-				g[node].push_back(node->returnType);
+				g[node].push_back(Edge(node->returnType, "ret_type"));
 				VISIT_IF_NOT_NULL( node->returnType);
 			}
 			switch(node->exprType) {
