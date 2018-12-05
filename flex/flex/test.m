@@ -1,4 +1,11 @@
+@interface MyClass 
+{} 
++ (int) staticMethod;
+- (float) localMethod;
+@end
+
 int main()
 {
-	void abc = 2;
+	MyClass* myObject;
+	[myObject localMethod];
 }

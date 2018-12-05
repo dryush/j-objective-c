@@ -42,10 +42,18 @@ class TypeCalculation : public NodeVisiter {
         curstmt = node;
         
         FunctionInfo * currentFuncOrMethod;
-        if( this->isMethod)
-            currentFuncOrMethod = classes[curClass->name]->getMethod( curMethod);
-        else
+        if( this->isMethod){
+			if( classes.find(curClass->name) == classes.end()){
+				addError("Unknown class( There are not class in table)");
+				return;
+			}
+			else {
+				currentFuncOrMethod = classes[curClass->name]->getMethod( curMethod);
+			}
+		}
+        else {
             currentFuncOrMethod = functions[ curFunc->name];
+		}
 
         if( curstmt->stmtType == STMT_ARRAY_DECL){
             currentFuncOrMethod->addLocalVar( curstmt->name, TypeInfo( curstmt->varType));
@@ -235,7 +243,7 @@ class TypeCalculation : public NodeVisiter {
         else if ( node->exprType == ExprType::EXPR_METHOD_CALL ) {
             MethodInfo* meth;
             if( node->object->returnType->varType == TYPEE_CLASS) {
-                ClassInfo* iclassinfo = classes[node->name]; 
+                ClassInfo* iclassinfo = classes[node->object->name]; 
                 auto imeth = iclassinfo->staticMethods.find( node->name);
                 if (imeth != iclassinfo->staticMethods.end()){
                     meth = imeth->second;
@@ -246,7 +254,7 @@ class TypeCalculation : public NodeVisiter {
                 string classname = node->object->returnType->childType->name;
                 ClassInfo* iclassinfo = classes[classname]; 
                 auto imeth = iclassinfo->localMethods.find( node->name);
-                if (imeth != iclassinfo->localMethods.end()){
+				if (imeth != iclassinfo->localMethods.end() && imeth->second){
                     meth = imeth->second;
                 } else {
                     addError(string("Unknown local method ") + iclassinfo->name + "::" + node->name );
@@ -259,7 +267,8 @@ class TypeCalculation : public NodeVisiter {
                 addError("can`t get static field");
             } else if (node->object->returnType->varType == TYPE_CUSTOM) {
                 //TODO:: А сюды ваще зайдёт?
-                throw "TypeCalc 226?";
+                //throw "TypeCalc 226?";
+                addError(string("can`t get field from not object"));
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
 
                 string classname = node->object->returnType->childType->name;
@@ -284,5 +293,16 @@ class TypeCalculation : public NodeVisiter {
        
         node->returnType = retType;
     }
+public:
+	TypeCalculation() {
+		this->curClass = nullptr;
+		this->curFunc = nullptr;
+		this->curMethod = nullptr;
+		this->curstmt = nullptr;
+		
+		this->isClass= false;
+		this->isMethod= false;
+		this->isFunc= false;
+	}
 
-}
+};

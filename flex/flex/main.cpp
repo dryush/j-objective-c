@@ -16,6 +16,8 @@
 #include "TableFiller.h"
 #include "PrintNodes.h"
 #include "VariableTypeChecker.h"
+#include "TypeCalculation.h"
+#include "PointerChecker.h"
 
 using namespace std;
 
@@ -29,16 +31,20 @@ int main(int argc, char *argv[]) {
 	printf("\n\n");
 	print(root);
 	ProgramNode* prog = new ProgramNode(root);
-    FunctionAndMethodsLocalVarChecker lvc;
-	ArrayAndFieldAssignTransform aafat;
-	TableFiller tf;
-	VariableTypeChecker vtc;
-	PrintNodes printNodes;
-    prog->visit(&lvc);
-	prog->visit(&aafat);
-	prog->visit(&tf);
-	prog->visit(&vtc);
-	prog->visit(&printNodes);
+	vector<NodeVisiter*> visiters;
+
+	visiters.push_back( new FunctionAndMethodsLocalVarChecker());
+	visiters.push_back( new ArrayAndFieldAssignTransform());
+	visiters.push_back( new TableFiller());
+	visiters.push_back( new VariableTypeChecker());
+	visiters.push_back( new PointerChecker());
+	visiters.push_back( new TypeCalculation());
+	visiters.push_back( new PrintNodes());
+	FOR_EACH( ivisiter, visiters){
+		prog->visit(*ivisiter);
+		auto test = (*++prog->functions[0]->body->childs.begin())->expr;
+		delete*ivisiter;
+	}
 	freopen("CON","w", stdout);
     if( errors.size() > 0){
         for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){

@@ -132,6 +132,11 @@ public:
 	void visit( ExprNode* node ) override {
 		if (node != NULL) {
 			ids[node] = getNextId();
+			if( node->returnType) {
+				labels[node] ="expr_ret_type";
+				g[node].push_back(node->returnType);
+				VISIT_IF_NOT_NULL( node->returnType);
+			}
 			switch(node->exprType) {
 				case EXPR_OPERATION: {
 					switch(node->operationType) {

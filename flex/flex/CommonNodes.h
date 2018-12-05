@@ -127,7 +127,7 @@ public:
     }
 
     bool isBinnaryOnlyNumbers() {
-        this->isBinnaryMath() || this->isBinnaryComparer();
+        return this->isBinnaryMath() || this->isBinnaryComparer();
     }
 
     bool isUnnaryMath() {
@@ -155,6 +155,7 @@ public:
 		this->charVal = 0;
 		this->object = nullptr;
 		this->funcArgs = nullptr;
+		this->returnType = nullptr;
 	}
 
 	ExprNode(Expression_st* st);
@@ -254,6 +255,18 @@ public:
 			this->expr = st->expr ? new ExprNode(st->expr) : nullptr;
 		}
 	}
+
+	StatementNode() {
+		this->arrayElems;
+		this->arraySize = 0;
+		this->childs;
+		this->condition =nullptr;
+		this->expr =nullptr;
+		this->name ="";
+		this->truthStmt =nullptr;
+		this->varType =nullptr;
+		this->wrongStmt =nullptr;
+	}
 };
 
 	
@@ -271,6 +284,9 @@ ExprNode::ExprNode(Expression_st* st) {
 	this->exprType = st->exprType;
 	this->operationType = st->operationType;
 	this->constType = st->const_type;
+
+	this->returnType = nullptr;
+
 	if (st->exprType == EXPR_ARRAY_ELEM_CALL){
 		this->left = new ExprNode(st->left);
 		this->right = new ExprNode(st->right);  

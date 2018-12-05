@@ -1,4 +1,6 @@
-﻿#include "NodeVisiter.h"
+﻿#pragma once
+
+#include "NodeVisiter.h"
 #include <unordered_map>
 #include <string>
 
@@ -250,12 +252,12 @@ public:
 		RETURN_IF_NODE_NULL;
 
         if ( node->methodType == METHOD_STATIC){
-            if( this->currentClass->staticMethods[node->name])
+            if( this->currentClass->staticMethods.find(node->name) != this->currentClass->staticMethods.end())
             ///TODO::Добавить ошибку
                 throw "static method redef";
         } 
         else if ( node->methodType == METHOD_LOCAL){
-            if( this->currentClass->localMethods[node->name])
+            if( this->currentClass->localMethods.find(node->name) != this->currentClass->localMethods.end())
             ///TODO::Добавить ошибку
                 throw "local method redef";
         }
@@ -264,6 +266,7 @@ public:
         this->currentMethod->name = node->name;
         this->currentMethod->access = node->access;
         this->currentMethod->returnType = TypeInfo( node->returnType);
+		this->currentMethod->methodType = node->methodType;
 
         for( auto iparam = node->params.begin(); iparam != node->params.end(); iparam++){
 			auto param = *iparam;
