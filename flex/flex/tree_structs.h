@@ -50,7 +50,9 @@ enum VarType
 	TYPE_BOOL,
 	TYPE_CUSTOM,
 	TYPE_POINTER,
-	TYPE_ARRAY
+	TYPE_ARRAY,
+
+    TYPEE_CLASS
 };
 
 struct Type_st;	/* + */

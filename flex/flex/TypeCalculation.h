@@ -37,9 +37,9 @@ class TypeCalculation : public NodeVisiter {
     }
 
 
-    StatementNode* stmt;
+    StatementNode* curstmt;
     void visit( StatementNode* node) override {
-        stmt = node;
+        curstmt = node;
         
         FunctionInfo * currentFuncOrMethod;
         if( this->isMethod)
@@ -47,14 +47,14 @@ class TypeCalculation : public NodeVisiter {
         else
             currentFuncOrMethod = functions[ curFunc->name];
 
-        if( stmt->stmtType == STMT_ARRAY_DECL){
-            currentFuncOrMethod->addLocalVar( stmt->name, TypeInfo( stmt->varType));
-        } else if ( stmt->stmtType == STMT_VAR_DECL) {
-            currentFuncOrMethod->addLocalVar( stmt->name, TypeInfo( stmt->varType));
+        if( curstmt->stmtType == STMT_ARRAY_DECL){
+            currentFuncOrMethod->addLocalVar( curstmt->name, TypeInfo( curstmt->varType));
+        } else if ( curstmt->stmtType == STMT_VAR_DECL) {
+            currentFuncOrMethod->addLocalVar( curstmt->name, TypeInfo( curstmt->varType));
         }
 
         NodeVisiter::visit( node);
-        stmt = nullptr;
+        curstmt = nullptr;
     }
 
     TypeNode* calcValueExprType(ExprNode* node){
@@ -64,36 +64,40 @@ class TypeCalculation : public NodeVisiter {
         
         if( node->constType == VarType::TYPE_CUSTOM) {
             //retType->name = node->name;
-            FunctionInfo* curFuncOrMethod;
-            ClassInfo*  curClassInfo;
-            if( isFunc) { 
-                curFuncOrMethod =  functions[ curFunc->name]; 
-            }
-            else if ( isMethod) {
-                curClassInfo = classes[ curClass->name];
-                if( curMethod->methodType == MethodType::METHOD_LOCAL)
-                    curFuncOrMethod = curClassInfo->localMethods[ curMethod->name];
-                else
-                    curFuncOrMethod = curClassInfo->staticMethods[ curMethod->name];
-            }
+            if( classes.find( node->name) != classes.end() ){
+                retType->varType = TYPEE_CLASS;
+            } else {
+                FunctionInfo* curFuncOrMethod;
+                ClassInfo*  curClassInfo;
+                if( isFunc) { 
+                    curFuncOrMethod =  functions[ curFunc->name]; 
+                }
+                else if ( isMethod) {
+                    curClassInfo = classes[ curClass->name];
+                    if( curMethod->methodType == MethodType::METHOD_LOCAL)
+                        curFuncOrMethod = curClassInfo->localMethods[ curMethod->name];
+                    else
+                        curFuncOrMethod = curClassInfo->staticMethods[ curMethod->name];
+                }
 
-            TypeInfo typeInfo;
+                TypeInfo typeInfo;
 
-            bool isExist = curFuncOrMethod->getVar( node->name, &typeInfo);
-            if( !isExist){
-                if ( isMethod) {
-                    auto field = curClassInfo->fields[ node->name];
-                    if( field) {
-                        isExist = true;
-                        typeInfo = field->type;
+                bool isExist = curFuncOrMethod->getVar( node->name, &typeInfo);
+                if( !isExist){
+                    if ( isMethod) {
+                        auto field = curClassInfo->fields[ node->name];
+                        if( field) {
+                            isExist = true;
+                            typeInfo = field->type;
+                        }
                     }
                 }
-            }
 
-            if( !isExist) {
-                addError(string("Unknown variable: ") + node->name);
-            } else {
-                retType = typeInfo.toNode();
+                if( !isExist) {
+                    addError(string("Unknown variable: ") + node->name);
+                } else {
+                    retType = typeInfo.toNode();
+                }
             }
         }
         else if ( node->constType == VarType::TYPE_ARRAY ) {
@@ -114,6 +118,61 @@ class TypeCalculation : public NodeVisiter {
         return retType;
     }
 
+    TypeNode* calcOperation( ExprNode* node) {
+        auto retType = new TypeNode();
+
+        if( node->exprType == ExprType::EXPR_OPERATION) {
+            
+            if( node->operationType == OperationType::OP_VALUE) {
+                retType = calcValueExprType( node);
+            } else if ( node->isBinnaryOnlyNumbers()) {
+
+                if( node->left->isNuberValue() && node->right->isNuberValue()) {
+                    if( node->left->returnType->varType != node->right->returnType->varType && (
+                        node->left->returnType->varType == VarType::TYPE_FLOAT || 
+                        node->right->returnType->varType == VarType::TYPE_FLOAT
+                        )
+                    ){
+                        retType->varType = TYPE_FLOAT;
+                        // TODO: По-хорошему бы привидение типов вставить
+                    } else {
+                        retType->varType = node->left->constType;
+                    }
+                } else {
+                    addError("Not number with binnary math operations");
+                }
+            } else if ( node->isUnnaryMath() ) {
+
+                if( node->left->returnType->varType == TYPE_INT || 
+                    node->left->returnType->varType == TYPE_FLOAT) {
+                    retType->varType = node->left->returnType->varType;
+                } else {
+                    addError("Not number with uplus or uminus");
+                }
+            } else if( node->isEqual()) {
+                retType->varType = TYPE_BOOL;
+                if( node->left->returnType->varType == node->right->returnType->varType) {
+                        
+
+                } else if ( node->left->returnType->isNuberValue() && node->right->returnType->isNuberValue()) {
+                        /// TODO: По-хорошему бы привидение типов вставить
+                } else if( node->left->returnType->varType == TYPE_POINTER && node->right->returnType->varType == TYPE_POINTER) {
+                    /// TODO: По-хорошему бы привидение типов вставить и проверить указатели
+                } else {
+                    addError("Can`t compare");
+                }
+
+            } else if( node->isBinnaryLogical() ) {
+                //TODO:: Дима проверяй сам
+                retType->varType = TYPE_BOOL;
+            } else if ( node->operationType == OperationType::OP_LOGICAL_NOT) {
+                //TODO:: Дима проверяй сам
+            }
+
+        }
+        return retType;
+    }
+
     void visit( ExprNode* node) override {
         RETURN_IF_NODE_NULL;
         
@@ -125,18 +184,33 @@ class TypeCalculation : public NodeVisiter {
         VISIT_IF_NOT_NULL( node->right);
         VISIT_IF_NOT_NULL( node->object);
 
-
-        auto retType = new TypeNode();
-
+        TypeNode* retType = new TypeNode();
+        
         if( node->exprType == ExprType::EXPR_OPERATION) {
-            
-            if( node->operationType == OperationType::OP_VALUE) {
-                retType = calcValueExprType( node);
-            } else if ( node->isBinnaryMath()) {
-                //auto lefttype = node->left
+            retType = calcOperation( node);
+        } 
+        else if ( node->exprType == ExprType::EXPR_FUNC_CALL ) {
+            auto ifunc = functions.find( node->name);
+            if( ifunc != functions.end()){
+                /// TODO:: Где-то проверить соотвествие аргументов
+                retType = ifunc->second->returnType.toNode();
             }
+        } 
+        else if ( node->exprType == ExprType::EXPR_METHOD_CALL ) {
+            MethodInfo* meth;
+            if( node->object->returnType->varType == TYPEE_CLASS) {
+                ClassInfo* iclassinfo = classes[node->name]; 
+                auto imeth = iclassinfo->staticMethods.find( node->name);
+                if (imeth != iclassinfo->staticMethods.end()){
+                    meth = imeth->second;
+                } else {
+                    addError(string("Unknown static method ") + iclassinfo->name + "::" + node->name );
+                }
+            } else {
 
+            }
         }
+       
         node->returnType = retType;
     }
 

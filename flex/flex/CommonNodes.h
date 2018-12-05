@@ -17,6 +17,11 @@ public:
     
     void visit(NodeVisiter* visiter);
 
+    
+    bool isNuberValue(){
+        return this->varType == VarType::TYPE_FLOAT || this->varType == VarType::TYPE_INT;
+    }
+
 	TypeNode() {
 		this->name = "";
 		this->childType = NULL;
@@ -86,12 +91,17 @@ public:
     
     bool isBinnaryComparer () {
         return this->exprType == EXPR_OPERATION && (
-            this->operationType == OP_EQUAL ||
-            this->operationType == OP_NOT_EQUAL ||
             this->operationType == OP_LESS ||
             this->operationType == OP_LESS_OR_EQUAL ||
             this->operationType == OP_GREATER ||
             this->operationType == OP_GREATER_OR_EQUAL
+        );
+    }
+
+    bool isEqual() {
+        return this->exprType == EXPR_OPERATION && (
+            this->operationType == OP_EQUAL ||
+            this->operationType == OP_NOT_EQUAL
         );
     }
 
@@ -116,10 +126,24 @@ public:
         );
     }
 
-    
+    bool isBinnaryOnlyNumbers() {
+        this->isBinnaryMath() || this->isBinnaryComparer();
+    }
+
+    bool isUnnaryMath() {
+        return this->exprType == EXPR_OPERATION && (
+            this->operationType == OP_UMINUS ||
+            this->operationType == OP_UPLUS
+        );
+    }
+
     bool isLeftRight(){
         ///TODO::Порверить внимательнее
         return this->left && this->right;
+    }
+
+    bool isNuberValue(){
+        return this->constType == VarType::TYPE_FLOAT || this->constType == VarType::TYPE_INT;
     }
 
     ExprNode() {
