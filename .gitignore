@@ -1,4 +1,3 @@
-
 flex/flex/objectivec.tab.c
 flex/ipch/flex-4f97896/flex-3312f35b.ipch
 flex/ipch/flex-af8c2ac5/flex-3312f35b.ipch
@@ -11,11 +10,9 @@ flex/flex/objectivec.output
 flex/flex.sdf
 flex/flex.suo
 flex/flex.sdf
-flex/flex/Debug/cl.command.1.tlog
-flex/flex/Debug/CL.read.1.tlog
-flex/flex/Debug/CL.write.1.tlog
-flex/flex/Debug/flex.log
-flex/flex/Debug/flex.write.1.tlog
-flex/flex/Debug/vc100.idb
-flex/flex/Debug/vc100.pdb
-*.tlog
+flex/flex/Debug
+flex/Debug
+flex/flex/graph.txt
+flex/flex/graph.png
+flex/flex/graphSemantic.txt
+flex/flex/graphSemantic.png

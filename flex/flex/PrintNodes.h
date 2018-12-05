@@ -102,8 +102,30 @@ public:
 					g[node].push_back(node->childType);
 					node->childType->visit(this);
 					break;
-				} 
+				}
+				case TYPE_ARRAY: {
+					labels[node] = "array";
+					g[node].push_back(Edge(node->childType, "type"));
+					node->childType->visit(this);
+					break;
+				}
 			}
+		}
+	}
+
+	void visit( ExprListNode* node ) override {
+		if (node != NULL) {
+			ids[node] = getNextId();
+			labels[node] = "Func_call_arg_list";
+
+			int number = 1;
+			for (auto it = node->exprs.begin(); it != node->exprs.end(); it++)
+			{
+				g[node].push_back(Edge::numb(*it, number));
+				(*it)->visit(this);
+				number++;
+			}
+			
 		}
 	}
 
@@ -296,8 +318,8 @@ public:
 				}
 				case EXPR_FUNC_CALL: {
 					labels[node] = "Func_call " + node->name + "()";
-					//g[node].push_back(node->func_args);
-					//print(node->func_args);
+					g[node].push_back(node->funcArgs);
+					node->funcArgs->visit(this);
 					break;
 				}
 				case EXPR_METHOD_CALL: {
