@@ -1,10 +1,4 @@
-@implementation class 
-+ (MyType*) someFunc: (int []) someParam (MyType*[]) someOtherParam
+int main()
 {
-	c + b;
-}
-@end
-int main() 
-{
-	FOOOO(a, FUUUU( 2, "hello"));
+	void abc = 2;
 }
