@@ -241,7 +241,7 @@ class TypeCalculation : public NodeVisiter {
             }
         } 
         else if ( node->exprType == ExprType::EXPR_METHOD_CALL ) {
-            MethodInfo* meth;
+            MethodInfo* meth = nullptr;
             if( node->object->returnType->varType == TYPEE_CLASS) {
                 ClassInfo* iclassinfo = classes[node->object->name]; 
                 auto imeth = iclassinfo->staticMethods.find( node->name);
@@ -261,6 +261,9 @@ class TypeCalculation : public NodeVisiter {
                 }
             } else {
                 addError(string("can`t call method from not object"));
+            }
+            if( meth) {
+                retType = meth->returnType.toNode();
             }
         } else if ( node->exprType == ExprType::EXPR_INVAR_CALL ) {
             if(node->object->returnType->varType == TYPEE_CLASS) {
