@@ -253,11 +253,11 @@ public:
 
         if ( node->methodType == METHOD_STATIC){
             if( this->currentClass->staticMethods.find(node->name) != this->currentClass->staticMethods.end())
-				addError("Static method " + node->name + " redef");
+				addError("Static method " + node->name + " redefinition");
         } 
         else if ( node->methodType == METHOD_LOCAL){
             if( this->currentClass->localMethods.find(node->name) != this->currentClass->localMethods.end())
-				addError("Local method " + node->name + " redef");
+				addError("Local method " + node->name + " redefinition");
         }
 
         this->currentMethod = new MethodInfo();
@@ -292,8 +292,7 @@ public:
 		RETURN_IF_NODE_NULL;
 		
         if( classes[node->name]){
-            ///TODO:: Записать ошибку
-            throw "class redefinition";    
+            addError("Class " + node->name + " redefinition");    
         }
         this->currentClass = new ClassInfo();
         this->currentClass->name = node->name; 

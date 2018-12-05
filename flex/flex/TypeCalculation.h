@@ -271,7 +271,7 @@ class TypeCalculation : public NodeVisiter {
             } else if (node->object->returnType->varType == TYPE_CUSTOM) {
                 //TODO:: А сюды ваще зайдёт?
                 //throw "TypeCalc 226?";
-                addError(string("can`t get field from not object"));
+                addError(string("Can`t get field " + node->name + " from variable " + node->object->name));
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
 
                 string classname = node->object->returnType->childType->name;
