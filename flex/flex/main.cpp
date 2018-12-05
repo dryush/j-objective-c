@@ -15,6 +15,7 @@
 #include "ArrayAndFieldAssignTransform.h"
 #include "TableFiller.h"
 #include "PrintNodes.h"
+#include "VariableTypeChecker.h"
 
 using namespace std;
 
@@ -31,11 +32,14 @@ int main(int argc, char *argv[]) {
     FunctionAndMethodsLocalVarChecker lvc;
 	ArrayAndFieldAssignTransform aafat;
 	TableFiller tf;
+	VariableTypeChecker vtc;
 	PrintNodes printNodes;
     prog->visit(&lvc);
 	prog->visit(&aafat);
 	prog->visit(&tf);
+	prog->visit(&vtc);
 	prog->visit(&printNodes);
+	freopen("CON","w", stdout);
     if( errors.size() > 0){
         for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
             cout << *ierror << endl;
