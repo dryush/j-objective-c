@@ -226,7 +226,7 @@ public:
 		else if (this->stmtType == STMT_VAR_DECL) {
 			this->varType = new TypeNode(st->var_type);
 			this->name = st->identifier;
-			this->expr = new ExprNode(st->expr);
+			this->expr = st->expr ? new ExprNode(st->expr) : nullptr;
 		}
 	}
 };
