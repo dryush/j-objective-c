@@ -206,9 +206,44 @@ class TypeCalculation : public NodeVisiter {
                 } else {
                     addError(string("Unknown static method ") + iclassinfo->name + "::" + node->name );
                 }
+            } else if(node->object->returnType->varType == TYPE_POINTER) {
+                string classname = node->object->returnType->childType->name;
+                ClassInfo* iclassinfo = classes[classname]; 
+                auto imeth = iclassinfo->localMethods.find( node->name);
+                if (imeth != iclassinfo->localMethods.end()){
+                    meth = imeth->second;
+                } else {
+                    addError(string("Unknown local method ") + iclassinfo->name + "::" + node->name );
+                }
             } else {
-
+                addError(string("can`t call method from not object"));
             }
+        } else if ( node->exprType == ExprType::EXPR_INVAR_CALL ) {
+            if(node->object->returnType->varType == TYPEE_CLASS) {
+                addError("can`t get static field");
+            } else if (node->object->returnType->varType == TYPE_CUSTOM) {
+                //TODO:: А сюды ваще зайдёт?
+                throw "TypeCalc 226?";
+            } else if ( node->object->returnType->varType == TYPE_POINTER) {
+
+                string classname = node->object->returnType->childType->name;
+                ClassInfo* iclassinfo = classes[classname]; 
+                auto ifield = iclassinfo->fields.find( node->name);
+                if( ifield != iclassinfo->fields.end()){
+                    retType = ifield->second->type.toNode();
+                } else {
+                    addError("Unknow field" + node->name);
+                }
+            }
+        }
+        else if ( node->exprType == ExprType::EXPRE_ARRAY_ELEM_ASSIGN ) {
+            retType = new TypeNode(*node->right->returnType->childType);
+        } 
+        else if ( node->exprType == ExprType::EXPRE_CLASS_FIELD_ASSIGN) {
+            retType = new TypeNode(*node->right->returnType->childType);
+        }
+        else if ( node->exprType == ExprType::EXPR_ARRAY_ELEM_CALL ) {
+            retType = new TypeNode(*node->left->returnType->childType);
         }
        
         node->returnType = retType;
