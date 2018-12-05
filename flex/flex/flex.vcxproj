@@ -86,11 +86,15 @@
     <ClInclude Include="FunctionNodes.h" />
     <ClInclude Include="NodeVisiter.h" />
     <ClInclude Include="objectivec.tab.h" />
+    <ClInclude Include="PointerChecker.h" />
     <ClInclude Include="PrintNodes.h" />
     <ClInclude Include="ProgramNode.h" />
     <ClInclude Include="struct_print.h" />
+    <ClInclude Include="TableFiller.h" />
     <ClInclude Include="TreeClass.h" />
     <ClInclude Include="tree_structs.h" />
+    <ClInclude Include="TypeCalculation.h" />
+    <ClInclude Include="VariableTypeChecker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lex.yy.c" />
