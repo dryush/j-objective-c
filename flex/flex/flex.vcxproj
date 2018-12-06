@@ -95,6 +95,7 @@
     <ClInclude Include="TreeClass.h" />
     <ClInclude Include="tree_structs.h" />
     <ClInclude Include="TypeCalculation.h" />
+    <ClInclude Include="VariableTypeChecker.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lex.yy.c" />
