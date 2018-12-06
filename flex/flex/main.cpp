@@ -39,6 +39,7 @@ int main(int argc, char *argv[]) {
 	visiters.push_back( new VariableTypeChecker());
 	visiters.push_back( new PointerChecker());
 	visiters.push_back( new TypeCalculation());
+	visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
 	FOR_EACH( ivisiter, visiters){
 		prog->visit(*ivisiter);
@@ -51,6 +52,13 @@ int main(int argc, char *argv[]) {
             cout << *ierror << endl;
         }
     }
+    
+	freopen("table.csv","w", stdout);
+    FOR_EACH( cl, classes){
+        cout << cl->second->name << endl;
+        cout << cl->second->table->to_csv_string() << endl;
+    }
+	freopen("CON","w", stdout);
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
 	execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
 	return 0;
