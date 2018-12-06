@@ -766,7 +766,7 @@ public:
 
         this->currentClass->name = node->name; 
         this->currentClass->parentName = node->parentName;
-        
+        classes[ this->currentClass->name] = currentClass;
 
         for( auto ifield = node->fields.begin(); ifield != node->fields.end(); ifield++){
 			auto field = * ifield;
@@ -782,7 +782,7 @@ public:
 
         this->currentClass->classDeclNode = node;
 
-        classes[ this->currentClass->name] = currentClass;
+        
 	}
 
 	void visit( ProgramNode * node) override {
