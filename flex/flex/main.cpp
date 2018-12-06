@@ -18,6 +18,7 @@
 #include "VariableTypeChecker.h"
 #include "TypeCalculation.h"
 #include "PointerChecker.h"
+#include "ReturnChecker.h"
 
 using namespace std;
 
@@ -38,12 +39,13 @@ int main(int argc, char *argv[]) {
 	visiters.push_back( new TableFiller());
 	visiters.push_back( new VariableTypeChecker());
 	visiters.push_back( new PointerChecker());
+	visiters.push_back( new ReturnChecker());
 	visiters.push_back( new TypeCalculation());
 	visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
 	FOR_EACH( ivisiter, visiters){
 		prog->visit(*ivisiter);
-		auto test = (*++prog->functions[0]->body->childs.begin())->expr;
+		//auto test = (*++prog->functions[0]->body->childs.begin())->expr;
 		delete*ivisiter;
 	}
 	freopen("CON","w", stdout);
