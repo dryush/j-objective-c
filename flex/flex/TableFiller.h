@@ -289,85 +289,6 @@ FieldInfo* getField( string& classname, string& fieldname){
 unordered_map<string, FunctionInfo*> functions;
 unordered_map<string, EnumInfo*> enums;
 
-void fillDefaultClasses() {
-    ClassInfo* nsoclassinfo = new ClassInfo();
-    nsoclassinfo->isDefault = true;
-    nsoclassinfo->name = "NSObject";
-    nsoclassinfo->parentName = defaultParentClass;
-    
-    ClassInfo* nssclassinfo = new ClassInfo();
-    nssclassinfo->isDefault = false;
-    nssclassinfo->name = "NSString";
-    nssclassinfo->parentName = defaultParentClass;
-    ///TODO::: Список методов NSString
-    auto nssinitm = new MethodInfo();
-    nssinitm->isDefault = false;
-    nssinitm->name = "init";
-    nssinitm->returnType = TypeInfo::Pointer( nssclassinfo->name);
-    nssinitm->classname = nssclassinfo->name;
-    nssinitm->access = ACCESS_PUBLIC;
-    nssinitm->methodType = METHOD_LOCAL;
-
-    nssclassinfo->localMethods[ nssinitm->name] = nssinitm;
-
-    classes[nsoclassinfo->name] = nsoclassinfo;
-    classes[nssclassinfo->name] = nssclassinfo;
-
-    ClassInfo* NSScanner = new ClassInfo();
-    NSScanner->name = "NSScanner";
-    NSScanner->isDefault = false;
-    NSScanner->parentName = defaultParentClass;
-
-    vector<string> scanNames;
-    scanNames.push_back( "scanInt");
-    scanNames.push_back( "scanString");
-    scanNames.push_back( "scanFloat");
-
-    FOR_EACH( scanname, scanNames){
-        auto scan = new MethodInfo();
-        scan->isDefault = false;
-        scan->name = *scanname;
-        scan->classname = NSScanner->name;
-        scan->returnType = TypeInfo::Pointer( nssclassinfo->name);
-        scan->access = ACCESS_PUBLIC;
-        scan->methodType = METHOD_LOCAL;
-        NSScanner->localMethods[ scan->name] = scan;
-    }
-    classes[ NSScanner->name] = NSScanner;
-}
-void fillDefaultMethods() {
-    MethodInfo mi;
-    mi.name = "alloc";
-    mi.access = ACCESS_PUBLIC;
-    mi.methodType = MethodType::METHOD_STATIC;
-    
-    FOR_EACH( cl, classes){
-        auto cmi = new MethodInfo( mi);
-        cmi->classname = cl->second->name;
-        cmi->access = ACCESS_PUBLIC;
-        cmi->isDefault = false;
-        cmi->methodType = METHOD_STATIC;
-
-        TypeInfo t;
-        t.type = TYPE_POINTER;
-        t.name = cl->second->name;
-        cmi->returnType = t;
-        cl->second->staticMethods[ cmi->name] = cmi;
-    }
-}
-
-void fillDefaultFunctions() {
-
-    FunctionInfo* printf = new FunctionInfo();
-    printf->isDefault = true;
-    printf->name = "printf";
-    
-    FunctionParamInfo* stringParam = new FunctionParamInfo();
-    stringParam->name = "string";
-    stringParam->type = TypeInfo::Pointer("NSString");
-    printf->params[ stringParam->name] = stringParam;
-    
-}
 
 /**
 *
@@ -735,6 +656,89 @@ public:
 };
 
 
+
+void fillDefaultClasses() {
+    ClassInfo* nsoclassinfo = new ClassInfo();
+    nsoclassinfo->isDefault = true;
+    nsoclassinfo->name = "NSObject";
+    nsoclassinfo->parentName = defaultParentClass;
+    nsoclassinfo->table = new JavaTable();
+
+    ClassInfo* nssclassinfo = new ClassInfo();
+    nssclassinfo->isDefault = false;
+    nssclassinfo->name = "NSString";
+    nssclassinfo->parentName = defaultParentClass;
+    nssclassinfo->table = new JavaTable();
+    ///TODO::: Список методов NSString
+    auto nssinitm = new MethodInfo();
+    nssinitm->isDefault = false;
+    nssinitm->name = "init";
+    nssinitm->returnType = TypeInfo::Pointer( nssclassinfo->name);
+    nssinitm->classname = nssclassinfo->name;
+    nssinitm->access = ACCESS_PUBLIC;
+    nssinitm->methodType = METHOD_LOCAL;
+
+    nssclassinfo->localMethods[ nssinitm->name] = nssinitm;
+
+    classes[nsoclassinfo->name] = nsoclassinfo;
+    classes[nssclassinfo->name] = nssclassinfo;
+
+    ClassInfo* NSScanner = new ClassInfo();
+    NSScanner->name = "NSScanner";
+    NSScanner->isDefault = false;
+    NSScanner->parentName = defaultParentClass;
+    NSScanner->table = new JavaTable();
+    vector<string> scanNames;
+    scanNames.push_back( "scanInt");
+    scanNames.push_back( "scanString");
+    scanNames.push_back( "scanFloat");
+
+    FOR_EACH( scanname, scanNames){
+        auto scan = new MethodInfo();
+        scan->isDefault = false;
+        scan->name = *scanname;
+        scan->classname = NSScanner->name;
+        scan->returnType = TypeInfo::Pointer( nssclassinfo->name);
+        scan->access = ACCESS_PUBLIC;
+        scan->methodType = METHOD_LOCAL;
+        NSScanner->localMethods[ scan->name] = scan;
+    }
+    classes[ NSScanner->name] = NSScanner;
+}
+void fillDefaultMethods() {
+    MethodInfo mi;
+    mi.name = "alloc";
+    mi.access = ACCESS_PUBLIC;
+    mi.methodType = MethodType::METHOD_STATIC;
+    
+    FOR_EACH( cl, classes){
+        auto cmi = new MethodInfo( mi);
+        cmi->classname = cl->second->name;
+        cmi->access = ACCESS_PUBLIC;
+        cmi->isDefault = false;
+        cmi->methodType = METHOD_STATIC;
+
+        TypeInfo t;
+        t.type = TYPE_POINTER;
+        t.name = cl->second->name;
+        cmi->returnType = t;
+        cl->second->staticMethods[ cmi->name] = cmi;
+    }
+}
+
+void fillDefaultFunctions() {
+
+    FunctionInfo* printf = new FunctionInfo();
+    printf->isDefault = true;
+    printf->name = "printf";
+    
+    FunctionParamInfo* stringParam = new FunctionParamInfo();
+    stringParam->name = "string";
+    stringParam->type = TypeInfo::Pointer("NSString");
+    printf->params[ stringParam->name] = stringParam;
+    
+}
+
 /**
  * 
  *
@@ -754,6 +758,38 @@ public:
  *
  * 
  */
+class ClassTableFiller : public NodeVisiter {
+public:
+    void visit( ProgramNode* node) override {
+        
+        for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
+			auto classDecl = *iclassDecl;
+            (classDecl)->visit( this);
+        }
+
+    }
+
+
+    ClassInfo* currentClass;
+    void visit( ClassDeclarationNode* node) override {
+		RETURN_IF_NODE_NULL;
+		
+        if( classes[node->name]){
+            addError("Class " + node->name + " redefinition");    
+        }
+        this->currentClass = new ClassInfo();
+        this->currentClass->table = new JavaTable();
+
+        this->currentClass->name = node->name; 
+        this->currentClass->parentName = node->parentName;
+        classes[ this->currentClass->name] = currentClass;
+
+        this->currentClass->classDeclNode = node;
+
+	}
+
+};
+
 class TableFiller : public NodeVisiter {
 public:
 
@@ -852,17 +888,8 @@ public:
 
     void visit( ClassDeclarationNode* node) override {
 		RETURN_IF_NODE_NULL;
-		
-        if( classes[node->name]){
-            addError("Class " + node->name + " redefinition");    
-        }
-        this->currentClass = new ClassInfo();
-        this->currentClass->table = new JavaTable();
 
-        this->currentClass->name = node->name; 
-        this->currentClass->parentName = node->parentName;
-        classes[ this->currentClass->name] = currentClass;
-
+        this->currentClass = classes[ node->name]; 
         for( auto ifield = node->fields.begin(); ifield != node->fields.end(); ifield++){
 			auto field = * ifield;
             if( field)
@@ -877,7 +904,6 @@ public:
 
         this->currentClass->classDeclNode = node;
 
-        
 	}
 
 	void visit( ProgramNode * node) override {
@@ -890,6 +916,13 @@ public:
         classes[FUNCTIONS_CLASS]->parentName = defaultParentClass;
         classes[FUNCTIONS_CLASS]->name= FUNCTIONS_CLASS;
         classes[FUNCTIONS_CLASS]->table= new JavaTable();
+        
+        classes[FUNCTIONS_CLASS]->table->addClass( classes[FUNCTIONS_CLASS]);
+
+        for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
+			auto classDecl = *iclassDecl;
+            (classDecl)->visit( this);
+        }
 
 		for( auto ifunc = node->functions.begin(); ifunc != node->functions.end(); ifunc++ ){
 			auto func = *ifunc;
@@ -899,13 +932,6 @@ public:
         
         FOR_EACH( ifunc, functions){ 
             classes[FUNCTIONS_CLASS]->table->addFunction( ifunc->second);
-        }
-
-        classes[FUNCTIONS_CLASS]->table->addClass( classes[FUNCTIONS_CLASS]);
-
-        for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
-			auto classDecl = *iclassDecl;
-            (classDecl)->visit( this);
         }
 
         fillDefaultMethods();
@@ -985,12 +1011,14 @@ class JVMTableFiller : public NodeVisiter {
                 classes[ FUNCTIONS_CLASS]->table->addFunction( f);
         } else if( node->exprType == EXPR_INVAR_CALL) {
 
-            auto c = classes[ node->object->returnType->childType->name];
-            auto f = c->fields[ node->name];
-            if( isClass)
-                classes[this->curClass->name]->table->addField( f);
-            else
-                classes[ FUNCTIONS_CLASS]->table->addField( f);
+            auto f = getField( node->object->returnType->childType->name, node->name);
+            
+            if( f){
+                if( isClass)
+                    classes[this->curClass->name]->table->addField( f);
+                else
+                    classes[ FUNCTIONS_CLASS]->table->addField( f);
+            }
         }
     }
 public: 

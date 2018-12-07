@@ -72,9 +72,7 @@ class TypeCalculation : public NodeVisiter {
         
         if( node->constType == VarType::TYPE_CUSTOM) {
             //retType->name = node->name;
-            if( classes.find( node->name) != classes.end() ){
-                retType->varType = TYPEE_CLASS;
-            } else {
+            {
                 FunctionInfo* curFuncOrMethod;
                 ClassInfo*  curClassInfo;
                 if( isFunc) { 
@@ -100,7 +98,12 @@ class TypeCalculation : public NodeVisiter {
                         }
                     }
                 }
-
+                if( !isExist) {
+                    if( classes.find( node->name) != classes.end() ){
+                        retType->varType = TYPEE_CLASS;
+                        isExist = true;
+                    } 
+                }
                 if( !isExist) {
                     addError(string("Unknown variable: ") + node->name);
                 } else {
@@ -211,6 +214,8 @@ class TypeCalculation : public NodeVisiter {
 
             } else if ( node->operationType == OperationType::OP_LOGICAL_NOT) {
                 //TODO:: Дима проверяй сам
+            } else if ( node->operationType == OperationType::OP_ASSIGN) {
+                node->returnType = new TypeNode( *node->right->returnType);
             }
 
         }
@@ -250,6 +255,9 @@ class TypeCalculation : public NodeVisiter {
                 } else {
                     addError(string("Unknown static method: ") + iclassinfo->name + "::" + node->name );
                 }
+
+                
+
             } else if(node->object->returnType->varType == TYPE_POINTER) {
                 string classname = node->object->returnType->childType->name;
                 ClassInfo* iclassinfo = classes[classname]; 

@@ -36,9 +36,10 @@ int main(int argc, char *argv[]) {
 
 	visiters.push_back( new FunctionAndMethodsLocalVarChecker());
 	visiters.push_back( new ArrayAndFieldAssignTransform());
+    visiters.push_back( new ClassTableFiller());
+	visiters.push_back( new PointerChecker());
 	visiters.push_back( new TableFiller());
 	visiters.push_back( new VariableTypeChecker());
-	visiters.push_back( new PointerChecker());
 	visiters.push_back( new ReturnChecker());
 	visiters.push_back( new TypeCalculation());
 	visiters.push_back( new JVMTableFiller());
@@ -62,6 +63,8 @@ int main(int argc, char *argv[]) {
     }
 	freopen("CON","w", stdout);
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
-	execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
+	
+    system("graphSemantic.bat");
+    system("graph.bat");
 	return 0;
 }

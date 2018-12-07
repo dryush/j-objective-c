@@ -1,5 +1,8 @@
 #include "NodeVisiter.h"
-
+/**
+* Check for void vars
+*
+*/
 class VariableTypeChecker : public NodeVisiter {
 
     bool isClass;
