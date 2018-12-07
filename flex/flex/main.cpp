@@ -60,7 +60,6 @@ int main(int argc, char *argv[]) {
         cout << cl->second->name << endl;
         cout << cl->second->table->to_csv_string() << endl;
     }
-	freopen("CON","w", stdout);
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
 	execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
 	return 0;
