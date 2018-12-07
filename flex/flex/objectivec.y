@@ -95,7 +95,6 @@
 %type <_stmt> while_stmt
 %type <_expr> expr
 %type <_type> type
-%type <_type> pointer_custom_type
 %type <_type> enum_type
 %type <_type> default_type
 %type <_enum_decl> enum_declaration
@@ -131,7 +130,6 @@
 %type <func_arg_list_st> func_args
 %type <func_arg_list_st> func_args_or_empty
 %type <func_declaration_st> func_header
-%type <func_declaration_st> func_declaration
 %type <func_impl_st> func_implementation
 
 %type <expr_list_st> expr_list
@@ -182,8 +180,7 @@
  
 %%
 /* ТУТ ПРАВИЛА */
-extern_code: func_declaration 	{ $$ = createExternCode($1, NULL, NULL, NULL, NULL);}
-	| func_implementation		{ $$ = createExternCode(NULL, $1, NULL, NULL, NULL);}
+extern_code: func_implementation		{ $$ = createExternCode(NULL, $1, NULL, NULL, NULL);}
     | class_declaration 		{ $$ = createExternCode(NULL, NULL, $1, NULL, NULL);}
 	| class_implementation 		{ $$ = createExternCode(NULL, NULL, NULL, $1, NULL);}
 	| enum_declaration			{ $$ = createExternCode(NULL, NULL, NULL, NULL, $1);}
@@ -224,12 +221,13 @@ while_stmt: WHILE '(' expr ')' stmt 	{ $$ = CreateWhileStatement($3, $5); }
 	;
 	
 var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
-	| type ID ';'						{ $$ = CreateVarDeclWithInit($1, $2, NULL); }
+	| type '*' ID '=' expr ';'		/*!*/	{ $$ = CreateVarDeclWithInit(createType(TYPE_POINTER, 0, $1), $3, $5); }
+	| type  ID ';'						{ $$ = CreateVarDeclWithInit($1, $2, NULL); }
+	| type '*' ID ';'						/*!*/{ $$ = CreateVarDeclWithInit(createType(TYPE_POINTER, 0, $1), $3, NULL); }
 	| type ID '[' INT_CONST ']' ';'	/*Массивы*/  { $$ = CreateArrayDeclWithInit($1, $2, $4, NULL);}
+	| type '*' ID '[' INT_CONST ']' ';'	/*!*//*Массивы*/  { $$ = CreateArrayDeclWithInit(createType(TYPE_POINTER, 0, $1), $3, $5, NULL);}
 	| type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'	/*Массивы*/ { $$ = CreateArrayDeclWithInit($1, $2, $4, $8);}
-	;
-
-pointer_custom_type: ID '*' { $$ = createType(TYPE_POINTER, NULL, createType(TYPE_CUSTOM, $1, NULL)); }
+	| type '*' ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'	/*!*//*Массивы*/ { $$ = CreateArrayDeclWithInit(createType(TYPE_POINTER, 0, $1), $3, $5, $9);}
 	;
 
 enum_type:
@@ -237,7 +235,6 @@ enum_type:
 	;
 
 type: default_type { $$ = $1; } 	
-	| pointer_custom_type { $$ = $1; }
 	| enum_type { $$ = $1; }
 	;
 
@@ -252,7 +249,6 @@ default_type:  INT { $$ = createType(TYPE_INT, NULL, NULL);}
 expr: expr '+' expr 				{ $$ = CreateExpression(OP_ADD, $1, $3); }
     | expr '-' expr 				{ $$ = CreateExpression(OP_SUB, $1, $3); }
     | expr '*' expr 				{ $$ = CreateExpression(OP_MUL, $1, $3); }
-    | pointer_custom_type expr 		{ $$ = CreateMulFromPointer( $1, $2); }
     | expr '/' expr 				{ $$ = CreateExpression(OP_DIV, $1, $3); }
 	| expr '%' expr 				{ $$ = CreateExpression(OP_MOD, $1, $3); }
 	| expr '=' expr 				{ $$ = CreateExpression(OP_ASSIGN, $1, $3); }
@@ -323,6 +319,7 @@ class_fields_access: PUBLIC { $$ = A_PUBLIC; }
 	;
 
 class_invariant_declaration: type ID ';' { $$ = createClassInvariantDeclaration($1, $2); }
+						| type '*' ID ';' /*!*/ { $$ = createClassInvariantDeclaration(createType(TYPE_POINTER, 0, $1), $3); }
 	;
 
 class_invariants_declarations: class_invariant_declaration 		{ $$ = createClassInvariantsDeclarationList($1); }
@@ -344,7 +341,9 @@ class_invariants_declaration: '{' '}' 						{ $$ = NULL; }
 	;
 
 class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclaration( NULL, $2, $4 ); }
+						| '(' type '*' ')' ID /*!*/{ $$ = createClassMethodParamDeclaration( NULL, createType(TYPE_POINTER, 0, $2), $5 ); }
 						| '(' type '['']' ')' ID { $$ = createClassMethodParamDeclaration( NULL, createType(TYPE_ARRAY, NULL, $2), $6 ); }
+						| '(' type '*' '['']' ')' ID /*!*/{ $$ = createClassMethodParamDeclaration( NULL, createType(TYPE_ARRAY, NULL, createType(TYPE_POINTER, 0, $2)), $7 ); }
 	;
 	
 /*Параметры, начиная со второго могут либо все объявляться с именем 
@@ -352,7 +351,9 @@ class_method_first_param: '(' type ')' ID { $$ = createClassMethodParamDeclarati
 */
 
 class_method_other_param_named: ID ':' '(' type ')' ID { $$ = createClassMethodParamDeclaration($1, $4, $6); }
+							| ID ':' '(' type '*' ')' ID /*!*/{ $$ = createClassMethodParamDeclaration($1, createType(TYPE_POINTER, 0, $4), $7); }
 							| ID ':' '(' type '['']' ')' ID { $$ = createClassMethodParamDeclaration($1, createType(TYPE_ARRAY, NULL, $4), $8); }
+							| ID ':' '(' type '*' '['']' ')' ID /*!*/{ $$ = createClassMethodParamDeclaration($1, createType(TYPE_ARRAY, NULL, createType(TYPE_POINTER, 0, $4)), $9); }
 	;
 
 class_method_other_params_named: class_method_other_param_named  		{ $$ = createClassMethodParamDeclarationList($1); }
@@ -382,9 +383,13 @@ class_method_params: class_method_all_params 	{ $$ = $1; }
 */
 
 class_method: '-' '(' type ')' ID ':' class_method_params 	{ $$ = createMethodDeclaration(NON_STATIC, $3, $5, $7); }
+	| '-' '(' type '*' ')' ID ':' class_method_params 	/*!*/{ $$ = createMethodDeclaration(NON_STATIC, createType(TYPE_POINTER, 0, $3), $6, $8); }
     | '+' '(' type ')' ID ':' class_method_params 			{ $$ = createMethodDeclaration(STATIC, $3, $5, $7); }
+    | '+' '(' type '*'')' ID ':' class_method_params 			/*!*/{ $$ = createMethodDeclaration(STATIC, createType(TYPE_POINTER, 0, $3), $6, $8); }
     | '-' '(' type ')' ID 									{ $$ = createMethodDeclaration(NON_STATIC, $3, $5, NULL); }
+    | '-' '(' type '*'')' ID 									/*!*/{ $$ = createMethodDeclaration(NON_STATIC, createType(TYPE_POINTER, 0, $3), $6, NULL); }
     | '+' '(' type ')' ID 									{ $$ = createMethodDeclaration(STATIC, $3, $5, NULL); }
+    | '+' '(' type '*'')' ID 									/*!*/{ $$ = createMethodDeclaration(STATIC, createType(TYPE_POINTER, 0, $3), $6, NULL); }
     ;
 
 class_method_declaration: class_method ';' { $$ = $1; }
@@ -469,7 +474,9 @@ array_elems_or_empty: expr_list { $$ = $1; }
 
 /*ФУНКЦИИ */
 func_arg: type ID { $$ =  createFuncArg($1, $2); }
+		| type '*' ID  /*!*/{ $$ =  createFuncArg(createType(TYPE_POINTER, 0, $1), $3); }
 		| type ID '['']' { $$ =  createFuncArg(createType(TYPE_ARRAY, NULL, $1), $2); }
+		| type '*' ID '['']' /*!*/{ $$ =  createFuncArg(createType(TYPE_ARRAY, NULL, createType(TYPE_POINTER, 0, $1)), $3); }
     ;
 
 func_args: func_arg 			{ $$ = createFuncArgList($1); }
@@ -481,9 +488,7 @@ func_args_or_empty: func_args	{ $$ = $1; }
     ;
 
 func_header: type ID '(' func_args_or_empty ')' { $$ = createFuncDeclaration($1, $2, $4); }
-    ;
-
-func_declaration: func_header ';' { $$ = $1; }
+	| type '*' ID '(' func_args_or_empty ')' /*!*/{ $$ = createFuncDeclaration(createType(TYPE_POINTER, 0, $1), $3, $5); }
     ;
 
 func_implementation: func_header compound_stmt { $$ = createFuncImpl($1, $2); }
