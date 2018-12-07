@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "CommonNodes.h"
 
+const string defaultParentClass = "Java.lang.Object";
+
 enum FieldAccess {
     ACCESS_PUBLIC,
     ACCESS_PROTECTED,
@@ -143,7 +145,7 @@ public:
 
     ClassDeclarationNode( Class_declaration_st* st ){
         this->name = st->name;
-        this->parentName = st->parentName ? st->parentName : "<Java.Lang.Object>";
+        this->parentName = st->parentName ? st->parentName : defaultParentClass;
         ClassFieldDeclarationNode::FillFrom( this->fields, st->invariants_declaration_list);
         ClassMethodDeclarationNode::FillFrom( this->methods, st->methods_declaraion_list);
     }

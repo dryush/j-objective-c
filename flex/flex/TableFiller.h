@@ -52,6 +52,12 @@ public:
         }
     }
 
+    static TypeInfo Pointer( const string& classname) {
+        TypeInfo info;
+        info.type = TYPE_POINTER;
+        info.name = classname;
+        return info;
+    }
     TypeNode* toNode() {
         auto retType = new TypeNode();
         
@@ -117,10 +123,14 @@ class FunctionInfo {
 private:
     int localVarNum;
 public:
+     bool isDefault;
+
     FunctionInfo(){
         this->localVarNum = 0;
+        isDefault = true;
     }
 
+   
     string name;
     TypeInfo returnType;
     FunctionNode* functionNode;
@@ -192,6 +202,11 @@ public:
 
 class ClassInfo {
 public:
+    bool isDefault;
+    ClassInfo(){
+        this->isDefault = true;
+    }
+
     string name;
     string parentName;
     unordered_map<string, FieldInfo*> fields;
@@ -273,6 +288,86 @@ FieldInfo* getField( string& classname, string& fieldname){
 
 unordered_map<string, FunctionInfo*> functions;
 unordered_map<string, EnumInfo*> enums;
+
+void fillDefaultClasses() {
+    ClassInfo* nsoclassinfo = new ClassInfo();
+    nsoclassinfo->isDefault = true;
+    nsoclassinfo->name = "NSObject";
+    nsoclassinfo->parentName = defaultParentClass;
+    
+    ClassInfo* nssclassinfo = new ClassInfo();
+    nssclassinfo->isDefault = false;
+    nssclassinfo->name = "NSString";
+    nssclassinfo->parentName = defaultParentClass;
+    ///TODO::: Список методов NSString
+    auto nssinitm = new MethodInfo();
+    nssinitm->isDefault = false;
+    nssinitm->name = "init";
+    nssinitm->returnType = TypeInfo::Pointer( nssclassinfo->name);
+    nssinitm->classname = nssclassinfo->name;
+    nssinitm->access = ACCESS_PUBLIC;
+    nssinitm->methodType = METHOD_LOCAL;
+
+    nssclassinfo->localMethods[ nssinitm->name] = nssinitm;
+
+    classes[nsoclassinfo->name] = nsoclassinfo;
+    classes[nssclassinfo->name] = nssclassinfo;
+
+    ClassInfo* NSScanner = new ClassInfo();
+    NSScanner->name = "NSScanner";
+    NSScanner->isDefault = false;
+    NSScanner->parentName = defaultParentClass;
+
+    vector<string> scanNames;
+    scanNames.push_back( "scanInt");
+    scanNames.push_back( "scanString");
+    scanNames.push_back( "scanFloat");
+
+    FOR_EACH( scanname, scanNames){
+        auto scan = new MethodInfo();
+        scan->isDefault = false;
+        scan->name = *scanname;
+        scan->classname = NSScanner->name;
+        scan->returnType = TypeInfo::Pointer( nssclassinfo->name);
+        scan->access = ACCESS_PUBLIC;
+        scan->methodType = METHOD_LOCAL;
+        NSScanner->localMethods[ scan->name] = scan;
+    }
+    classes[ NSScanner->name] = NSScanner;
+}
+void fillDefaultMethods() {
+    MethodInfo mi;
+    mi.name = "alloc";
+    mi.access = ACCESS_PUBLIC;
+    mi.methodType = MethodType::METHOD_STATIC;
+    
+    FOR_EACH( cl, classes){
+        auto cmi = new MethodInfo( mi);
+        cmi->classname = cl->second->name;
+        cmi->access = ACCESS_PUBLIC;
+        cmi->isDefault = false;
+        cmi->methodType = METHOD_STATIC;
+
+        TypeInfo t;
+        t.type = TYPE_POINTER;
+        t.name = cl->second->name;
+        cmi->returnType = t;
+        cl->second->staticMethods[ cmi->name] = cmi;
+    }
+}
+
+void fillDefaultFunctions() {
+
+    FunctionInfo* printf = new FunctionInfo();
+    printf->isDefault = true;
+    printf->name = "printf";
+    
+    FunctionParamInfo* stringParam = new FunctionParamInfo();
+    stringParam->name = "string";
+    stringParam->type = TypeInfo::Pointer("NSString");
+    printf->params[ stringParam->name] = stringParam;
+    
+}
 
 /**
 *
@@ -788,9 +883,11 @@ public:
 	void visit( ProgramNode * node) override {
 		RETURN_IF_NODE_NULL;
 		
+        fillDefaultClasses();
+        fillDefaultFunctions();
 
         classes[FUNCTIONS_CLASS] = new ClassInfo();
-        classes[FUNCTIONS_CLASS]->parentName = "<Java.Lang.Object>";
+        classes[FUNCTIONS_CLASS]->parentName = defaultParentClass;
         classes[FUNCTIONS_CLASS]->name= FUNCTIONS_CLASS;
         classes[FUNCTIONS_CLASS]->table= new JavaTable();
 
@@ -810,6 +907,9 @@ public:
 			auto classDecl = *iclassDecl;
             (classDecl)->visit( this);
         }
+
+        fillDefaultMethods();
+
         for( auto ienum = node->enums.begin(); ienum != node->enums.end(); ienum++){
 			auto _enum = *ienum;
             (_enum)->visit( this);
