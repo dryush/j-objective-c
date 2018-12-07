@@ -39,9 +39,10 @@ int main(int argc, char *argv[]) {
     visiters.push_back( new ClassTableFiller());
 	visiters.push_back( new PointerChecker());
 	visiters.push_back( new TableFiller());
+    // Требует заполненных "таблиц", дозаполняет их локальными перменными
+	visiters.push_back( new TypeCalculation());
 	visiters.push_back( new VariableTypeChecker());
 	visiters.push_back( new ReturnChecker());
-	visiters.push_back( new TypeCalculation());
 	visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
 	FOR_EACH( ivisiter, visiters){
