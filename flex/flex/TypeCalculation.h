@@ -6,7 +6,8 @@
 
 class TypeCalculation : public NodeVisiter {
 
-    bool isFunc;
+public: 
+	bool isFunc;
     FunctionNode* curFunc;
     void visit( FunctionNode* node) override {
         isFunc = true;
@@ -128,6 +129,18 @@ class TypeCalculation : public NodeVisiter {
         } 
         return retType;
     }
+	// —пускаемс€ в дереве до переменных и вычисл€ем их VarType
+	void calcVarType( ExprNode* node) {
+		if (node->operationType != OP_VALUE) {
+			if (node->left != NULL)
+				calcVarType(node->left);
+			if (node->right != NULL)
+				calcVarType(node->right);
+		}
+		else {
+			node->returnType = calcValueExprType(node);
+		}
+	}
 
     TypeNode* calcOperation( ExprNode* node) {
         auto retType = new TypeNode();
@@ -135,22 +148,34 @@ class TypeCalculation : public NodeVisiter {
         if( node->exprType == ExprType::EXPR_OPERATION) {
             
             if( node->operationType == OperationType::OP_VALUE) {
-                retType = calcValueExprType( node);
+				node->returnType = calcValueExprType( node );
             } else if ( node->isBinnaryOnlyNumbers()) {
+				
+				calcVarType(node);
 
-                if( node->left->isNuberValue() && node->right->isNuberValue()) {
-                    if( node->left->returnType->varType != node->right->returnType->varType && (
-                        node->left->returnType->varType == VarType::TYPE_FLOAT || 
-                        node->right->returnType->varType == VarType::TYPE_FLOAT
-                        )
-                    ){
-                        retType->varType = TYPE_FLOAT;
-                        // TODO: ѕо-хорошему бы привидение типов вставить
-                    } else {
-                        retType->varType = node->left->constType;
-                    }
+                if( node->left->isNumberValue() && node->right->isNumberValue()) {
+                    
+					VarType leftType = node->left->returnType->varType;
+					VarType rightType = node->right->returnType->varType;
+					if (leftType == rightType && leftType == TYPE_INT) {
+						 retType->varType = TYPE_INT;
+					}
+					else if (leftType == rightType && leftType == TYPE_FLOAT) {
+						retType->varType = TYPE_FLOAT;
+					}
+					else if (leftType == TYPE_FLOAT) {
+						retType->varType = TYPE_FLOAT;
+						node->right->floatVal = node->right->intVal;
+					}
+					else if (rightType == TYPE_FLOAT) {
+						retType->varType = TYPE_FLOAT;
+						node->left->floatVal = node->left->intVal;
+					}
                 } else {
-                    addError("Not number with binnary math operations");
+					if (node->left->isNumberValue() == node->right->isNumberValue() )
+						addError("This operation have not float and int operands");
+					else
+						addError("This operation have not float and int operand");
                 }
             } else if ( node->isUnnaryMath() ) {
 

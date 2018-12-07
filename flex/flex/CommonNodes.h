@@ -142,8 +142,8 @@ public:
         return this->left && this->right;
     }
 
-    bool isNuberValue(){
-        return this->constType == VarType::TYPE_FLOAT || this->constType == VarType::TYPE_INT;
+    bool isNumberValue(){
+		return this->returnType->varType == VarType::TYPE_FLOAT || this->returnType->varType == VarType::TYPE_INT;
     }
 
     ExprNode() {
@@ -293,6 +293,10 @@ ExprNode::ExprNode(Expression_st* st) {
 	}
 	else if (this->exprType == EXPR_OPERATION) {
 		if (this->operationType == OP_VALUE) {
+			
+			this->returnType = new TypeNode();
+			this->returnType->varType = this->constType;
+			
 			if (this->constType == TYPE_CUSTOM) {
 				this->name = st->identifier;
 			}
