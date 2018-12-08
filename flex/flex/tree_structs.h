@@ -52,7 +52,8 @@ enum VarType
 	TYPE_POINTER,
 	TYPE_ARRAY,
 
-    TYPEE_CLASS
+    TYPEE_CLASS,
+	TYPEE_UNSET
 };
 
 struct Type_st;	/* + */
