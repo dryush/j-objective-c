@@ -115,6 +115,10 @@ public:
 class MethodParamInfo : public FunctionParamInfo {
 public: 
     string outerName;
+    MethodParamInfo() : FunctionParamInfo() {
+        this->outerName = "";
+    }
+
     MethodParamInfo( ClassMethodParamNode* pn){
         this->name = pn->innerName;
         this->outerName = pn->outerName;
@@ -201,6 +205,11 @@ public:
 
 
     string descriptor;
+
+    void addParam( MethodParamInfo* param) {
+        this->params[ param->name] = param;
+        this->outerParams[ param->outerName] = param;
+    }
 };
 
 class ClassInfo {
@@ -676,6 +685,12 @@ void fillDefaultClasses() {
     auto nssinitm = new MethodInfo();
     nssinitm->isDefault = false;
     nssinitm->name = "init";
+    auto stringParam = new MethodParamInfo();
+    stringParam->name = "string";
+    stringParam->outerName = "string";
+    stringParam->type.type = TYPE_STRING;
+    nssinitm->addParam( stringParam);
+
     nssinitm->returnType = TypeInfo::Pointer( nssclassinfo->name);
     nssinitm->classname = nssclassinfo->name;
     nssinitm->access = ACCESS_PUBLIC;
@@ -860,8 +875,7 @@ public:
 			auto param = *iparam;
             if( param){
                 auto mpi = new MethodParamInfo( param);
-                this->currentMethod->params[ mpi->name] = mpi;
-                this->currentMethod->outerParams[ mpi->outerName] = mpi;
+                this->currentMethod->addParam( mpi);
             }
         }
 

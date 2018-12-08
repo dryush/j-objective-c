@@ -110,6 +110,12 @@ public:
 					VISIT_IF_NOT_NULL(node->childType);//->visit(this);
 					break;
 				}
+                case TYPEE_CLASS: {
+                    labels[node] = "CLASS";
+					g[node].push_back(Edge(node->childType, "type"));
+					VISIT_IF_NOT_NULL(node->childType);//->visit(this);					
+                }
+                                 
 			}
 		}
 	}
@@ -308,6 +314,9 @@ public:
 									labels[node] += "Pointer ";
 									break;
 								}
+                                case TYPEE_CLASS: {
+                                    labels[node] += "CLASS " + node->name;
+                                }
 							}
 							break;
 						}

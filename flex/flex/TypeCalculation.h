@@ -127,6 +127,8 @@ public:
                 }
             }
             retType = arrayType->toNode();
+        } else if (node->constType == VarType::TYPEE_CLASS){
+            throw "wtf?";
         } else {
             retType->varType = node->constType;
         }
@@ -162,10 +164,37 @@ public:
         }
 
         if( node->returnType->varType == TYPE_STRING){
-            //TODO:: сделать так, чтоб этого не случалось, стринг должно приводиться к NSString
+
+            ExprNode nssClassObject;
+            nssClassObject.exprType = EXPR_OPERATION;
+            nssClassObject.operationType = OP_VALUE;
+            nssClassObject.constType = TYPEE_CLASS;
+            nssClassObject.name = "NSString";
+            nssClassObject.returnType = new TypeNode();
+            
+            auto nsstringAlloc = new ExprNode();
+            
+            nsstringAlloc->exprType = EXPR_METHOD_CALL;
+            nsstringAlloc->name="alloc";
+            nsstringAlloc->returnType = classes[ nssClassObject.name]->staticMethods[ nsstringAlloc->name]->returnType.toNode();
+
+            nsstringAlloc->object = new ExprNode( nssClassObject); 
+
+            auto nsstringInitFromString = new ExprNode();
+            nsstringInitFromString->exprType = EXPR_METHOD_CALL;
+            nsstringInitFromString->name="init";
+            nsstringInitFromString->object = nsstringAlloc;
+            nsstringInitFromString->returnType = classes[ nssClassObject.name]->localMethods[ nsstringInitFromString->name]->returnType.toNode();
+
+            nsstringInitFromString->methodArgs.push_back( new ExprNode(*node));
+            
+            *node = *nsstringInitFromString;
         }
 
         if( node->returnType->varType == TYPE_POINTER){
+            if( TypeInfo(node->returnType).isEqual( typeToCast)){
+                return true;
+            }
             if( typeToCast->varType != TYPE_POINTER)
                 return false;
             ///TODO:: Проверить возможно ли кастануть в дочерний
