@@ -179,6 +179,10 @@ public:
             return false;
         }
 
+        if( node->returnType->varType == TYPE_CHAR){
+            return false;
+        }
+
         if( node->returnType->varType == TYPE_STRING){
 
             ExprNode nssClassObject;
@@ -205,6 +209,8 @@ public:
             nsstringInitFromString->methodArgs.push_back( new ExprNode(*node));
             
             *node = *nsstringInitFromString;
+
+            return castIfPossible( node, typeToCast);
         }
 
         if( node->returnType->varType == TYPE_POINTER){
@@ -236,8 +242,10 @@ public:
             return false;
         }
         if( node->returnType->varType == TYPE_ARRAY){
-
+            return false;
         }
+
+        return false;
     }
 
     TypeNode* calcOperation( ExprNode* node) {
@@ -435,7 +443,9 @@ public:
             }
         }
         else if ( node->exprType == ExprType::EXPRE_ARRAY_ELEM_ASSIGN ) {
-            retType = new TypeNode(*node->right->returnType->childType);
+
+
+            retType = new TypeNode(*node->right->returnType);
         } 
         else if ( node->exprType == ExprType::EXPRE_CLASS_FIELD_ASSIGN) {
             retType = new TypeNode(*node->right->returnType->childType);

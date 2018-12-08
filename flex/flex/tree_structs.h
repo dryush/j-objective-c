@@ -421,7 +421,7 @@ struct Statement_st *CreateArrayDeclWithInit(struct Type_st *var_type, char *ide
 {
 	struct Statement_st *cur = (struct Statement_st *)malloc(sizeof(struct Statement_st));
     cur->stmt_type =  STMT_ARRAY_DECL;
-	cur->var_type = var_type;
+	cur->var_type = createType( TYPE_ARRAY, 0, var_type);
 	cur->identifier = identifier;
 	cur->array_elems = exprs;
 	cur->array_size = ar_size;

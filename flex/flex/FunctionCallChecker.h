@@ -25,6 +25,18 @@ class FunctionCallChecker : public NodeVisiter {
             else if( iExistArg != existArgs.end()) 
                 addError(string("Not enought args in function call: ") + node->name + "()"); 
 
+        } else if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
+            auto inttypenode = new TypeNode();
+            inttypenode->varType = TYPE_INT;
+            if( ! TypeCalculation::castIfPossible( node->right, inttypenode)){
+                addError(string("Index must be int array elem call: ") + node->left->name);
+            }
+        } else if ( node->exprType == EXPRE_ARRAY_ELEM_ASSIGN) {
+            auto inttypenode = new TypeNode();
+            inttypenode->varType = TYPE_INT;
+            if( ! TypeCalculation::castIfPossible( node->left, inttypenode)){
+                addError(string("Index must be int array elem call: ") + node->left->name);
+            }
         }
     }
 };

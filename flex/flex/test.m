@@ -1,22 +1,10 @@
-int func() {
-	return 2;
-}
 
-@interface MyClass2 
-{} 
-+ (MyClass*) staticMethod: (MyClass*[]) firstparam (int) secondparam;
-- (float) localMethod;
-@end
-
-void foo( MyClass* n){
-	return;
-}
 
 int main()
 {
-	MyClass* MyClass;
-	
-	foo(MyClass);
+	int a[2] = { 1, 2 };
+	a[1];
+	a[0.6] = 4;
 
 	return 0;
 }
