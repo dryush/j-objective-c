@@ -100,13 +100,14 @@ public:
 				case TYPE_POINTER: {
 					labels[node] += "* (pointer)";
 					g[node].push_back(node->childType);
-					node->childType->visit(this);
+                    if ( node->childType)
+                        node->childType->visit(this);
 					break;
 				}
 				case TYPE_ARRAY: {
 					labels[node] = "array";
 					g[node].push_back(Edge(node->childType, "type"));
-					node->childType->visit(this);
+					VISIT_IF_NOT_NULL(node->childType);//->visit(this);
 					break;
 				}
 			}

@@ -101,7 +101,8 @@ public:
                 }
                 if( !isExist) {
                     if( classes.find( node->name) != classes.end() ){
-                        retType->varType = TYPEE_CLASS;
+                        typeInfo.type = TYPEE_CLASS;
+                        typeInfo.name = node->name;
                         isExist = true;
                     } 
                 }
@@ -129,18 +130,6 @@ public:
         } 
         return retType;
     }
-	// —пускаемс€ в дереве до переменных и вычисл€ем их VarType
-	void calcVarType( ExprNode* node) {
-		if (node->operationType != OP_VALUE) {
-			if (node->left != NULL)
-				calcVarType(node->left);
-			if (node->right != NULL)
-				calcVarType(node->right);
-		}
-		else {
-			node->returnType = calcValueExprType(node);
-		}
-	}
 
     TypeNode* calcOperation( ExprNode* node) {
         auto retType = new TypeNode();
@@ -148,10 +137,9 @@ public:
         if( node->exprType == ExprType::EXPR_OPERATION) {
             
             if( node->operationType == OperationType::OP_VALUE) {
-				node->returnType = calcValueExprType( node );
+				retType = calcValueExprType( node );
             } else if ( node->isBinnaryOnlyNumbers()) {
 				
-				calcVarType(node);
 
                 if( node->left->isNumberValue() && node->right->isNumberValue()) {
                     
@@ -297,6 +285,8 @@ public:
             }
             if( meth) {
                 retType = meth->returnType.toNode();
+            } else {
+                addError(string("Can`t calc Method Return TYPE!!!!!!!!!!!!!!!"));
             }
         } else if ( node->exprType == ExprType::EXPR_INVAR_CALL ) {
             if(node->object->returnType->varType == TYPEE_CLASS) {

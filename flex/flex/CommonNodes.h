@@ -25,7 +25,7 @@ public:
 	TypeNode() {
 		this->name = "";
 		this->childType = NULL;
-		this->varType = TYPE_VOID;
+		this->varType = TYPEE_UNSET;
 	}
 
 	TypeNode(Type_st * st) {
@@ -34,8 +34,9 @@ public:
 		if( this->varType == TYPE_CUSTOM)
 			this->name = st->name;
 		this->childType = nullptr;
-		if( st->childType)
-			this->childType = new TypeNode(st->childType);
+        if( st->var_type == TYPE_POINTER || st->var_type == TYPE_ARRAY)
+		    if( st->childType)
+			    this->childType = new TypeNode(st->childType);
 	}
 	
 };
@@ -294,8 +295,9 @@ ExprNode::ExprNode(Expression_st* st) {
 	else if (this->exprType == EXPR_OPERATION) {
 		if (this->operationType == OP_VALUE) {
 			
-			this->returnType = new TypeNode();
-			this->returnType->varType = this->constType;
+			//this->returnType = new TypeNode();
+			this->returnType = nullptr;
+			//this->returnType->varType = this->constType;
 			
 			if (this->constType == TYPE_CUSTOM) {
 				this->name = st->identifier;

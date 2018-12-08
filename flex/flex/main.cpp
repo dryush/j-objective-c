@@ -10,6 +10,7 @@
 #include "struct_print.h"
 #include "objectivec.tab.c"
 #include "lex.yy.c"
+ 
 
 #include "FunctionLocalVarChecker.h"
 #include "ArrayAndFieldAssignTransform.h"
@@ -32,6 +33,9 @@ int main(int argc, char *argv[]) {
 	printf("\n\n");
 	print(root);
 	ProgramNode* prog = new ProgramNode(root);
+    //prog->visit( new PrintNodes()); 
+    //system("graphSemantic.bat");
+
 	vector<NodeVisiter*> visiters;
 
 	visiters.push_back( new FunctionAndMethodsLocalVarChecker());
@@ -45,11 +49,17 @@ int main(int argc, char *argv[]) {
 	visiters.push_back( new ReturnChecker());
 	visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
-	FOR_EACH( ivisiter, visiters){
-		prog->visit(*ivisiter);
-		//auto test = (*++prog->functions[0]->body->childs.begin())->expr;
-		delete*ivisiter;
-	}
+    prog->visit( visiters.back());
+    try{
+        FOR_EACH( ivisiter, visiters){
+	        prog->visit(*ivisiter);
+	        //auto test = (*++prog->functions[0]->body->childs.begin())->expr;
+	        delete*ivisiter;
+        }
+    } catch ( ...) {
+        printf("COMPLITION STOPPED!!!\n");
+
+    }
 	freopen("CON","w", stdout);
     if( errors.size() > 0){
         for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
@@ -63,8 +73,9 @@ int main(int argc, char *argv[]) {
         cout << cl->second->table->to_csv_string() << endl;
     }
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
+    execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
 	
-    system("graphSemantic.bat");
-    system("graph.bat");
+    //system("graphSemantic.bat");
+    //system("graph.bat");
 	return 0;
 }
