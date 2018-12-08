@@ -127,7 +127,9 @@ public:
                 }
             }
             retType = arrayType->toNode();
-        } 
+        } else {
+            retType->varType = node->constType;
+        }
         return retType;
     }
 
@@ -228,7 +230,7 @@ public:
             } else if ( node->operationType == OperationType::OP_LOGICAL_NOT) {
                 //TODO:: Дима проверяй сам
             } else if ( node->operationType == OperationType::OP_ASSIGN) {
-                node->returnType = new TypeNode( *node->right->returnType);
+                retType = new TypeNode( *node->right->returnType);
             }
 
         }
@@ -242,9 +244,7 @@ public:
             return;
         }
 
-        VISIT_IF_NOT_NULL( node->left);
-        VISIT_IF_NOT_NULL( node->right);
-        VISIT_IF_NOT_NULL( node->object);
+        NodeVisiter::visit( node);
 
         TypeNode* retType = new TypeNode();
         
@@ -278,7 +278,19 @@ public:
 				if (imeth != iclassinfo->localMethods.end() && imeth->second){
                     meth = imeth->second;
                 } else {
-                    addError(string("Unknown local method: ") + iclassinfo->name + "::" + node->name );
+                    
+                    //Проверяем, может быть всё же есть такой класс
+                    auto varNameClass = classes.find( node->object->name);
+                    bool isStatic = varNameClass != classes.end(); 
+                    if( isStatic ) {
+                        auto staticMethod = varNameClass->second->staticMethods.find( node->name);
+                        isStatic = staticMethod != varNameClass->second->staticMethods.end(); 
+                        if( isStatic ){
+                            meth = staticMethod->second;
+                        }
+                    } 
+                    if( !isStatic)
+                        addError(string("Unknown local method: ") + iclassinfo->name + "::" + node->name );
                 }
             } else {
 				addError(string("Can`t call method " + node->name + " from variable " + node->object->name));

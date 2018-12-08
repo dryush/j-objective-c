@@ -92,7 +92,10 @@ public:
     }
 
     bool isEqual( TypeNode* node){
-        return this->isEqual( TypeInfo(node));
+        if( node)
+            return this->isEqual( TypeInfo(node));
+        else
+            false; ///TODO::: СПОРНО ДО БЕЗУМИЯ
     }
 };
 
@@ -990,17 +993,23 @@ class JVMTableFiller : public NodeVisiter {
         if( node->exprType == EXPR_METHOD_CALL) {
             ClassInfo * c;
             MethodInfo* m;
+            bool isOk = true;
             if ( node->object->returnType->varType == TYPEE_CLASS){
                 c = classes[ node->object->returnType->name];
                 m = c->staticMethods[ node->name];
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
                 c = classes[ node->object->returnType->childType->name];
                 m = c->localMethods[node->name];
+            } else {
+                addError("Need Test Why this Error");
+                isOk = false;
             }
-            if( isClass)
-                classes[this->curClass->name]->table->addMethod( m);
-            else
-                classes[ FUNCTIONS_CLASS]->table->addMethod( m);
+
+            if( isOk)
+                if( isClass)
+                    classes[this->curClass->name]->table->addMethod( m);
+                else
+                    classes[ FUNCTIONS_CLASS]->table->addMethod( m);
 
         } else if( node->exprType == EXPR_FUNC_CALL) {
 

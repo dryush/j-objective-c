@@ -12,14 +12,15 @@
 - (float) localMethod;
 @end
 
+void foo( MyClass* n){
+	return;
+}
+
 int main()
 {
-	MyClass* myObject;
-	myObject->am;
-	[myObject localMethod];
-	MyClass* mc1 = [MyClass staticMethod];
-	MyClass* mc2 = [MyClass alloc];
-
+	MyClass* MyClass;
+	
+	foo(MyClass);
 
 	return 0;
 }

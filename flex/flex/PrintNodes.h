@@ -418,9 +418,10 @@ public:
                 break;
 			}
             case STMT_RETURN: {
+                
                 labels[node] = "Return_stmt";
 		        g[node].push_back(node->expr);
-				node->expr->visit(this);
+				VISIT_IF_NOT_NULL( node->expr);
                 break;
             }
             case STMT_COMPOUND: {

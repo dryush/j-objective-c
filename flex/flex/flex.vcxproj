@@ -83,6 +83,7 @@
     <ClInclude Include="ArrayAndFieldAssignTransform.h" />
     <ClInclude Include="ClassNodes.h" />
     <ClInclude Include="CommonNodes.h" />
+    <ClInclude Include="FunctionCallChecker.h" />
     <ClInclude Include="FunctionLocalVarChecker.h" />
     <ClInclude Include="FunctionNodes.h" />
     <ClInclude Include="NodeVisiter.h" />

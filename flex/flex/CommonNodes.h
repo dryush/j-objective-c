@@ -28,6 +28,14 @@ public:
 		this->varType = TYPEE_UNSET;
 	}
 
+    TypeNode(TypeNode& tn) {
+        this->name = tn.name;
+        this->varType = tn.varType;
+        if( tn.childType){
+            this->childType = new TypeNode( *tn.childType);
+        }
+    }
+
 	TypeNode(Type_st * st) {
 
 		this->varType = st->var_type;
@@ -248,7 +256,9 @@ public:
 			this->truthStmt = new StatementNode(st->truth_stmt);
 		}
 		else if (this->stmtType == STMT_RETURN) {
-			this->expr = new ExprNode(st->expr);
+            if ( st->expr) {
+                this->expr = new ExprNode(st->expr);
+            } 
 		}
 		else if (this->stmtType == STMT_VAR_DECL) {
 			this->varType = new TypeNode(st->var_type);
