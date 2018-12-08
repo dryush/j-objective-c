@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     visiters.push_back( new ClassTableFiller());
 	visiters.push_back( new PointerChecker());
 	visiters.push_back( new TableFiller());
-    // Требует заполненных "таблиц", дозаполняет их локальными перменными
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅ", пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	visiters.push_back( new TypeCalculation());
     
     visiters.push_back( new FunctionCallChecker());
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 	visiters.push_back( new ReturnChecker());
 	//visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
-
+    //prog->visit( visiters.back());
     try{
         FOR_EACH( ivisiter, visiters){
 	        prog->visit(*ivisiter);

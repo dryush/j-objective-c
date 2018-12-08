@@ -24,7 +24,9 @@ enum OperationType
 	OP_OR,
 	OP_UPLUS,
 	OP_UMINUS,
-	OP_VALUE
+	OP_VALUE,
+
+    OPE_CAST
 
 };
 
@@ -37,7 +39,7 @@ enum ExprType {
 
 	
 	EXPRE_ARRAY_ELEM_ASSIGN,
-	EXPRE_CLASS_FIELD_ASSIGN,
+	EXPRE_CLASS_FIELD_ASSIGN
 };
 
 enum VarType
@@ -55,6 +57,7 @@ enum VarType
     TYPEE_CLASS,
 	TYPEE_UNSET
 };
+
 
 struct Type_st;	/* + */
 struct Expression_st; /* +- */

@@ -133,6 +133,68 @@ public:
         return retType;
     }
 
+
+    static bool castIfPossible(ExprNode* node, TypeNode* typeToCast){
+        
+        if( TypeInfo(node->returnType).isEqual( typeToCast)){
+            return true;
+        }
+
+        if( node->returnType->varType == TYPE_INT ) {
+            /// TODO:: Дима жги
+            if( typeToCast->varType == TYPE_FLOAT || typeToCast->varType == TYPE_BOOL)
+                return true;
+            else
+                return false;
+        }
+
+        if( node->returnType->varType == TYPE_FLOAT) {
+            /// TODO:: Дима жги
+            if( typeToCast->varType == TYPE_INT)
+                return true;
+            else
+                return false;
+        }
+
+        if( node->returnType->varType == TYPE_BOOL){
+            /// TODO:: Дима жги
+            return false;
+        }
+
+        if( node->returnType->varType == TYPE_STRING){
+            //TODO:: сделать так, чтоб этого не случалось, стринг должно приводиться к NSString
+        }
+
+        if( node->returnType->varType == TYPE_POINTER){
+            if( typeToCast->varType != TYPE_POINTER)
+                return false;
+            ///TODO:: Проверить возможно ли кастануть в дочерний
+            bool isChild = true;
+            string parent = node->returnType->childType->name;
+            auto parentType = classes.find( parent);
+            while( parentType != classes.end() && parentType->second->parentName.size()){
+                if( parentType->second->name == typeToCast->childType->name){
+                    auto thisNode = new ExprNode( *node);
+                    auto castNode = new ExprNode();
+                    castNode->exprType = EXPR_OPERATION;
+                    castNode->operationType = OPE_CAST;
+                    castNode->constType = TYPE_POINTER;
+                    castNode->name = parentType->second->name;
+                    castNode->returnType = TypeInfo::Pointer( castNode->name).toNode();
+                    *node = *castNode;
+                    node->left = thisNode;
+
+                    return true;
+                }
+                parentType = classes.find( parentType->second->parentName);
+            }
+            return false;
+        }
+        if( node->returnType->varType == TYPE_ARRAY){
+
+        }
+    }
+
     TypeNode* calcOperation( ExprNode* node) {
         auto retType = new TypeNode();
 
@@ -326,7 +388,8 @@ public:
             retType = new TypeNode(*node->right->returnType->childType);
         }
         else if ( node->exprType == ExprType::EXPR_ARRAY_ELEM_CALL ) {
-            retType = new TypeNode(*node->left->returnType->childType);
+            if (node->left->returnType->childType)
+				retType = new TypeNode(*node->left->returnType->childType);
         }
        
         node->returnType = retType;

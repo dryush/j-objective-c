@@ -1,10 +1,6 @@
-@interface MyClass 
-{
-	int am;
-} 
-+ (int) staticMethod;
-- (float) localMethod;
-@end
+int func() {
+	return 2;
+}
 
 @interface MyClass2 
 {} 

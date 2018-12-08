@@ -22,6 +22,17 @@ public:
         return this->varType == VarType::TYPE_FLOAT || this->varType == VarType::TYPE_INT;
     }
 
+    bool isDefaultType(){
+        return varType == VarType::TYPE_BOOL || 
+            varType == VarType::TYPE_CHAR ||
+            varType == VarType::TYPE_FLOAT || 
+            varType == VarType::TYPE_INT;
+    }
+
+    bool isString(){
+        return varType == TYPE_STRING;
+    }
+
 	TypeNode() {
 		this->name = "";
 		this->childType = NULL;
@@ -326,6 +337,9 @@ ExprNode::ExprNode(Expression_st* st) {
 			}
 			else if (this->constType == TYPE_STRING) {
 				this->strVal = st->string_value;
+			}
+			else if (this->constType == TYPE_ARRAY) {
+				
 			}
 		}
 		else if (this->operationType == OP_UPLUS
