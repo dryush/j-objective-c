@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
 	visiters.push_back( new ReturnChecker());
 	visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
-    prog->visit( visiters.back());
+    //prog->visit( visiters.back());
     try{
         FOR_EACH( ivisiter, visiters){
 	        prog->visit(*ivisiter);
