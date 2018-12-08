@@ -364,6 +364,18 @@ public:
 					}
 					break;
 				}
+				case EXPRE_ARRAY_ELEM_ASSIGN: {
+					labels[node] = "array_elem_assign " + node->name;
+					if( node->object){
+						g[node].push_back(Edge(node->object,"object"));
+						node->object->visit(this);
+					}
+					g[node].push_back(Edge::left(node->left));
+					node->left->visit(this);
+					g[node].push_back(Edge::right(node->right));
+					node->right->visit(this);
+					break;
+				}
 			}
 		}
 	}
