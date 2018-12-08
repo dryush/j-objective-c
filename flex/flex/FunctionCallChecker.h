@@ -15,7 +15,7 @@ class FunctionCallChecker : public NodeVisiter {
             int order = 0;
             for( ; iParam != params.end() && iExistArg != existArgs.end(); iParam++, iExistArg++){
                 order++;
-                if( ! iParam->second->type.isEqual( (*iExistArg)->returnType)) {
+                if( !TypeCalculation::castIfPossible(*iExistArg, iParam->second->type.toNode())) {
                     addError(string("Uncorrect arg type in function call: ") + node->name + "()" + " arg number: " + to_string( order)); 
                 }
             }

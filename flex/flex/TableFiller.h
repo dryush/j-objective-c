@@ -80,7 +80,7 @@ public:
     bool isEqual( TypeInfo& other){
 
         if ( this->type == other.type){
-            if( this->type == TYPE_CUSTOM || this->type == POINTER){
+            if( this->type == TYPE_CUSTOM || this->type == TYPE_POINTER){
                 return this->name == other.name;
             } else if ( this->type == TYPE_ARRAY){
                 return this->arrayType == other.arrayType && this->name == other.name;
@@ -664,7 +664,7 @@ void fillDefaultClasses() {
     ClassInfo* nsoclassinfo = new ClassInfo();
     nsoclassinfo->isDefault = true;
     nsoclassinfo->name = "NSObject";
-    nsoclassinfo->parentName = defaultParentClass;
+    nsoclassinfo->parentName = JavaLangObject;
     nsoclassinfo->table = new JavaTable();
 
     ClassInfo* nssclassinfo = new ClassInfo();

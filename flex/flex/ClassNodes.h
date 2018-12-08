@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "CommonNodes.h"
 
-const string defaultParentClass = "Java.lang.Object";
+const string defaultParentClass = "NSObject";
+const string JavaLangObject = "java/lang/object";
 
 enum FieldAccess {
     ACCESS_PUBLIC,
