@@ -90,6 +90,8 @@
     <ClInclude Include="PointerChecker.h" />
     <ClInclude Include="PrintNodes.h" />
     <ClInclude Include="ProgramNode.h" />
+    <ClInclude Include="ReturnChecker.h" />
+    <ClInclude Include="ReturnTypeVarCalc.h" />
     <ClInclude Include="struct_print.h" />
     <ClInclude Include="TableFiller.h" />
     <ClInclude Include="TreeClass.h" />
