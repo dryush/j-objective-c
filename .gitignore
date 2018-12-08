@@ -10,7 +10,7 @@ flex/flex/Debug
 
 flex/flex/objectivec.tab.c
 flex/flex/objectivec.tab.h
-flex/flex/objectivec.tab.ccp
+flex/flex/objectivec.tab.cpp
 flex/flex/objectivec.output
 flex/flex/lex.yy.c
 flex/flex/graph.txt
