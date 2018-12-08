@@ -62,8 +62,25 @@ public:
             currentFuncOrMethod->addLocalVar( curstmt->name, TypeInfo( curstmt->varType));
         }
 
+		if (curstmt->stmtType == STMT_RETURN) {
+			curstmt->expr->returnType = calcOperation(curstmt->expr);
+			if( this->isMethod) {
+				if (castIfPossible(curstmt->expr, curMethod->returnType) == false) {
+					addError("Return type does not match type of method " + curMethod->name + "() in class " + curClass->name);
+					return;
+				}
+			}
+			else {
+				if (castIfPossible(curstmt->expr, curFunc->returnType) == false) {
+					addError("Return type does not match type of function " + curFunc->name + "()");
+					return;
+				}
+			}
+		}
+
         NodeVisiter::visit( node);
-        curstmt = nullptr;
+		curstmt = nullptr;
+
     }
 
     TypeNode* calcValueExprType(ExprNode* node){
@@ -118,9 +135,9 @@ public:
             auto arrayType = getMethodVarType( curClass->name, curMethod->name, node->name);
             auto type = arrayType->arrayType;
             auto customtypename = arrayType->name;
-            // Здесь проверяем чтоб все елементы массива были одного типа
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             FOR_EACH( iArrayElemExpr, node->arrayElems->exprs){
-                //Заходим в каждый
+                //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 VISIT_IF_NOT_NULL( (*iArrayElemExpr));
                 if( type != (*iArrayElemExpr)->constType ||  customtypename != (*iArrayElemExpr)->name) {
                     addError(string("Uncorrect array elem type, var name: ") + node->name);
@@ -135,7 +152,6 @@ public:
         return retType;
     }
 
-
     static bool castIfPossible(ExprNode* node, TypeNode* typeToCast){
         
         if( TypeInfo(node->returnType).isEqual( typeToCast)){
@@ -143,7 +159,7 @@ public:
         }
 
         if( node->returnType->varType == TYPE_INT ) {
-            /// TODO:: Дима жги
+            /// TODO:: пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
             if( typeToCast->varType == TYPE_FLOAT || typeToCast->varType == TYPE_BOOL)
                 return true;
             else
@@ -151,7 +167,7 @@ public:
         }
 
         if( node->returnType->varType == TYPE_FLOAT) {
-            /// TODO:: Дима жги
+            /// TODO:: пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
             if( typeToCast->varType == TYPE_INT)
                 return true;
             else
@@ -159,7 +175,7 @@ public:
         }
 
         if( node->returnType->varType == TYPE_BOOL){
-            /// TODO:: Дима жги
+            /// TODO:: пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
             return false;
         }
 
@@ -197,7 +213,7 @@ public:
             }
             if( typeToCast->varType != TYPE_POINTER)
                 return false;
-            ///TODO:: Проверить возможно ли кастануть в дочерний
+            ///TODO:: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             bool isChild = true;
             string parent = node->returnType->childType->name;
             auto parentType = classes.find( parent);
@@ -228,101 +244,109 @@ public:
         auto retType = new TypeNode();
 
         if( node->exprType == ExprType::EXPR_OPERATION) {
-            
+ 
             if( node->operationType == OperationType::OP_VALUE) {
 				retType = calcValueExprType( node );
-            } else if ( node->isBinnaryOnlyNumbers()) {
+            } else {
 				
+				if (node->left)
+					node->left->returnType = calcOperation(node->left);
+				if (node->right)
+					node->right->returnType = calcOperation(node->right);
 
-                if( node->left->isNumberValue() && node->right->isNumberValue()) {
+				if ( node->isBinnaryOnlyNumbers()) {
+				
+					//calcVarType(node);
+					if( node->left->isNumberValue() && node->right->isNumberValue()) {
                     
-					VarType leftType = node->left->returnType->varType;
-					VarType rightType = node->right->returnType->varType;
-					if (leftType == rightType && leftType == TYPE_INT) {
-						 retType->varType = TYPE_INT;
+						VarType leftType = node->left->returnType->varType;
+						VarType rightType = node->right->returnType->varType;
+						if (leftType == rightType && leftType == TYPE_INT) {
+							 retType->varType = TYPE_INT;
+						}
+						else if (leftType == rightType && leftType == TYPE_FLOAT) {
+							retType->varType = TYPE_FLOAT;
+						}
+						else if (leftType == TYPE_FLOAT) {
+							retType->varType = TYPE_FLOAT;
+							node->right->floatVal = node->right->intVal;
+						}
+						else if (rightType == TYPE_FLOAT) {
+							retType->varType = TYPE_FLOAT;
+							node->left->floatVal = node->left->intVal;
+						}
+					} else {
+						if (node->left->isNumberValue() == node->right->isNumberValue() )
+							addError("This operation have not float and int operands");
+						else
+							addError("This operation have not float and int operand");
 					}
-					else if (leftType == rightType && leftType == TYPE_FLOAT) {
-						retType->varType = TYPE_FLOAT;
-					}
-					else if (leftType == TYPE_FLOAT) {
-						retType->varType = TYPE_FLOAT;
-						node->right->floatVal = node->right->intVal;
-					}
-					else if (rightType == TYPE_FLOAT) {
-						retType->varType = TYPE_FLOAT;
-						node->left->floatVal = node->left->intVal;
-					}
-                } else {
-					if (node->left->isNumberValue() == node->right->isNumberValue() )
-						addError("This operation have not float and int operands");
-					else
-						addError("This operation have not float and int operand");
-                }
-            } else if ( node->isUnnaryMath() ) {
+				} else if ( node->isUnnaryMath() ) {
 
-                if( node->left->returnType->varType == TYPE_INT || 
-                    node->left->returnType->varType == TYPE_FLOAT) {
-                    retType->varType = node->left->returnType->varType;
-                } else {
-                    addError("Not number with uplus or uminus");
-                }
-            } else if( node->isEqual()) {
-                retType->varType = TYPE_BOOL;
-                if( node->left->returnType->varType == node->right->returnType->varType) {
+					if( node->left->returnType->varType == TYPE_INT || 
+						node->left->returnType->varType == TYPE_FLOAT) {
+						retType->varType = node->left->returnType->varType;
+					} else {
+						addError("Not number with uplus or uminus");
+					}
+				} else if( node->isEqual()) {
+					retType->varType = TYPE_BOOL;
+					if( node->left->returnType->varType == node->right->returnType->varType) {
                         
 
-                } else if ( node->left->returnType->isNuberValue() && node->right->returnType->isNuberValue()) {
-                        /// TODO: По-хорошему бы привидение типов вставить
-                } else if( node->left->returnType->varType == TYPE_POINTER && node->right->returnType->varType == TYPE_POINTER) {
-                    /// TODO: По-хорошему бы привидение типов вставить и проверить указатели
-                } else {
-                    addError("Can`t compare");
-                }
+					} else if ( node->left->returnType->isNuberValue() && node->right->returnType->isNuberValue()) {
+							/// TODO: пїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+					} else if( node->left->returnType->varType == TYPE_POINTER && node->right->returnType->varType == TYPE_POINTER) {
+						/// TODO: пїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+					} else {
+						addError("Can`t compare");
+					}
 
-            } else if( node->isBinnaryLogical() ) {
-                //TODO:: Дима проверяй сам (a != nil) && YES
-                retType->varType = TYPE_BOOL;
-				if (node->left->returnType->varType == TYPE_BOOL && node->right->returnType->varType == TYPE_BOOL) {
+				} else if( node->isBinnaryLogical() ) {
+					//TODO:: пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ (a != nil) && YES
+					retType->varType = TYPE_BOOL;
+					if (node->left->returnType->varType == TYPE_BOOL && node->right->returnType->varType == TYPE_BOOL) {
 				
-				} else {
-					if (node->left->returnType->varType == TYPE_INT) {
-						node->left->boolVal = node->left->intVal != 0;
-					}
-					else if (node->left->returnType->varType == TYPE_FLOAT) {
-						node->left->boolVal = node->left->floatVal != 0;
-					}
-					else if (node->left->returnType->varType == TYPE_CHAR) {
-						node->left->boolVal = node->left->charVal != 0;
-					}
-					else if (node->left->returnType->varType == TYPE_STRING) {
-						node->left->boolVal = node->left->strVal != "";
-					}
-					else {
-						addError("Left expr can't compare");
+					} else {
+						if (node->left->returnType->varType == TYPE_INT) {
+							node->left->boolVal = node->left->intVal != 0;
+						}
+						else if (node->left->returnType->varType == TYPE_FLOAT) {
+							node->left->boolVal = node->left->floatVal != 0;
+						}
+						else if (node->left->returnType->varType == TYPE_CHAR) {
+							node->left->boolVal = node->left->charVal != 0;
+						}
+						else if (node->left->returnType->varType == TYPE_STRING) {
+							node->left->boolVal = node->left->strVal != "";
+						}
+						else {
+							addError("Left expr can't compare");
+						}
+
+						if (node->right->returnType->varType == TYPE_INT) {
+							node->right->boolVal = node->right->intVal != 0;
+						}
+						else if (node->right->returnType->varType == TYPE_FLOAT) {
+							node->right->boolVal = node->right->floatVal != 0;
+						}
+						else if (node->right->returnType->varType == TYPE_CHAR) {
+							node->right->boolVal = node->right->charVal != 0;
+						}
+						else if (node->right->returnType->varType == TYPE_STRING) {
+							node->right->boolVal = node->right->strVal != "";
+						}
+						else {
+							addError("Right expr can't compare");
+						}
 					}
 
-					if (node->right->returnType->varType == TYPE_INT) {
-						node->right->boolVal = node->right->intVal != 0;
-					}
-					else if (node->right->returnType->varType == TYPE_FLOAT) {
-						node->right->boolVal = node->right->floatVal != 0;
-					}
-					else if (node->right->returnType->varType == TYPE_CHAR) {
-						node->right->boolVal = node->right->charVal != 0;
-					}
-					else if (node->right->returnType->varType == TYPE_STRING) {
-						node->right->boolVal = node->right->strVal != "";
-					}
-					else {
-						addError("Right expr can't compare");
-					}
+				} else if ( node->operationType == OperationType::OP_LOGICAL_NOT) {
+					//TODO:: пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+				} else if ( node->operationType == OperationType::OP_ASSIGN) {
+					retType = new TypeNode( *node->right->returnType);
 				}
-
-            } else if ( node->operationType == OperationType::OP_LOGICAL_NOT) {
-                //TODO:: Дима проверяй сам
-            } else if ( node->operationType == OperationType::OP_ASSIGN) {
-                retType = new TypeNode( *node->right->returnType);
-            }
+			}
 
         }
         return retType;
@@ -345,7 +369,7 @@ public:
         else if ( node->exprType == ExprType::EXPR_FUNC_CALL ) {
             auto ifunc = functions.find( node->name);
             if( ifunc != functions.end()){
-                /// TODO:: Где-то проверить соотвествие аргументов
+                /// TODO:: пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 retType = ifunc->second->returnType.toNode();
             }
         } 
@@ -370,7 +394,7 @@ public:
                     meth = imeth->second;
                 } else {
                     
-                    //Проверяем, может быть всё же есть такой класс
+                    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                     auto varNameClass = classes.find( node->object->name);
                     bool isStatic = varNameClass != classes.end(); 
                     if( isStatic ) {
@@ -395,7 +419,7 @@ public:
             if(node->object->returnType->varType == TYPEE_CLASS) {
                 addError("can`t get static field");
             } else if (node->object->returnType->varType == TYPE_CUSTOM) {
-                //TODO:: А сюды ваще зайдёт?
+                //TODO:: пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ?
                 //throw "TypeCalc 226?";
                 addError(string("Can`t get field " + node->name + " from variable " + node->object->name));
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
