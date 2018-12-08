@@ -6,73 +6,70 @@ Terminals unused in grammar
    '.'
 
 
-State 63 conflicts: 1 shift/reduce
-State 80 conflicts: 1 shift/reduce
-State 123 conflicts: 16 shift/reduce
-State 213 conflicts: 1 shift/reduce
+State 61 conflicts: 1 shift/reduce
+State 233 conflicts: 1 shift/reduce
 
 
 Grammar
 
     0 $accept: prog_full $end
 
-    1 extern_code: func_declaration
-    2            | func_implementation
-    3            | class_declaration
-    4            | class_implementation
-    5            | enum_declaration
+    1 extern_code: func_implementation
+    2            | class_declaration
+    3            | class_implementation
+    4            | enum_declaration
 
-    6 prog: extern_code
-    7     | prog extern_code
+    5 prog: extern_code
+    6     | prog extern_code
 
-    8 prog_full: prog
+    7 prog_full: prog
 
-    9 stmt_list: stmt_list stmt
-   10          | stmt
+    8 stmt_list: stmt_list stmt
+    9          | stmt
 
-   11 stmt_list_or_empty: stmt_list
-   12                   | /* empty */
+   10 stmt_list_or_empty: stmt_list
+   11                   | /* empty */
 
-   13 stmt: RETURN expr ';'
-   14     | RETURN ';'
-   15     | expr ';'
-   16     | while_stmt
-   17     | if_stmt
-   18     | var_decl
-   19     | compound_stmt
-   20     | ';'
+   12 stmt: RETURN expr ';'
+   13     | RETURN ';'
+   14     | expr ';'
+   15     | while_stmt
+   16     | if_stmt
+   17     | var_decl
+   18     | compound_stmt
+   19     | ';'
 
-   21 compound_stmt: '{' stmt_list_or_empty '}'
+   20 compound_stmt: '{' stmt_list_or_empty '}'
 
-   22 if_stmt: IF '(' expr ')' stmt
-   23        | IF '(' expr ')' stmt ELSE stmt
+   21 if_stmt: IF '(' expr ')' stmt
+   22        | IF '(' expr ')' stmt ELSE stmt
 
-   24 while_stmt: WHILE '(' expr ')' stmt
+   23 while_stmt: WHILE '(' expr ')' stmt
 
-   25 var_decl: type ID '=' expr ';'
+   24 var_decl: type ID '=' expr ';'
+   25         | ID '*' ID '=' expr ';'
    26         | type ID ';'
-   27         | type ID '[' INT_CONST ']' ';'
-   28         | type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
+   27         | ID '*' ID ';'
+   28         | type ID '[' INT_CONST ']' ';'
+   29         | ID '*' ID '[' INT_CONST ']' ';'
+   30         | type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
+   31         | ID '*' ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
 
-   29 pointer_custom_type: ID '*'
+   32 enum_type: ENUM ID
 
-   30 enum_type: ENUM ID
+   33 type: default_type
+   34     | enum_type
 
-   31 type: default_type
-   32     | pointer_custom_type
-   33     | enum_type
+   35 default_type: INT
+   36             | FLOAT
+   37             | STRING
+   38             | CHAR
+   39             | BOOL
+   40             | VOID
 
-   34 default_type: INT
-   35             | FLOAT
-   36             | STRING
-   37             | CHAR
-   38             | BOOL
-   39             | VOID
-
-   40 expr: expr '+' expr
-   41     | expr '-' expr
-   42     | expr '*' expr
-   43     | pointer_custom_type expr
+   41 expr: expr '+' expr
+   42     | expr '-' expr
+   43     | expr '*' expr
    44     | expr '/' expr
    45     | expr '%' expr
    46     | expr '=' expr
@@ -115,104 +112,114 @@ Grammar
    79                    | PRIVATE
 
    80 class_invariant_declaration: type ID ';'
+   81                            | ID '*' ID ';'
 
-   81 class_invariants_declarations: class_invariant_declaration
-   82                              | class_invariants_declarations class_invariant_declaration
+   82 class_invariants_declarations: class_invariant_declaration
+   83                              | class_invariants_declarations class_invariant_declaration
 
-   83 class_invariant_declaration_with_access: class_fields_access class_invariants_declarations
+   84 class_invariant_declaration_with_access: class_fields_access class_invariants_declarations
 
-   84 class_invariant_declaration_with_access_list: class_invariants_declarations
-   85                                             | class_invariant_declaration_with_access
-   86                                             | class_invariant_declaration_with_access_list class_invariant_declaration_with_access
+   85 class_invariant_declaration_with_access_list: class_invariants_declarations
+   86                                             | class_invariant_declaration_with_access
+   87                                             | class_invariant_declaration_with_access_list class_invariant_declaration_with_access
 
-   87 class_invariants_declaration: '{' '}'
-   88                             | '{' class_invariant_declaration_with_access_list '}'
+   88 class_invariants_declaration: '{' '}'
+   89                             | '{' class_invariant_declaration_with_access_list '}'
 
-   89 class_method_first_param: '(' type ')' ID
-   90                         | '(' type '[' ']' ')' ID
+   90 class_method_first_param: '(' type ')' ID
+   91                         | '(' ID '*' ')' ID
+   92                         | '(' type '[' ']' ')' ID
+   93                         | '(' ID '*' '[' ']' ')' ID
 
-   91 class_method_other_param_named: ID ':' '(' type ')' ID
-   92                               | ID ':' '(' type '[' ']' ')' ID
+   94 class_method_other_param_named: ID ':' '(' type ')' ID
+   95                               | ID ':' '(' ID '*' ')' ID
+   96                               | ID ':' '(' type '[' ']' ')' ID
+   97                               | ID ':' '(' ID '*' '[' ']' ')' ID
 
-   93 class_method_other_params_named: class_method_other_param_named
-   94                                | class_method_other_params_named class_method_other_param_named
+   98 class_method_other_params_named: class_method_other_param_named
+   99                                | class_method_other_params_named class_method_other_param_named
 
-   95 class_method_params_nonamed: class_method_first_param
-   96                            | class_method_params_nonamed class_method_first_param
+  100 class_method_params_nonamed: class_method_first_param
+  101                            | class_method_params_nonamed class_method_first_param
 
-   97 class_method_all_params: class_method_first_param class_method_other_params_named
-   98                        | class_method_params_nonamed
+  102 class_method_all_params: class_method_first_param class_method_other_params_named
+  103                        | class_method_params_nonamed
 
-   99 class_method_params: class_method_all_params
-  100                    | /* empty */
+  104 class_method_params: class_method_all_params
+  105                    | /* empty */
 
-  101 class_method: '-' '(' type ')' ID ':' class_method_params
-  102             | '+' '(' type ')' ID ':' class_method_params
-  103             | '-' '(' type ')' ID
-  104             | '+' '(' type ')' ID
+  106 class_method: '-' '(' type ')' ID ':' class_method_params
+  107             | '-' '(' ID '*' ')' ID ':' class_method_params
+  108             | '+' '(' type ')' ID ':' class_method_params
+  109             | '+' '(' ID '*' ')' ID ':' class_method_params
+  110             | '-' '(' type ')' ID
+  111             | '-' '(' ID '*' ')' ID
+  112             | '+' '(' type ')' ID
+  113             | '+' '(' ID '*' ')' ID
 
-  105 class_method_declaration: class_method ';'
+  114 class_method_declaration: class_method ';'
 
-  106 class_methods_declaration: class_method_declaration
-  107                          | class_methods_declaration class_method_declaration
+  115 class_methods_declaration: class_method_declaration
+  116                          | class_methods_declaration class_method_declaration
 
-  108 class_methods_declaration_with_access: class_fields_access class_methods_declaration
+  117 class_methods_declaration_with_access: class_fields_access class_methods_declaration
 
-  109 class_methods_declaration_with_access_list: class_methods_declaration
-  110                                           | class_methods_declaration_with_access
-  111                                           | class_methods_declaration_with_access_list class_methods_declaration_with_access
+  118 class_methods_declaration_with_access_list: class_methods_declaration
+  119                                           | class_methods_declaration_with_access
+  120                                           | class_methods_declaration_with_access_list class_methods_declaration_with_access
 
-  112 class_methods_declaration_or_empty: class_methods_declaration_with_access_list
-  113                                   | /* empty */
+  121 class_methods_declaration_or_empty: class_methods_declaration_with_access_list
+  122                                   | /* empty */
 
-  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
-  115                  | INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END
-  116                  | INTERFACE ID ':' ID class_methods_declaration_or_empty END
-  117                  | INTERFACE ID class_methods_declaration_or_empty END
+  123 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
+  124                  | INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END
+  125                  | INTERFACE ID ':' ID class_methods_declaration_or_empty END
+  126                  | INTERFACE ID class_methods_declaration_or_empty END
 
-  118 class_method_implementation: class_method compound_stmt
+  127 class_method_implementation: class_method compound_stmt
 
-  119 class_methods_implementation: class_method_implementation
-  120                             | class_methods_implementation class_method_implementation
+  128 class_methods_implementation: class_method_implementation
+  129                             | class_methods_implementation class_method_implementation
 
-  121 class_methods_implementation_or_empty: class_methods_implementation
-  122                                      | /* empty */
+  130 class_methods_implementation_or_empty: class_methods_implementation
+  131                                      | /* empty */
 
-  123 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END
+  132 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END
 
-  124 method_call_noname_arg: ':' expr
+  133 method_call_noname_arg: ':' expr
 
-  125 method_call_name_arg: ID ':' expr
+  134 method_call_name_arg: ID ':' expr
 
-  126 method_call_noname_args: method_call_noname_arg
-  127                        | method_call_noname_args method_call_noname_arg
+  135 method_call_noname_args: method_call_noname_arg
+  136                        | method_call_noname_args method_call_noname_arg
 
-  128 method_call_name_args: method_call_name_arg
-  129                      | method_call_name_args method_call_name_arg
+  137 method_call_name_args: method_call_name_arg
+  138                      | method_call_name_args method_call_name_arg
 
-  130 method_call_args: method_call_noname_arg method_call_name_args
-  131                 | method_call_noname_args
+  139 method_call_args: method_call_noname_arg method_call_name_args
+  140                 | method_call_noname_args
 
-  132 expr_list: expr
-  133          | expr_list ',' expr
+  141 expr_list: expr
+  142          | expr_list ',' expr
 
-  134 array_elems_or_empty: expr_list
-  135                     | /* empty */
+  143 array_elems_or_empty: expr_list
+  144                     | /* empty */
 
-  136 func_arg: type ID
-  137         | type ID '[' ']'
+  145 func_arg: type ID
+  146         | ID '*' ID
+  147         | type ID '[' ']'
+  148         | ID '*' ID '[' ']'
 
-  138 func_args: func_arg
-  139          | func_args ',' func_arg
+  149 func_args: func_arg
+  150          | func_args ',' func_arg
 
-  140 func_args_or_empty: func_args
-  141                   | /* empty */
+  151 func_args_or_empty: func_args
+  152                   | /* empty */
 
-  142 func_header: type ID '(' func_args_or_empty ')'
+  153 func_header: type ID '(' func_args_or_empty ')'
+  154            | ID '*' ID '(' func_args_or_empty ')'
 
-  143 func_declaration: func_header ';'
-
-  144 func_implementation: func_header compound_stmt
+  155 func_implementation: func_header compound_stmt
 
 
 Terminals, with rules where they appear
@@ -220,50 +227,53 @@ Terminals, with rules where they appear
 $end (0) 0
 '!' (33) 56
 '%' (37) 45
-'(' (40) 22 23 24 59 70 71 89 90 91 92 101 102 103 104 142
-')' (41) 22 23 24 59 70 71 89 90 91 92 101 102 103 104 142
-'*' (42) 29 42
-'+' (43) 40 57 102 104
-',' (44) 73 133 139
-'-' (45) 41 58 101 103
+'(' (40) 21 22 23 59 70 71 90 91 92 93 94 95 96 97 106 107 108 109
+    110 111 112 113 153 154
+')' (41) 21 22 23 59 70 71 90 91 92 93 94 95 96 97 106 107 108 109
+    110 111 112 113 153 154
+'*' (42) 25 27 29 31 43 81 91 93 95 97 107 109 111 113 146 148 154
+'+' (43) 41 57 108 109 112 113
+',' (44) 73 142 150
+'-' (45) 42 58 106 107 110 111
 '.' (46)
 '/' (47) 44
-':' (58) 91 92 101 102 114 116 124 125
-';' (59) 13 14 15 20 25 26 27 28 72 80 105 143
+':' (58) 94 95 96 97 106 107 108 109 123 125 133 134
+';' (59) 12 13 14 19 24 25 26 27 28 29 30 31 72 80 81 114
 '<' (60) 48
-'=' (61) 25 28 46 47 76
+'=' (61) 24 25 30 31 46 47 76
 '>' (62) 50
-'[' (91) 27 28 66 67 68 90 92 137
-']' (93) 27 28 66 67 68 90 92 137
-'{' (123) 21 28 47 72 87 88
-'}' (125) 21 28 47 72 87 88
+'[' (91) 28 29 30 31 66 67 68 92 93 96 97 147 148
+']' (93) 28 29 30 31 66 67 68 92 93 96 97 147 148
+'{' (123) 20 30 31 47 72 88 89
+'}' (125) 20 30 31 47 72 88 89
 error (256)
-INT_CONST (258) 27 28 61 76
+INT_CONST (258) 28 29 30 31 61 76
 FLOAT_CONST (259) 62
 CHAR_CONST (260) 64
 BOOL_CONST (261) 63
 STRING_CONST (262) 65
-ID (263) 25 26 27 28 29 30 60 66 67 69 70 71 75 76 80 89 90 91 92 101
-    102 103 104 114 115 116 117 123 125 136 137 142
-WHILE (264) 24
+ID (263) 24 25 26 27 28 29 30 31 32 60 66 67 69 70 71 75 76 80 81 90
+    91 92 93 94 95 96 97 106 107 108 109 110 111 112 113 123 124 125
+    126 132 134 145 146 147 148 153 154
+WHILE (264) 23
 DO (265)
-IF (266) 22 23
-ELSE (267) 23
-END (268) 114 115 116 117 123
+IF (266) 21 22
+ELSE (267) 22
+END (268) 123 124 125 126 132
 EXTERN (269)
-IMPLEMENTATION (270) 123
-INTERFACE (271) 114 115 116 117
+IMPLEMENTATION (270) 132
+INTERFACE (271) 123 124 125 126
 PUBLIC (272) 77
 PROTECTED (273) 78
 PRIVATE (274) 79
-RETURN (275) 13 14
-ENUM (276) 30
-INT (277) 34
-FLOAT (278) 35
-STRING (279) 36
-CHAR (280) 37
-BOOL (281) 38
-VOID (282) 39
+RETURN (275) 12 13
+ENUM (276) 32
+INT (277) 35
+FLOAT (278) 36
+STRING (279) 37
+CHAR (280) 38
+BOOL (281) 39
+VOID (282) 40
 OR (283) 55
 AND (284) 54
 NOT_EQUAL (285) 53
@@ -281,117 +291,113 @@ Nonterminals, with rules where they appear
 $accept (57)
     on left: 0
 extern_code (58)
-    on left: 1 2 3 4 5, on right: 6 7
+    on left: 1 2 3 4, on right: 5 6
 prog (59)
-    on left: 6 7, on right: 7 8
+    on left: 5 6, on right: 6 7
 prog_full (60)
-    on left: 8, on right: 0
+    on left: 7, on right: 0
 stmt_list (61)
-    on left: 9 10, on right: 9 11
+    on left: 8 9, on right: 8 10
 stmt_list_or_empty (62)
-    on left: 11 12, on right: 21
+    on left: 10 11, on right: 20
 stmt (63)
-    on left: 13 14 15 16 17 18 19 20, on right: 9 10 22 23 24
+    on left: 12 13 14 15 16 17 18 19, on right: 8 9 21 22 23
 compound_stmt (64)
-    on left: 21, on right: 19 118 144
+    on left: 20, on right: 18 127 155
 if_stmt (65)
-    on left: 22 23, on right: 17
+    on left: 21 22, on right: 16
 while_stmt (66)
-    on left: 24, on right: 16
+    on left: 23, on right: 15
 var_decl (67)
-    on left: 25 26 27 28, on right: 18
-pointer_custom_type (68)
-    on left: 29, on right: 32 43
-enum_type (69)
-    on left: 30, on right: 33 72
-type (70)
-    on left: 31 32 33, on right: 25 26 27 28 80 89 90 91 92 101 102
-    103 104 136 137 142
-default_type (71)
-    on left: 34 35 36 37 38 39, on right: 31
-expr (72)
-    on left: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57
-    58 59 60 61 62 63 64 65 66 67 68 69 70 71, on right: 13 15 22 23
-    24 25 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58
-    59 66 67 68 69 124 125 132 133
-enum_declaration (73)
-    on left: 72, on right: 5
-enumerator_list (74)
+    on left: 24 25 26 27 28 29 30 31, on right: 17
+enum_type (68)
+    on left: 32, on right: 34 72
+type (69)
+    on left: 33 34, on right: 24 26 28 30 80 90 92 94 96 106 108 110
+    112 145 147 153
+default_type (70)
+    on left: 35 36 37 38 39 40, on right: 33
+expr (71)
+    on left: 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58
+    59 60 61 62 63 64 65 66 67 68 69 70 71, on right: 12 14 21 22 23
+    24 25 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59
+    66 67 68 69 133 134 141 142
+enum_declaration (72)
+    on left: 72, on right: 4
+enumerator_list (73)
     on left: 73 74, on right: 72 73
-enumerator (75)
+enumerator (74)
     on left: 75 76, on right: 73 74
-class_fields_access (76)
-    on left: 77 78 79, on right: 83 108
-class_invariant_declaration (77)
-    on left: 80, on right: 81 82
-class_invariants_declarations (78)
-    on left: 81 82, on right: 82 83 84
-class_invariant_declaration_with_access (79)
-    on left: 83, on right: 85 86
-class_invariant_declaration_with_access_list (80)
-    on left: 84 85 86, on right: 86 88
-class_invariants_declaration (81)
-    on left: 87 88, on right: 114 115
-class_method_first_param (82)
-    on left: 89 90, on right: 95 96 97
-class_method_other_param_named (83)
-    on left: 91 92, on right: 93 94
-class_method_other_params_named (84)
-    on left: 93 94, on right: 94 97
-class_method_params_nonamed (85)
-    on left: 95 96, on right: 96 98
-class_method_all_params (86)
-    on left: 97 98, on right: 99
-class_method_params (87)
-    on left: 99 100, on right: 101 102
-class_method (88)
-    on left: 101 102 103 104, on right: 105 118
-class_method_declaration (89)
-    on left: 105, on right: 106 107
-class_methods_declaration (90)
-    on left: 106 107, on right: 107 108 109
-class_methods_declaration_with_access (91)
-    on left: 108, on right: 110 111
-class_methods_declaration_with_access_list (92)
-    on left: 109 110 111, on right: 111 112
-class_methods_declaration_or_empty (93)
-    on left: 112 113, on right: 114 115 116 117
-class_declaration (94)
-    on left: 114 115 116 117, on right: 3
-class_method_implementation (95)
-    on left: 118, on right: 119 120
-class_methods_implementation (96)
-    on left: 119 120, on right: 120 121
-class_methods_implementation_or_empty (97)
-    on left: 121 122, on right: 123
-class_implementation (98)
-    on left: 123, on right: 4
-method_call_noname_arg (99)
-    on left: 124, on right: 126 127 130
-method_call_name_arg (100)
-    on left: 125, on right: 128 129
-method_call_noname_args (101)
-    on left: 126 127, on right: 127 131
-method_call_name_args (102)
+class_fields_access (75)
+    on left: 77 78 79, on right: 84 117
+class_invariant_declaration (76)
+    on left: 80 81, on right: 82 83
+class_invariants_declarations (77)
+    on left: 82 83, on right: 83 84 85
+class_invariant_declaration_with_access (78)
+    on left: 84, on right: 86 87
+class_invariant_declaration_with_access_list (79)
+    on left: 85 86 87, on right: 87 89
+class_invariants_declaration (80)
+    on left: 88 89, on right: 123 124
+class_method_first_param (81)
+    on left: 90 91 92 93, on right: 100 101 102
+class_method_other_param_named (82)
+    on left: 94 95 96 97, on right: 98 99
+class_method_other_params_named (83)
+    on left: 98 99, on right: 99 102
+class_method_params_nonamed (84)
+    on left: 100 101, on right: 101 103
+class_method_all_params (85)
+    on left: 102 103, on right: 104
+class_method_params (86)
+    on left: 104 105, on right: 106 107 108 109
+class_method (87)
+    on left: 106 107 108 109 110 111 112 113, on right: 114 127
+class_method_declaration (88)
+    on left: 114, on right: 115 116
+class_methods_declaration (89)
+    on left: 115 116, on right: 116 117 118
+class_methods_declaration_with_access (90)
+    on left: 117, on right: 119 120
+class_methods_declaration_with_access_list (91)
+    on left: 118 119 120, on right: 120 121
+class_methods_declaration_or_empty (92)
+    on left: 121 122, on right: 123 124 125 126
+class_declaration (93)
+    on left: 123 124 125 126, on right: 2
+class_method_implementation (94)
+    on left: 127, on right: 128 129
+class_methods_implementation (95)
     on left: 128 129, on right: 129 130
-method_call_args (103)
-    on left: 130 131, on right: 66
-expr_list (104)
-    on left: 132 133, on right: 70 133 134
-array_elems_or_empty (105)
-    on left: 134 135, on right: 28 47
-func_arg (106)
-    on left: 136 137, on right: 138 139
-func_args (107)
-    on left: 138 139, on right: 139 140
-func_args_or_empty (108)
-    on left: 140 141, on right: 142
-func_header (109)
-    on left: 142, on right: 143 144
-func_declaration (110)
-    on left: 143, on right: 1
-func_implementation (111)
-    on left: 144, on right: 2
+class_methods_implementation_or_empty (96)
+    on left: 130 131, on right: 132
+class_implementation (97)
+    on left: 132, on right: 3
+method_call_noname_arg (98)
+    on left: 133, on right: 135 136 139
+method_call_name_arg (99)
+    on left: 134, on right: 137 138
+method_call_noname_args (100)
+    on left: 135 136, on right: 136 140
+method_call_name_args (101)
+    on left: 137 138, on right: 138 139
+method_call_args (102)
+    on left: 139 140, on right: 66
+expr_list (103)
+    on left: 141 142, on right: 70 142 143
+array_elems_or_empty (104)
+    on left: 143 144, on right: 30 31 47
+func_arg (105)
+    on left: 145 146 147 148, on right: 149 150
+func_args (106)
+    on left: 149 150, on right: 150 151
+func_args_or_empty (107)
+    on left: 151 152, on right: 153 154
+func_header (108)
+    on left: 153 154, on right: 155
+func_implementation (109)
+    on left: 155, on right: 1
 
 
 State 0
@@ -412,102 +418,100 @@ State 0
     extern_code           go to state 11
     prog                  go to state 12
     prog_full             go to state 13
-    pointer_custom_type   go to state 14
-    enum_type             go to state 15
-    type                  go to state 16
-    default_type          go to state 17
-    enum_declaration      go to state 18
-    class_declaration     go to state 19
-    class_implementation  go to state 20
-    func_header           go to state 21
-    func_declaration      go to state 22
-    func_implementation   go to state 23
+    enum_type             go to state 14
+    type                  go to state 15
+    default_type          go to state 16
+    enum_declaration      go to state 17
+    class_declaration     go to state 18
+    class_implementation  go to state 19
+    func_header           go to state 20
+    func_implementation   go to state 21
 
 
 State 1
 
-   29 pointer_custom_type: ID . '*'
+  154 func_header: ID . '*' ID '(' func_args_or_empty ')'
 
-    '*'  shift, and go to state 24
+    '*'  shift, and go to state 22
 
 
 State 2
 
-  123 class_implementation: IMPLEMENTATION . ID class_methods_implementation_or_empty END
+  132 class_implementation: IMPLEMENTATION . ID class_methods_implementation_or_empty END
 
-    ID  shift, and go to state 25
+    ID  shift, and go to state 23
 
 
 State 3
 
-  114 class_declaration: INTERFACE . ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
-  115                  | INTERFACE . ID class_invariants_declaration class_methods_declaration_or_empty END
-  116                  | INTERFACE . ID ':' ID class_methods_declaration_or_empty END
-  117                  | INTERFACE . ID class_methods_declaration_or_empty END
+  123 class_declaration: INTERFACE . ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END
+  124                  | INTERFACE . ID class_invariants_declaration class_methods_declaration_or_empty END
+  125                  | INTERFACE . ID ':' ID class_methods_declaration_or_empty END
+  126                  | INTERFACE . ID class_methods_declaration_or_empty END
 
-    ID  shift, and go to state 26
+    ID  shift, and go to state 24
 
 
 State 4
 
-   30 enum_type: ENUM . ID
+   32 enum_type: ENUM . ID
 
-    ID  shift, and go to state 27
+    ID  shift, and go to state 25
 
 
 State 5
 
-   34 default_type: INT .
-
-    $default  reduce using rule 34 (default_type)
-
-
-State 6
-
-   35 default_type: FLOAT .
+   35 default_type: INT .
 
     $default  reduce using rule 35 (default_type)
 
 
-State 7
+State 6
 
-   36 default_type: STRING .
+   36 default_type: FLOAT .
 
     $default  reduce using rule 36 (default_type)
 
 
-State 8
+State 7
 
-   37 default_type: CHAR .
+   37 default_type: STRING .
 
     $default  reduce using rule 37 (default_type)
 
 
-State 9
+State 8
 
-   38 default_type: BOOL .
+   38 default_type: CHAR .
 
     $default  reduce using rule 38 (default_type)
 
 
-State 10
+State 9
 
-   39 default_type: VOID .
+   39 default_type: BOOL .
 
     $default  reduce using rule 39 (default_type)
 
 
+State 10
+
+   40 default_type: VOID .
+
+    $default  reduce using rule 40 (default_type)
+
+
 State 11
 
-    6 prog: extern_code .
+    5 prog: extern_code .
 
-    $default  reduce using rule 6 (prog)
+    $default  reduce using rule 5 (prog)
 
 
 State 12
 
-    7 prog: prog . extern_code
-    8 prog_full: prog .
+    6 prog: prog . extern_code
+    7 prog_full: prog .
 
     ID              shift, and go to state 1
     IMPLEMENTATION  shift, and go to state 2
@@ -520,212 +524,187 @@ State 12
     BOOL            shift, and go to state 9
     VOID            shift, and go to state 10
 
-    $default  reduce using rule 8 (prog_full)
+    $default  reduce using rule 7 (prog_full)
 
-    extern_code           go to state 28
-    pointer_custom_type   go to state 14
-    enum_type             go to state 15
-    type                  go to state 16
-    default_type          go to state 17
-    enum_declaration      go to state 18
-    class_declaration     go to state 19
-    class_implementation  go to state 20
-    func_header           go to state 21
-    func_declaration      go to state 22
-    func_implementation   go to state 23
+    extern_code           go to state 26
+    enum_type             go to state 14
+    type                  go to state 15
+    default_type          go to state 16
+    enum_declaration      go to state 17
+    class_declaration     go to state 18
+    class_implementation  go to state 19
+    func_header           go to state 20
+    func_implementation   go to state 21
 
 
 State 13
 
     0 $accept: prog_full . $end
 
-    $end  shift, and go to state 29
+    $end  shift, and go to state 27
 
 
 State 14
 
-   32 type: pointer_custom_type .
+   34 type: enum_type .
+   72 enum_declaration: enum_type . '{' enumerator_list '}' ';'
 
-    $default  reduce using rule 32 (type)
+    '{'  shift, and go to state 28
+
+    $default  reduce using rule 34 (type)
 
 
 State 15
 
-   33 type: enum_type .
-   72 enum_declaration: enum_type . '{' enumerator_list '}' ';'
+  153 func_header: type . ID '(' func_args_or_empty ')'
 
-    '{'  shift, and go to state 30
-
-    $default  reduce using rule 33 (type)
+    ID  shift, and go to state 29
 
 
 State 16
 
-  142 func_header: type . ID '(' func_args_or_empty ')'
+   33 type: default_type .
 
-    ID  shift, and go to state 31
+    $default  reduce using rule 33 (type)
 
 
 State 17
 
-   31 type: default_type .
+    4 extern_code: enum_declaration .
 
-    $default  reduce using rule 31 (type)
+    $default  reduce using rule 4 (extern_code)
 
 
 State 18
 
-    5 extern_code: enum_declaration .
+    2 extern_code: class_declaration .
 
-    $default  reduce using rule 5 (extern_code)
+    $default  reduce using rule 2 (extern_code)
 
 
 State 19
 
-    3 extern_code: class_declaration .
+    3 extern_code: class_implementation .
 
     $default  reduce using rule 3 (extern_code)
 
 
 State 20
 
-    4 extern_code: class_implementation .
+  155 func_implementation: func_header . compound_stmt
 
-    $default  reduce using rule 4 (extern_code)
+    '{'  shift, and go to state 30
+
+    compound_stmt  go to state 31
 
 
 State 21
 
-  143 func_declaration: func_header . ';'
-  144 func_implementation: func_header . compound_stmt
-
-    ';'  shift, and go to state 32
-    '{'  shift, and go to state 33
-
-    compound_stmt  go to state 34
-
-
-State 22
-
-    1 extern_code: func_declaration .
+    1 extern_code: func_implementation .
 
     $default  reduce using rule 1 (extern_code)
 
 
+State 22
+
+  154 func_header: ID '*' . ID '(' func_args_or_empty ')'
+
+    ID  shift, and go to state 32
+
+
 State 23
 
-    2 extern_code: func_implementation .
+  132 class_implementation: IMPLEMENTATION ID . class_methods_implementation_or_empty END
 
-    $default  reduce using rule 2 (extern_code)
+    '-'  shift, and go to state 33
+    '+'  shift, and go to state 34
+
+    $default  reduce using rule 131 (class_methods_implementation_or_empty)
+
+    class_method                           go to state 35
+    class_method_implementation            go to state 36
+    class_methods_implementation           go to state 37
+    class_methods_implementation_or_empty  go to state 38
 
 
 State 24
 
-   29 pointer_custom_type: ID '*' .
+  123 class_declaration: INTERFACE ID . ':' ID class_invariants_declaration class_methods_declaration_or_empty END
+  124                  | INTERFACE ID . class_invariants_declaration class_methods_declaration_or_empty END
+  125                  | INTERFACE ID . ':' ID class_methods_declaration_or_empty END
+  126                  | INTERFACE ID . class_methods_declaration_or_empty END
 
-    $default  reduce using rule 29 (pointer_custom_type)
+    PUBLIC     shift, and go to state 39
+    PROTECTED  shift, and go to state 40
+    PRIVATE    shift, and go to state 41
+    '-'        shift, and go to state 33
+    '+'        shift, and go to state 34
+    '{'        shift, and go to state 42
+    ':'        shift, and go to state 43
+
+    $default  reduce using rule 122 (class_methods_declaration_or_empty)
+
+    class_fields_access                         go to state 44
+    class_invariants_declaration                go to state 45
+    class_method                                go to state 46
+    class_method_declaration                    go to state 47
+    class_methods_declaration                   go to state 48
+    class_methods_declaration_with_access       go to state 49
+    class_methods_declaration_with_access_list  go to state 50
+    class_methods_declaration_or_empty          go to state 51
 
 
 State 25
 
-  123 class_implementation: IMPLEMENTATION ID . class_methods_implementation_or_empty END
+   32 enum_type: ENUM ID .
 
-    '-'  shift, and go to state 35
-    '+'  shift, and go to state 36
-
-    $default  reduce using rule 122 (class_methods_implementation_or_empty)
-
-    class_method                           go to state 37
-    class_method_implementation            go to state 38
-    class_methods_implementation           go to state 39
-    class_methods_implementation_or_empty  go to state 40
+    $default  reduce using rule 32 (enum_type)
 
 
 State 26
 
-  114 class_declaration: INTERFACE ID . ':' ID class_invariants_declaration class_methods_declaration_or_empty END
-  115                  | INTERFACE ID . class_invariants_declaration class_methods_declaration_or_empty END
-  116                  | INTERFACE ID . ':' ID class_methods_declaration_or_empty END
-  117                  | INTERFACE ID . class_methods_declaration_or_empty END
+    6 prog: prog extern_code .
 
-    PUBLIC     shift, and go to state 41
-    PROTECTED  shift, and go to state 42
-    PRIVATE    shift, and go to state 43
-    '-'        shift, and go to state 35
-    '+'        shift, and go to state 36
-    '{'        shift, and go to state 44
-    ':'        shift, and go to state 45
-
-    $default  reduce using rule 113 (class_methods_declaration_or_empty)
-
-    class_fields_access                         go to state 46
-    class_invariants_declaration                go to state 47
-    class_method                                go to state 48
-    class_method_declaration                    go to state 49
-    class_methods_declaration                   go to state 50
-    class_methods_declaration_with_access       go to state 51
-    class_methods_declaration_with_access_list  go to state 52
-    class_methods_declaration_or_empty          go to state 53
+    $default  reduce using rule 6 (prog)
 
 
 State 27
-
-   30 enum_type: ENUM ID .
-
-    $default  reduce using rule 30 (enum_type)
-
-
-State 28
-
-    7 prog: prog extern_code .
-
-    $default  reduce using rule 7 (prog)
-
-
-State 29
 
     0 $accept: prog_full $end .
 
     $default  accept
 
 
-State 30
+State 28
 
    72 enum_declaration: enum_type '{' . enumerator_list '}' ';'
 
-    ID  shift, and go to state 54
+    ID  shift, and go to state 52
 
-    enumerator_list  go to state 55
-    enumerator       go to state 56
-
-
-State 31
-
-  142 func_header: type ID . '(' func_args_or_empty ')'
-
-    '('  shift, and go to state 57
+    enumerator_list  go to state 53
+    enumerator       go to state 54
 
 
-State 32
+State 29
 
-  143 func_declaration: func_header ';' .
+  153 func_header: type ID . '(' func_args_or_empty ')'
 
-    $default  reduce using rule 143 (func_declaration)
+    '('  shift, and go to state 55
 
 
-State 33
+State 30
 
-   21 compound_stmt: '{' . stmt_list_or_empty '}'
+   20 compound_stmt: '{' . stmt_list_or_empty '}'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    WHILE         shift, and go to state 64
-    IF            shift, and go to state 65
-    RETURN        shift, and go to state 66
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 61
+    WHILE         shift, and go to state 62
+    IF            shift, and go to state 63
+    RETURN        shift, and go to state 64
     ENUM          shift, and go to state 4
     INT           shift, and go to state 5
     FLOAT         shift, and go to state 6
@@ -733,120 +712,130 @@ State 33
     CHAR          shift, and go to state 8
     BOOL          shift, and go to state 9
     VOID          shift, and go to state 10
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    ';'           shift, and go to state 71
-    '{'           shift, and go to state 33
-    '('           shift, and go to state 72
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    ';'           shift, and go to state 69
+    '{'           shift, and go to state 30
+    '('           shift, and go to state 70
 
-    $default  reduce using rule 12 (stmt_list_or_empty)
+    $default  reduce using rule 11 (stmt_list_or_empty)
 
-    stmt_list            go to state 73
-    stmt_list_or_empty   go to state 74
-    stmt                 go to state 75
-    compound_stmt        go to state 76
-    if_stmt              go to state 77
-    while_stmt           go to state 78
-    var_decl             go to state 79
-    pointer_custom_type  go to state 80
-    enum_type            go to state 81
-    type                 go to state 82
-    default_type         go to state 17
-    expr                 go to state 83
+    stmt_list           go to state 71
+    stmt_list_or_empty  go to state 72
+    stmt                go to state 73
+    compound_stmt       go to state 74
+    if_stmt             go to state 75
+    while_stmt          go to state 76
+    var_decl            go to state 77
+    enum_type           go to state 78
+    type                go to state 79
+    default_type        go to state 16
+    expr                go to state 80
+
+
+State 31
+
+  155 func_implementation: func_header compound_stmt .
+
+    $default  reduce using rule 155 (func_implementation)
+
+
+State 32
+
+  154 func_header: ID '*' ID . '(' func_args_or_empty ')'
+
+    '('  shift, and go to state 81
+
+
+State 33
+
+  106 class_method: '-' . '(' type ')' ID ':' class_method_params
+  107             | '-' . '(' ID '*' ')' ID ':' class_method_params
+  110             | '-' . '(' type ')' ID
+  111             | '-' . '(' ID '*' ')' ID
+
+    '('  shift, and go to state 82
 
 
 State 34
 
-  144 func_implementation: func_header compound_stmt .
+  108 class_method: '+' . '(' type ')' ID ':' class_method_params
+  109             | '+' . '(' ID '*' ')' ID ':' class_method_params
+  112             | '+' . '(' type ')' ID
+  113             | '+' . '(' ID '*' ')' ID
 
-    $default  reduce using rule 144 (func_implementation)
+    '('  shift, and go to state 83
 
 
 State 35
 
-  101 class_method: '-' . '(' type ')' ID ':' class_method_params
-  103             | '-' . '(' type ')' ID
+  127 class_method_implementation: class_method . compound_stmt
 
-    '('  shift, and go to state 84
+    '{'  shift, and go to state 30
+
+    compound_stmt  go to state 84
 
 
 State 36
 
-  102 class_method: '+' . '(' type ')' ID ':' class_method_params
-  104             | '+' . '(' type ')' ID
+  128 class_methods_implementation: class_method_implementation .
 
-    '('  shift, and go to state 85
+    $default  reduce using rule 128 (class_methods_implementation)
 
 
 State 37
 
-  118 class_method_implementation: class_method . compound_stmt
+  129 class_methods_implementation: class_methods_implementation . class_method_implementation
+  130 class_methods_implementation_or_empty: class_methods_implementation .
 
-    '{'  shift, and go to state 33
+    '-'  shift, and go to state 33
+    '+'  shift, and go to state 34
 
-    compound_stmt  go to state 86
+    $default  reduce using rule 130 (class_methods_implementation_or_empty)
+
+    class_method                 go to state 35
+    class_method_implementation  go to state 85
 
 
 State 38
 
-  119 class_methods_implementation: class_method_implementation .
+  132 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty . END
 
-    $default  reduce using rule 119 (class_methods_implementation)
+    END  shift, and go to state 86
 
 
 State 39
-
-  120 class_methods_implementation: class_methods_implementation . class_method_implementation
-  121 class_methods_implementation_or_empty: class_methods_implementation .
-
-    '-'  shift, and go to state 35
-    '+'  shift, and go to state 36
-
-    $default  reduce using rule 121 (class_methods_implementation_or_empty)
-
-    class_method                 go to state 37
-    class_method_implementation  go to state 87
-
-
-State 40
-
-  123 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty . END
-
-    END  shift, and go to state 88
-
-
-State 41
 
    77 class_fields_access: PUBLIC .
 
     $default  reduce using rule 77 (class_fields_access)
 
 
-State 42
+State 40
 
    78 class_fields_access: PROTECTED .
 
     $default  reduce using rule 78 (class_fields_access)
 
 
-State 43
+State 41
 
    79 class_fields_access: PRIVATE .
 
     $default  reduce using rule 79 (class_fields_access)
 
 
-State 44
+State 42
 
-   87 class_invariants_declaration: '{' . '}'
-   88                             | '{' . class_invariant_declaration_with_access_list '}'
+   88 class_invariants_declaration: '{' . '}'
+   89                             | '{' . class_invariant_declaration_with_access_list '}'
 
-    ID         shift, and go to state 1
-    PUBLIC     shift, and go to state 41
-    PROTECTED  shift, and go to state 42
-    PRIVATE    shift, and go to state 43
+    ID         shift, and go to state 87
+    PUBLIC     shift, and go to state 39
+    PROTECTED  shift, and go to state 40
+    PRIVATE    shift, and go to state 41
     ENUM       shift, and go to state 4
     INT        shift, and go to state 5
     FLOAT      shift, and go to state 6
@@ -854,148 +843,147 @@ State 44
     CHAR       shift, and go to state 8
     BOOL       shift, and go to state 9
     VOID       shift, and go to state 10
-    '}'        shift, and go to state 89
+    '}'        shift, and go to state 88
 
-    pointer_custom_type                           go to state 14
-    enum_type                                     go to state 81
-    type                                          go to state 90
-    default_type                                  go to state 17
-    class_fields_access                           go to state 91
-    class_invariant_declaration                   go to state 92
-    class_invariants_declarations                 go to state 93
-    class_invariant_declaration_with_access       go to state 94
-    class_invariant_declaration_with_access_list  go to state 95
+    enum_type                                     go to state 78
+    type                                          go to state 89
+    default_type                                  go to state 16
+    class_fields_access                           go to state 90
+    class_invariant_declaration                   go to state 91
+    class_invariants_declarations                 go to state 92
+    class_invariant_declaration_with_access       go to state 93
+    class_invariant_declaration_with_access_list  go to state 94
+
+
+State 43
+
+  123 class_declaration: INTERFACE ID ':' . ID class_invariants_declaration class_methods_declaration_or_empty END
+  125                  | INTERFACE ID ':' . ID class_methods_declaration_or_empty END
+
+    ID  shift, and go to state 95
+
+
+State 44
+
+  117 class_methods_declaration_with_access: class_fields_access . class_methods_declaration
+
+    '-'  shift, and go to state 33
+    '+'  shift, and go to state 34
+
+    class_method               go to state 46
+    class_method_declaration   go to state 47
+    class_methods_declaration  go to state 96
 
 
 State 45
 
-  114 class_declaration: INTERFACE ID ':' . ID class_invariants_declaration class_methods_declaration_or_empty END
-  116                  | INTERFACE ID ':' . ID class_methods_declaration_or_empty END
+  124 class_declaration: INTERFACE ID class_invariants_declaration . class_methods_declaration_or_empty END
 
-    ID  shift, and go to state 96
+    PUBLIC     shift, and go to state 39
+    PROTECTED  shift, and go to state 40
+    PRIVATE    shift, and go to state 41
+    '-'        shift, and go to state 33
+    '+'        shift, and go to state 34
+
+    $default  reduce using rule 122 (class_methods_declaration_or_empty)
+
+    class_fields_access                         go to state 44
+    class_method                                go to state 46
+    class_method_declaration                    go to state 47
+    class_methods_declaration                   go to state 48
+    class_methods_declaration_with_access       go to state 49
+    class_methods_declaration_with_access_list  go to state 50
+    class_methods_declaration_or_empty          go to state 97
 
 
 State 46
 
-  108 class_methods_declaration_with_access: class_fields_access . class_methods_declaration
+  114 class_method_declaration: class_method . ';'
 
-    '-'  shift, and go to state 35
-    '+'  shift, and go to state 36
-
-    class_method               go to state 48
-    class_method_declaration   go to state 49
-    class_methods_declaration  go to state 97
+    ';'  shift, and go to state 98
 
 
 State 47
 
-  115 class_declaration: INTERFACE ID class_invariants_declaration . class_methods_declaration_or_empty END
+  115 class_methods_declaration: class_method_declaration .
 
-    PUBLIC     shift, and go to state 41
-    PROTECTED  shift, and go to state 42
-    PRIVATE    shift, and go to state 43
-    '-'        shift, and go to state 35
-    '+'        shift, and go to state 36
-
-    $default  reduce using rule 113 (class_methods_declaration_or_empty)
-
-    class_fields_access                         go to state 46
-    class_method                                go to state 48
-    class_method_declaration                    go to state 49
-    class_methods_declaration                   go to state 50
-    class_methods_declaration_with_access       go to state 51
-    class_methods_declaration_with_access_list  go to state 52
-    class_methods_declaration_or_empty          go to state 98
+    $default  reduce using rule 115 (class_methods_declaration)
 
 
 State 48
 
-  105 class_method_declaration: class_method . ';'
+  116 class_methods_declaration: class_methods_declaration . class_method_declaration
+  118 class_methods_declaration_with_access_list: class_methods_declaration .
 
-    ';'  shift, and go to state 99
+    '-'  shift, and go to state 33
+    '+'  shift, and go to state 34
+
+    $default  reduce using rule 118 (class_methods_declaration_with_access_list)
+
+    class_method              go to state 46
+    class_method_declaration  go to state 99
 
 
 State 49
 
-  106 class_methods_declaration: class_method_declaration .
+  119 class_methods_declaration_with_access_list: class_methods_declaration_with_access .
 
-    $default  reduce using rule 106 (class_methods_declaration)
+    $default  reduce using rule 119 (class_methods_declaration_with_access_list)
 
 
 State 50
 
-  107 class_methods_declaration: class_methods_declaration . class_method_declaration
-  109 class_methods_declaration_with_access_list: class_methods_declaration .
+  120 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list . class_methods_declaration_with_access
+  121 class_methods_declaration_or_empty: class_methods_declaration_with_access_list .
 
-    '-'  shift, and go to state 35
-    '+'  shift, and go to state 36
+    PUBLIC     shift, and go to state 39
+    PROTECTED  shift, and go to state 40
+    PRIVATE    shift, and go to state 41
 
-    $default  reduce using rule 109 (class_methods_declaration_with_access_list)
+    $default  reduce using rule 121 (class_methods_declaration_or_empty)
 
-    class_method              go to state 48
-    class_method_declaration  go to state 100
+    class_fields_access                    go to state 44
+    class_methods_declaration_with_access  go to state 100
 
 
 State 51
 
-  110 class_methods_declaration_with_access_list: class_methods_declaration_with_access .
+  126 class_declaration: INTERFACE ID class_methods_declaration_or_empty . END
 
-    $default  reduce using rule 110 (class_methods_declaration_with_access_list)
+    END  shift, and go to state 101
 
 
 State 52
 
-  111 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list . class_methods_declaration_with_access
-  112 class_methods_declaration_or_empty: class_methods_declaration_with_access_list .
-
-    PUBLIC     shift, and go to state 41
-    PROTECTED  shift, and go to state 42
-    PRIVATE    shift, and go to state 43
-
-    $default  reduce using rule 112 (class_methods_declaration_or_empty)
-
-    class_fields_access                    go to state 46
-    class_methods_declaration_with_access  go to state 101
-
-
-State 53
-
-  117 class_declaration: INTERFACE ID class_methods_declaration_or_empty . END
-
-    END  shift, and go to state 102
-
-
-State 54
-
    75 enumerator: ID .
    76           | ID . '=' INT_CONST
 
-    '='  shift, and go to state 103
+    '='  shift, and go to state 102
 
     $default  reduce using rule 75 (enumerator)
 
 
-State 55
+State 53
 
    72 enum_declaration: enum_type '{' enumerator_list . '}' ';'
    73 enumerator_list: enumerator_list . ',' enumerator
 
-    ','  shift, and go to state 104
-    '}'  shift, and go to state 105
+    ','  shift, and go to state 103
+    '}'  shift, and go to state 104
 
 
-State 56
+State 54
 
    74 enumerator_list: enumerator .
 
     $default  reduce using rule 74 (enumerator_list)
 
 
-State 57
+State 55
 
-  142 func_header: type ID '(' . func_args_or_empty ')'
+  153 func_header: type ID '(' . func_args_or_empty ')'
 
-    ID      shift, and go to state 1
+    ID      shift, and go to state 105
     ENUM    shift, and go to state 4
     INT     shift, and go to state 5
     FLOAT   shift, and go to state 6
@@ -1004,225 +992,221 @@ State 57
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    $default  reduce using rule 141 (func_args_or_empty)
+    $default  reduce using rule 152 (func_args_or_empty)
 
-    pointer_custom_type  go to state 14
-    enum_type            go to state 81
-    type                 go to state 106
-    default_type         go to state 17
-    func_arg             go to state 107
-    func_args            go to state 108
-    func_args_or_empty   go to state 109
+    enum_type           go to state 78
+    type                go to state 106
+    default_type        go to state 16
+    func_arg            go to state 107
+    func_args           go to state 108
+    func_args_or_empty  go to state 109
 
 
-State 58
+State 56
 
    61 expr: INT_CONST .
 
     $default  reduce using rule 61 (expr)
 
 
-State 59
+State 57
 
    62 expr: FLOAT_CONST .
 
     $default  reduce using rule 62 (expr)
 
 
-State 60
+State 58
 
    64 expr: CHAR_CONST .
 
     $default  reduce using rule 64 (expr)
 
 
-State 61
+State 59
 
    63 expr: BOOL_CONST .
 
     $default  reduce using rule 63 (expr)
 
 
-State 62
+State 60
 
    65 expr: STRING_CONST .
 
     $default  reduce using rule 65 (expr)
 
 
-State 63
+State 61
 
-   29 pointer_custom_type: ID . '*'
+   25 var_decl: ID . '*' ID '=' expr ';'
+   27         | ID . '*' ID ';'
+   29         | ID . '*' ID '[' INT_CONST ']' ';'
+   31         | ID . '*' ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
    60 expr: ID .
    70     | ID . '(' expr_list ')'
    71     | ID . '(' ')'
 
-    '*'  shift, and go to state 24
-    '('  shift, and go to state 110
+    '*'  shift, and go to state 110
+    '('  shift, and go to state 111
 
     '*'       [reduce using rule 60 (expr)]
     $default  reduce using rule 60 (expr)
 
 
-State 64
+State 62
 
-   24 while_stmt: WHILE . '(' expr ')' stmt
-
-    '('  shift, and go to state 111
-
-
-State 65
-
-   22 if_stmt: IF . '(' expr ')' stmt
-   23        | IF . '(' expr ')' stmt ELSE stmt
+   23 while_stmt: WHILE . '(' expr ')' stmt
 
     '('  shift, and go to state 112
 
 
+State 63
+
+   21 if_stmt: IF . '(' expr ')' stmt
+   22        | IF . '(' expr ')' stmt ELSE stmt
+
+    '('  shift, and go to state 113
+
+
+State 64
+
+   12 stmt: RETURN . expr ';'
+   13     | RETURN . ';'
+
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    ';'           shift, and go to state 115
+    '('           shift, and go to state 70
+
+    expr  go to state 116
+
+
+State 65
+
+   58 expr: '-' . expr
+
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
+
+    expr  go to state 117
+
+
 State 66
 
-   13 stmt: RETURN . expr ';'
-   14     | RETURN . ';'
+   57 expr: '+' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    ';'           shift, and go to state 113
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 115
+    expr  go to state 118
 
 
 State 67
 
-   58 expr: '-' . expr
+   56 expr: '!' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 116
+    expr  go to state 119
 
 
 State 68
 
-   57 expr: '+' . expr
+   66 expr: '[' . expr ID method_call_args ']'
+   67     | '[' . expr ID ']'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 117
+    expr  go to state 120
 
 
 State 69
 
-   56 expr: '!' . expr
+   19 stmt: ';' .
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
-
-    pointer_custom_type  go to state 114
-    expr                 go to state 118
+    $default  reduce using rule 19 (stmt)
 
 
 State 70
 
-   66 expr: '[' . expr ID method_call_args ']'
-   67     | '[' . expr ID ']'
+   59 expr: '(' . expr ')'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 119
+    expr  go to state 121
 
 
 State 71
 
-   20 stmt: ';' .
+    8 stmt_list: stmt_list . stmt
+   10 stmt_list_or_empty: stmt_list .
 
-    $default  reduce using rule 20 (stmt)
-
-
-State 72
-
-   59 expr: '(' . expr ')'
-
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
-
-    pointer_custom_type  go to state 114
-    expr                 go to state 120
-
-
-State 73
-
-    9 stmt_list: stmt_list . stmt
-   11 stmt_list_or_empty: stmt_list .
-
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    WHILE         shift, and go to state 64
-    IF            shift, and go to state 65
-    RETURN        shift, and go to state 66
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 61
+    WHILE         shift, and go to state 62
+    IF            shift, and go to state 63
+    RETURN        shift, and go to state 64
     ENUM          shift, and go to state 4
     INT           shift, and go to state 5
     FLOAT         shift, and go to state 6
@@ -1230,116 +1214,92 @@ State 73
     CHAR          shift, and go to state 8
     BOOL          shift, and go to state 9
     VOID          shift, and go to state 10
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    ';'           shift, and go to state 71
-    '{'           shift, and go to state 33
-    '('           shift, and go to state 72
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    ';'           shift, and go to state 69
+    '{'           shift, and go to state 30
+    '('           shift, and go to state 70
 
-    $default  reduce using rule 11 (stmt_list_or_empty)
+    $default  reduce using rule 10 (stmt_list_or_empty)
 
-    stmt                 go to state 121
-    compound_stmt        go to state 76
-    if_stmt              go to state 77
-    while_stmt           go to state 78
-    var_decl             go to state 79
-    pointer_custom_type  go to state 80
-    enum_type            go to state 81
-    type                 go to state 82
-    default_type         go to state 17
-    expr                 go to state 83
+    stmt           go to state 122
+    compound_stmt  go to state 74
+    if_stmt        go to state 75
+    while_stmt     go to state 76
+    var_decl       go to state 77
+    enum_type      go to state 78
+    type           go to state 79
+    default_type   go to state 16
+    expr           go to state 80
+
+
+State 72
+
+   20 compound_stmt: '{' stmt_list_or_empty . '}'
+
+    '}'  shift, and go to state 123
+
+
+State 73
+
+    9 stmt_list: stmt .
+
+    $default  reduce using rule 9 (stmt_list)
 
 
 State 74
 
-   21 compound_stmt: '{' stmt_list_or_empty . '}'
+   18 stmt: compound_stmt .
 
-    '}'  shift, and go to state 122
+    $default  reduce using rule 18 (stmt)
 
 
 State 75
 
-   10 stmt_list: stmt .
+   16 stmt: if_stmt .
 
-    $default  reduce using rule 10 (stmt_list)
+    $default  reduce using rule 16 (stmt)
 
 
 State 76
 
-   19 stmt: compound_stmt .
+   15 stmt: while_stmt .
 
-    $default  reduce using rule 19 (stmt)
+    $default  reduce using rule 15 (stmt)
 
 
 State 77
 
-   17 stmt: if_stmt .
+   17 stmt: var_decl .
 
     $default  reduce using rule 17 (stmt)
 
 
 State 78
 
-   16 stmt: while_stmt .
+   34 type: enum_type .
 
-    $default  reduce using rule 16 (stmt)
+    $default  reduce using rule 34 (type)
 
 
 State 79
 
-   18 stmt: var_decl .
-
-    $default  reduce using rule 18 (stmt)
-
-
-State 80
-
-   32 type: pointer_custom_type .
-   43 expr: pointer_custom_type . expr
-
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
-
-    ID  [reduce using rule 32 (type)]
-
-    pointer_custom_type  go to state 114
-    expr                 go to state 123
-
-
-State 81
-
-   33 type: enum_type .
-
-    $default  reduce using rule 33 (type)
-
-
-State 82
-
-   25 var_decl: type . ID '=' expr ';'
+   24 var_decl: type . ID '=' expr ';'
    26         | type . ID ';'
-   27         | type . ID '[' INT_CONST ']' ';'
-   28         | type . ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
+   28         | type . ID '[' INT_CONST ']' ';'
+   30         | type . ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
 
     ID  shift, and go to state 124
 
 
-State 83
+State 80
 
-   15 stmt: expr . ';'
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   14 stmt: expr . ';'
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -1374,12 +1334,11 @@ State 83
     ';'               shift, and go to state 141
 
 
-State 84
+State 81
 
-  101 class_method: '-' '(' . type ')' ID ':' class_method_params
-  103             | '-' '(' . type ')' ID
+  154 func_header: ID '*' ID '(' . func_args_or_empty ')'
 
-    ID      shift, and go to state 1
+    ID      shift, and go to state 105
     ENUM    shift, and go to state 4
     INT     shift, and go to state 5
     FLOAT   shift, and go to state 6
@@ -1388,101 +1347,133 @@ State 84
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    pointer_custom_type  go to state 14
-    enum_type            go to state 81
-    type                 go to state 142
-    default_type         go to state 17
+    $default  reduce using rule 152 (func_args_or_empty)
+
+    enum_type           go to state 78
+    type                go to state 106
+    default_type        go to state 16
+    func_arg            go to state 107
+    func_args           go to state 108
+    func_args_or_empty  go to state 142
+
+
+State 82
+
+  106 class_method: '-' '(' . type ')' ID ':' class_method_params
+  107             | '-' '(' . ID '*' ')' ID ':' class_method_params
+  110             | '-' '(' . type ')' ID
+  111             | '-' '(' . ID '*' ')' ID
+
+    ID      shift, and go to state 143
+    ENUM    shift, and go to state 4
+    INT     shift, and go to state 5
+    FLOAT   shift, and go to state 6
+    STRING  shift, and go to state 7
+    CHAR    shift, and go to state 8
+    BOOL    shift, and go to state 9
+    VOID    shift, and go to state 10
+
+    enum_type     go to state 78
+    type          go to state 144
+    default_type  go to state 16
+
+
+State 83
+
+  108 class_method: '+' '(' . type ')' ID ':' class_method_params
+  109             | '+' '(' . ID '*' ')' ID ':' class_method_params
+  112             | '+' '(' . type ')' ID
+  113             | '+' '(' . ID '*' ')' ID
+
+    ID      shift, and go to state 145
+    ENUM    shift, and go to state 4
+    INT     shift, and go to state 5
+    FLOAT   shift, and go to state 6
+    STRING  shift, and go to state 7
+    CHAR    shift, and go to state 8
+    BOOL    shift, and go to state 9
+    VOID    shift, and go to state 10
+
+    enum_type     go to state 78
+    type          go to state 146
+    default_type  go to state 16
+
+
+State 84
+
+  127 class_method_implementation: class_method compound_stmt .
+
+    $default  reduce using rule 127 (class_method_implementation)
 
 
 State 85
 
-  102 class_method: '+' '(' . type ')' ID ':' class_method_params
-  104             | '+' '(' . type ')' ID
+  129 class_methods_implementation: class_methods_implementation class_method_implementation .
 
-    ID      shift, and go to state 1
-    ENUM    shift, and go to state 4
-    INT     shift, and go to state 5
-    FLOAT   shift, and go to state 6
-    STRING  shift, and go to state 7
-    CHAR    shift, and go to state 8
-    BOOL    shift, and go to state 9
-    VOID    shift, and go to state 10
-
-    pointer_custom_type  go to state 14
-    enum_type            go to state 81
-    type                 go to state 143
-    default_type         go to state 17
+    $default  reduce using rule 129 (class_methods_implementation)
 
 
 State 86
 
-  118 class_method_implementation: class_method compound_stmt .
+  132 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END .
 
-    $default  reduce using rule 118 (class_method_implementation)
+    $default  reduce using rule 132 (class_implementation)
 
 
 State 87
 
-  120 class_methods_implementation: class_methods_implementation class_method_implementation .
+   81 class_invariant_declaration: ID . '*' ID ';'
 
-    $default  reduce using rule 120 (class_methods_implementation)
+    '*'  shift, and go to state 147
 
 
 State 88
 
-  123 class_implementation: IMPLEMENTATION ID class_methods_implementation_or_empty END .
+   88 class_invariants_declaration: '{' '}' .
 
-    $default  reduce using rule 123 (class_implementation)
+    $default  reduce using rule 88 (class_invariants_declaration)
 
 
 State 89
 
-   87 class_invariants_declaration: '{' '}' .
+   80 class_invariant_declaration: type . ID ';'
 
-    $default  reduce using rule 87 (class_invariants_declaration)
+    ID  shift, and go to state 148
 
 
 State 90
 
-   80 class_invariant_declaration: type . ID ';'
+   84 class_invariant_declaration_with_access: class_fields_access . class_invariants_declarations
 
-    ID  shift, and go to state 144
+    ID      shift, and go to state 87
+    ENUM    shift, and go to state 4
+    INT     shift, and go to state 5
+    FLOAT   shift, and go to state 6
+    STRING  shift, and go to state 7
+    CHAR    shift, and go to state 8
+    BOOL    shift, and go to state 9
+    VOID    shift, and go to state 10
+
+    enum_type                      go to state 78
+    type                           go to state 89
+    default_type                   go to state 16
+    class_invariant_declaration    go to state 91
+    class_invariants_declarations  go to state 149
 
 
 State 91
 
-   83 class_invariant_declaration_with_access: class_fields_access . class_invariants_declarations
+   82 class_invariants_declarations: class_invariant_declaration .
 
-    ID      shift, and go to state 1
-    ENUM    shift, and go to state 4
-    INT     shift, and go to state 5
-    FLOAT   shift, and go to state 6
-    STRING  shift, and go to state 7
-    CHAR    shift, and go to state 8
-    BOOL    shift, and go to state 9
-    VOID    shift, and go to state 10
-
-    pointer_custom_type            go to state 14
-    enum_type                      go to state 81
-    type                           go to state 90
-    default_type                   go to state 17
-    class_invariant_declaration    go to state 92
-    class_invariants_declarations  go to state 145
+    $default  reduce using rule 82 (class_invariants_declarations)
 
 
 State 92
 
-   81 class_invariants_declarations: class_invariant_declaration .
+   83 class_invariants_declarations: class_invariants_declarations . class_invariant_declaration
+   85 class_invariant_declaration_with_access_list: class_invariants_declarations .
 
-    $default  reduce using rule 81 (class_invariants_declarations)
-
-
-State 93
-
-   82 class_invariants_declarations: class_invariants_declarations . class_invariant_declaration
-   84 class_invariant_declaration_with_access_list: class_invariants_declarations .
-
-    ID      shift, and go to state 1
+    ID      shift, and go to state 87
     ENUM    shift, and go to state 4
     INT     shift, and go to state 5
     FLOAT   shift, and go to state 6
@@ -1491,261 +1482,266 @@ State 93
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    $default  reduce using rule 84 (class_invariant_declaration_with_access_list)
+    $default  reduce using rule 85 (class_invariant_declaration_with_access_list)
 
-    pointer_custom_type          go to state 14
-    enum_type                    go to state 81
-    type                         go to state 90
-    default_type                 go to state 17
-    class_invariant_declaration  go to state 146
+    enum_type                    go to state 78
+    type                         go to state 89
+    default_type                 go to state 16
+    class_invariant_declaration  go to state 150
+
+
+State 93
+
+   86 class_invariant_declaration_with_access_list: class_invariant_declaration_with_access .
+
+    $default  reduce using rule 86 (class_invariant_declaration_with_access_list)
 
 
 State 94
 
-   85 class_invariant_declaration_with_access_list: class_invariant_declaration_with_access .
+   87 class_invariant_declaration_with_access_list: class_invariant_declaration_with_access_list . class_invariant_declaration_with_access
+   89 class_invariants_declaration: '{' class_invariant_declaration_with_access_list . '}'
 
-    $default  reduce using rule 85 (class_invariant_declaration_with_access_list)
+    PUBLIC     shift, and go to state 39
+    PROTECTED  shift, and go to state 40
+    PRIVATE    shift, and go to state 41
+    '}'        shift, and go to state 151
+
+    class_fields_access                      go to state 90
+    class_invariant_declaration_with_access  go to state 152
 
 
 State 95
 
-   86 class_invariant_declaration_with_access_list: class_invariant_declaration_with_access_list . class_invariant_declaration_with_access
-   88 class_invariants_declaration: '{' class_invariant_declaration_with_access_list . '}'
+  123 class_declaration: INTERFACE ID ':' ID . class_invariants_declaration class_methods_declaration_or_empty END
+  125                  | INTERFACE ID ':' ID . class_methods_declaration_or_empty END
 
-    PUBLIC     shift, and go to state 41
-    PROTECTED  shift, and go to state 42
-    PRIVATE    shift, and go to state 43
-    '}'        shift, and go to state 147
+    PUBLIC     shift, and go to state 39
+    PROTECTED  shift, and go to state 40
+    PRIVATE    shift, and go to state 41
+    '-'        shift, and go to state 33
+    '+'        shift, and go to state 34
+    '{'        shift, and go to state 42
 
-    class_fields_access                      go to state 91
-    class_invariant_declaration_with_access  go to state 148
+    $default  reduce using rule 122 (class_methods_declaration_or_empty)
+
+    class_fields_access                         go to state 44
+    class_invariants_declaration                go to state 153
+    class_method                                go to state 46
+    class_method_declaration                    go to state 47
+    class_methods_declaration                   go to state 48
+    class_methods_declaration_with_access       go to state 49
+    class_methods_declaration_with_access_list  go to state 50
+    class_methods_declaration_or_empty          go to state 154
 
 
 State 96
 
-  114 class_declaration: INTERFACE ID ':' ID . class_invariants_declaration class_methods_declaration_or_empty END
-  116                  | INTERFACE ID ':' ID . class_methods_declaration_or_empty END
+  116 class_methods_declaration: class_methods_declaration . class_method_declaration
+  117 class_methods_declaration_with_access: class_fields_access class_methods_declaration .
 
-    PUBLIC     shift, and go to state 41
-    PROTECTED  shift, and go to state 42
-    PRIVATE    shift, and go to state 43
-    '-'        shift, and go to state 35
-    '+'        shift, and go to state 36
-    '{'        shift, and go to state 44
+    '-'  shift, and go to state 33
+    '+'  shift, and go to state 34
 
-    $default  reduce using rule 113 (class_methods_declaration_or_empty)
+    $default  reduce using rule 117 (class_methods_declaration_with_access)
 
-    class_fields_access                         go to state 46
-    class_invariants_declaration                go to state 149
-    class_method                                go to state 48
-    class_method_declaration                    go to state 49
-    class_methods_declaration                   go to state 50
-    class_methods_declaration_with_access       go to state 51
-    class_methods_declaration_with_access_list  go to state 52
-    class_methods_declaration_or_empty          go to state 150
+    class_method              go to state 46
+    class_method_declaration  go to state 99
 
 
 State 97
 
-  107 class_methods_declaration: class_methods_declaration . class_method_declaration
-  108 class_methods_declaration_with_access: class_fields_access class_methods_declaration .
+  124 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty . END
 
-    '-'  shift, and go to state 35
-    '+'  shift, and go to state 36
-
-    $default  reduce using rule 108 (class_methods_declaration_with_access)
-
-    class_method              go to state 48
-    class_method_declaration  go to state 100
+    END  shift, and go to state 155
 
 
 State 98
 
-  115 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty . END
+  114 class_method_declaration: class_method ';' .
 
-    END  shift, and go to state 151
+    $default  reduce using rule 114 (class_method_declaration)
 
 
 State 99
 
-  105 class_method_declaration: class_method ';' .
+  116 class_methods_declaration: class_methods_declaration class_method_declaration .
 
-    $default  reduce using rule 105 (class_method_declaration)
+    $default  reduce using rule 116 (class_methods_declaration)
 
 
 State 100
 
-  107 class_methods_declaration: class_methods_declaration class_method_declaration .
+  120 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list class_methods_declaration_with_access .
 
-    $default  reduce using rule 107 (class_methods_declaration)
+    $default  reduce using rule 120 (class_methods_declaration_with_access_list)
 
 
 State 101
 
-  111 class_methods_declaration_with_access_list: class_methods_declaration_with_access_list class_methods_declaration_with_access .
+  126 class_declaration: INTERFACE ID class_methods_declaration_or_empty END .
 
-    $default  reduce using rule 111 (class_methods_declaration_with_access_list)
+    $default  reduce using rule 126 (class_declaration)
 
 
 State 102
 
-  117 class_declaration: INTERFACE ID class_methods_declaration_or_empty END .
+   76 enumerator: ID '=' . INT_CONST
 
-    $default  reduce using rule 117 (class_declaration)
+    INT_CONST  shift, and go to state 156
 
 
 State 103
 
-   76 enumerator: ID '=' . INT_CONST
+   73 enumerator_list: enumerator_list ',' . enumerator
 
-    INT_CONST  shift, and go to state 152
+    ID  shift, and go to state 52
+
+    enumerator  go to state 157
 
 
 State 104
 
-   73 enumerator_list: enumerator_list ',' . enumerator
+   72 enum_declaration: enum_type '{' enumerator_list '}' . ';'
 
-    ID  shift, and go to state 54
-
-    enumerator  go to state 153
+    ';'  shift, and go to state 158
 
 
 State 105
 
-   72 enum_declaration: enum_type '{' enumerator_list '}' . ';'
+  146 func_arg: ID . '*' ID
+  148         | ID . '*' ID '[' ']'
 
-    ';'  shift, and go to state 154
+    '*'  shift, and go to state 159
 
 
 State 106
 
-  136 func_arg: type . ID
-  137         | type . ID '[' ']'
+  145 func_arg: type . ID
+  147         | type . ID '[' ']'
 
-    ID  shift, and go to state 155
+    ID  shift, and go to state 160
 
 
 State 107
 
-  138 func_args: func_arg .
+  149 func_args: func_arg .
 
-    $default  reduce using rule 138 (func_args)
+    $default  reduce using rule 149 (func_args)
 
 
 State 108
 
-  139 func_args: func_args . ',' func_arg
-  140 func_args_or_empty: func_args .
+  150 func_args: func_args . ',' func_arg
+  151 func_args_or_empty: func_args .
 
-    ','  shift, and go to state 156
+    ','  shift, and go to state 161
 
-    $default  reduce using rule 140 (func_args_or_empty)
+    $default  reduce using rule 151 (func_args_or_empty)
 
 
 State 109
 
-  142 func_header: type ID '(' func_args_or_empty . ')'
+  153 func_header: type ID '(' func_args_or_empty . ')'
 
-    ')'  shift, and go to state 157
+    ')'  shift, and go to state 162
 
 
 State 110
 
-   70 expr: ID '(' . expr_list ')'
-   71     | ID '(' . ')'
+   25 var_decl: ID '*' . ID '=' expr ';'
+   27         | ID '*' . ID ';'
+   29         | ID '*' . ID '[' INT_CONST ']' ';'
+   31         | ID '*' . ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    ')'           shift, and go to state 158
-    '('           shift, and go to state 72
-
-    pointer_custom_type  go to state 114
-    expr                 go to state 159
-    expr_list            go to state 160
+    ID  shift, and go to state 163
 
 
 State 111
 
-   24 while_stmt: WHILE '(' . expr ')' stmt
+   70 expr: ID '(' . expr_list ')'
+   71     | ID '(' . ')'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    ')'           shift, and go to state 164
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 161
+    expr       go to state 165
+    expr_list  go to state 166
 
 
 State 112
 
-   22 if_stmt: IF '(' . expr ')' stmt
-   23        | IF '(' . expr ')' stmt ELSE stmt
+   23 while_stmt: WHILE '(' . expr ')' stmt
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 162
+    expr  go to state 167
 
 
 State 113
 
-   14 stmt: RETURN ';' .
+   21 if_stmt: IF '(' . expr ')' stmt
+   22        | IF '(' . expr ')' stmt ELSE stmt
 
-    $default  reduce using rule 14 (stmt)
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
+
+    expr  go to state 168
 
 
 State 114
 
-   43 expr: pointer_custom_type . expr
+   60 expr: ID .
+   70     | ID . '(' expr_list ')'
+   71     | ID . '(' ')'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    '('  shift, and go to state 111
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 123
+    $default  reduce using rule 60 (expr)
 
 
 State 115
 
-   13 stmt: RETURN expr . ';'
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   13 stmt: RETURN ';' .
+
+    $default  reduce using rule 13 (stmt)
+
+
+State 116
+
+   12 stmt: RETURN expr . ';'
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -1777,14 +1773,14 @@ State 115
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ';'               shift, and go to state 163
+    ';'               shift, and go to state 169
 
 
-State 116
+State 117
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -1807,11 +1803,11 @@ State 116
     $default  reduce using rule 58 (expr)
 
 
-State 117
+State 118
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -1834,11 +1830,11 @@ State 117
     $default  reduce using rule 57 (expr)
 
 
-State 118
+State 119
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -1861,11 +1857,11 @@ State 118
     $default  reduce using rule 56 (expr)
 
 
-State 119
+State 120
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -1883,7 +1879,7 @@ State 119
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
 
-    ID                shift, and go to state 164
+    ID                shift, and go to state 170
     '='               shift, and go to state 125
     OR                shift, and go to state 126
     AND               shift, and go to state 127
@@ -1902,11 +1898,11 @@ State 119
     '['               shift, and go to state 140
 
 
-State 120
+State 121
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -1939,90 +1935,33 @@ State 120
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ')'               shift, and go to state 165
-
-
-State 121
-
-    9 stmt_list: stmt_list stmt .
-
-    $default  reduce using rule 9 (stmt_list)
+    ')'               shift, and go to state 171
 
 
 State 122
 
-   21 compound_stmt: '{' stmt_list_or_empty '}' .
+    8 stmt_list: stmt_list stmt .
 
-    $default  reduce using rule 21 (compound_stmt)
+    $default  reduce using rule 8 (stmt_list)
 
 
 State 123
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
-   43     | pointer_custom_type expr .
-   44     | expr . '/' expr
-   45     | expr . '%' expr
-   46     | expr . '=' expr
-   47     | expr . '=' '{' array_elems_or_empty '}'
-   48     | expr . '<' expr
-   49     | expr . LESS_OR_EQUAL expr
-   50     | expr . '>' expr
-   51     | expr . GREATER_OR_EQUAL expr
-   52     | expr . EQUAL expr
-   53     | expr . NOT_EQUAL expr
-   54     | expr . AND expr
-   55     | expr . OR expr
-   68     | expr . '[' expr ']'
-   69     | expr . ARROW ID
+   20 compound_stmt: '{' stmt_list_or_empty '}' .
 
-    '='               shift, and go to state 125
-    OR                shift, and go to state 126
-    AND               shift, and go to state 127
-    NOT_EQUAL         shift, and go to state 128
-    EQUAL             shift, and go to state 129
-    '<'               shift, and go to state 130
-    '>'               shift, and go to state 131
-    GREATER_OR_EQUAL  shift, and go to state 132
-    LESS_OR_EQUAL     shift, and go to state 133
-    '-'               shift, and go to state 134
-    '+'               shift, and go to state 135
-    '*'               shift, and go to state 136
-    '/'               shift, and go to state 137
-    '%'               shift, and go to state 138
-    ARROW             shift, and go to state 139
-    '['               shift, and go to state 140
-
-    '='               [reduce using rule 43 (expr)]
-    OR                [reduce using rule 43 (expr)]
-    AND               [reduce using rule 43 (expr)]
-    NOT_EQUAL         [reduce using rule 43 (expr)]
-    EQUAL             [reduce using rule 43 (expr)]
-    '<'               [reduce using rule 43 (expr)]
-    '>'               [reduce using rule 43 (expr)]
-    GREATER_OR_EQUAL  [reduce using rule 43 (expr)]
-    LESS_OR_EQUAL     [reduce using rule 43 (expr)]
-    '-'               [reduce using rule 43 (expr)]
-    '+'               [reduce using rule 43 (expr)]
-    '*'               [reduce using rule 43 (expr)]
-    '/'               [reduce using rule 43 (expr)]
-    '%'               [reduce using rule 43 (expr)]
-    ARROW             [reduce using rule 43 (expr)]
-    '['               [reduce using rule 43 (expr)]
-    $default          reduce using rule 43 (expr)
+    $default  reduce using rule 20 (compound_stmt)
 
 
 State 124
 
-   25 var_decl: type ID . '=' expr ';'
+   24 var_decl: type ID . '=' expr ';'
    26         | type ID . ';'
-   27         | type ID . '[' INT_CONST ']' ';'
-   28         | type ID . '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
+   28         | type ID . '[' INT_CONST ']' ';'
+   30         | type ID . '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
 
-    '='  shift, and go to state 166
-    '['  shift, and go to state 167
-    ';'  shift, and go to state 168
+    '='  shift, and go to state 172
+    '['  shift, and go to state 173
+    ';'  shift, and go to state 174
 
 
 State 125
@@ -2030,346 +1969,361 @@ State 125
    46 expr: expr '=' . expr
    47     | expr '=' . '{' array_elems_or_empty '}'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '{'           shift, and go to state 169
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '{'           shift, and go to state 175
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 170
+    expr  go to state 176
 
 
 State 126
 
    55 expr: expr OR . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 171
+    expr  go to state 177
 
 
 State 127
 
    54 expr: expr AND . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 172
+    expr  go to state 178
 
 
 State 128
 
    53 expr: expr NOT_EQUAL . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 173
+    expr  go to state 179
 
 
 State 129
 
    52 expr: expr EQUAL . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 174
+    expr  go to state 180
 
 
 State 130
 
    48 expr: expr '<' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 175
+    expr  go to state 181
 
 
 State 131
 
    50 expr: expr '>' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 176
+    expr  go to state 182
 
 
 State 132
 
    51 expr: expr GREATER_OR_EQUAL . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 177
+    expr  go to state 183
 
 
 State 133
 
    49 expr: expr LESS_OR_EQUAL . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 178
+    expr  go to state 184
 
 
 State 134
 
-   41 expr: expr '-' . expr
+   42 expr: expr '-' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 179
+    expr  go to state 185
 
 
 State 135
 
-   40 expr: expr '+' . expr
+   41 expr: expr '+' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 180
+    expr  go to state 186
 
 
 State 136
 
-   42 expr: expr '*' . expr
+   43 expr: expr '*' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 181
+    expr  go to state 187
 
 
 State 137
 
    44 expr: expr '/' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 182
+    expr  go to state 188
 
 
 State 138
 
    45 expr: expr '%' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 183
+    expr  go to state 189
 
 
 State 139
 
    69 expr: expr ARROW . ID
 
-    ID  shift, and go to state 184
+    ID  shift, and go to state 190
 
 
 State 140
 
    68 expr: expr '[' . expr ']'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 185
+    expr  go to state 191
 
 
 State 141
 
-   15 stmt: expr ';' .
+   14 stmt: expr ';' .
 
-    $default  reduce using rule 15 (stmt)
+    $default  reduce using rule 14 (stmt)
 
 
 State 142
 
-  101 class_method: '-' '(' type . ')' ID ':' class_method_params
-  103             | '-' '(' type . ')' ID
+  154 func_header: ID '*' ID '(' func_args_or_empty . ')'
 
-    ')'  shift, and go to state 186
+    ')'  shift, and go to state 192
 
 
 State 143
 
-  102 class_method: '+' '(' type . ')' ID ':' class_method_params
-  104             | '+' '(' type . ')' ID
+  107 class_method: '-' '(' ID . '*' ')' ID ':' class_method_params
+  111             | '-' '(' ID . '*' ')' ID
 
-    ')'  shift, and go to state 187
+    '*'  shift, and go to state 193
 
 
 State 144
 
-   80 class_invariant_declaration: type ID . ';'
+  106 class_method: '-' '(' type . ')' ID ':' class_method_params
+  110             | '-' '(' type . ')' ID
 
-    ';'  shift, and go to state 188
+    ')'  shift, and go to state 194
 
 
 State 145
 
-   82 class_invariants_declarations: class_invariants_declarations . class_invariant_declaration
-   83 class_invariant_declaration_with_access: class_fields_access class_invariants_declarations .
+  109 class_method: '+' '(' ID . '*' ')' ID ':' class_method_params
+  113             | '+' '(' ID . '*' ')' ID
 
-    ID      shift, and go to state 1
+    '*'  shift, and go to state 195
+
+
+State 146
+
+  108 class_method: '+' '(' type . ')' ID ':' class_method_params
+  112             | '+' '(' type . ')' ID
+
+    ')'  shift, and go to state 196
+
+
+State 147
+
+   81 class_invariant_declaration: ID '*' . ID ';'
+
+    ID  shift, and go to state 197
+
+
+State 148
+
+   80 class_invariant_declaration: type ID . ';'
+
+    ';'  shift, and go to state 198
+
+
+State 149
+
+   83 class_invariants_declarations: class_invariants_declarations . class_invariant_declaration
+   84 class_invariant_declaration_with_access: class_fields_access class_invariants_declarations .
+
+    ID      shift, and go to state 87
     ENUM    shift, and go to state 4
     INT     shift, and go to state 5
     FLOAT   shift, and go to state 6
@@ -2378,107 +2332,114 @@ State 145
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    $default  reduce using rule 83 (class_invariant_declaration_with_access)
+    $default  reduce using rule 84 (class_invariant_declaration_with_access)
 
-    pointer_custom_type          go to state 14
-    enum_type                    go to state 81
-    type                         go to state 90
-    default_type                 go to state 17
-    class_invariant_declaration  go to state 146
-
-
-State 146
-
-   82 class_invariants_declarations: class_invariants_declarations class_invariant_declaration .
-
-    $default  reduce using rule 82 (class_invariants_declarations)
-
-
-State 147
-
-   88 class_invariants_declaration: '{' class_invariant_declaration_with_access_list '}' .
-
-    $default  reduce using rule 88 (class_invariants_declaration)
-
-
-State 148
-
-   86 class_invariant_declaration_with_access_list: class_invariant_declaration_with_access_list class_invariant_declaration_with_access .
-
-    $default  reduce using rule 86 (class_invariant_declaration_with_access_list)
-
-
-State 149
-
-  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration . class_methods_declaration_or_empty END
-
-    PUBLIC     shift, and go to state 41
-    PROTECTED  shift, and go to state 42
-    PRIVATE    shift, and go to state 43
-    '-'        shift, and go to state 35
-    '+'        shift, and go to state 36
-
-    $default  reduce using rule 113 (class_methods_declaration_or_empty)
-
-    class_fields_access                         go to state 46
-    class_method                                go to state 48
-    class_method_declaration                    go to state 49
-    class_methods_declaration                   go to state 50
-    class_methods_declaration_with_access       go to state 51
-    class_methods_declaration_with_access_list  go to state 52
-    class_methods_declaration_or_empty          go to state 189
+    enum_type                    go to state 78
+    type                         go to state 89
+    default_type                 go to state 16
+    class_invariant_declaration  go to state 150
 
 
 State 150
 
-  116 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty . END
+   83 class_invariants_declarations: class_invariants_declarations class_invariant_declaration .
 
-    END  shift, and go to state 190
+    $default  reduce using rule 83 (class_invariants_declarations)
 
 
 State 151
 
-  115 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END .
+   89 class_invariants_declaration: '{' class_invariant_declaration_with_access_list '}' .
 
-    $default  reduce using rule 115 (class_declaration)
+    $default  reduce using rule 89 (class_invariants_declaration)
 
 
 State 152
+
+   87 class_invariant_declaration_with_access_list: class_invariant_declaration_with_access_list class_invariant_declaration_with_access .
+
+    $default  reduce using rule 87 (class_invariant_declaration_with_access_list)
+
+
+State 153
+
+  123 class_declaration: INTERFACE ID ':' ID class_invariants_declaration . class_methods_declaration_or_empty END
+
+    PUBLIC     shift, and go to state 39
+    PROTECTED  shift, and go to state 40
+    PRIVATE    shift, and go to state 41
+    '-'        shift, and go to state 33
+    '+'        shift, and go to state 34
+
+    $default  reduce using rule 122 (class_methods_declaration_or_empty)
+
+    class_fields_access                         go to state 44
+    class_method                                go to state 46
+    class_method_declaration                    go to state 47
+    class_methods_declaration                   go to state 48
+    class_methods_declaration_with_access       go to state 49
+    class_methods_declaration_with_access_list  go to state 50
+    class_methods_declaration_or_empty          go to state 199
+
+
+State 154
+
+  125 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty . END
+
+    END  shift, and go to state 200
+
+
+State 155
+
+  124 class_declaration: INTERFACE ID class_invariants_declaration class_methods_declaration_or_empty END .
+
+    $default  reduce using rule 124 (class_declaration)
+
+
+State 156
 
    76 enumerator: ID '=' INT_CONST .
 
     $default  reduce using rule 76 (enumerator)
 
 
-State 153
+State 157
 
    73 enumerator_list: enumerator_list ',' enumerator .
 
     $default  reduce using rule 73 (enumerator_list)
 
 
-State 154
+State 158
 
    72 enum_declaration: enum_type '{' enumerator_list '}' ';' .
 
     $default  reduce using rule 72 (enum_declaration)
 
 
-State 155
+State 159
 
-  136 func_arg: type ID .
-  137         | type ID . '[' ']'
+  146 func_arg: ID '*' . ID
+  148         | ID '*' . ID '[' ']'
 
-    '['  shift, and go to state 191
-
-    $default  reduce using rule 136 (func_arg)
+    ID  shift, and go to state 201
 
 
-State 156
+State 160
 
-  139 func_args: func_args ',' . func_arg
+  145 func_arg: type ID .
+  147         | type ID . '[' ']'
 
-    ID      shift, and go to state 1
+    '['  shift, and go to state 202
+
+    $default  reduce using rule 145 (func_arg)
+
+
+State 161
+
+  150 func_args: func_args ',' . func_arg
+
+    ID      shift, and go to state 105
     ENUM    shift, and go to state 4
     INT     shift, and go to state 5
     FLOAT   shift, and go to state 6
@@ -2487,32 +2448,43 @@ State 156
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    pointer_custom_type  go to state 14
-    enum_type            go to state 81
-    type                 go to state 106
-    default_type         go to state 17
-    func_arg             go to state 192
+    enum_type     go to state 78
+    type          go to state 106
+    default_type  go to state 16
+    func_arg      go to state 203
 
 
-State 157
+State 162
 
-  142 func_header: type ID '(' func_args_or_empty ')' .
+  153 func_header: type ID '(' func_args_or_empty ')' .
 
-    $default  reduce using rule 142 (func_header)
+    $default  reduce using rule 153 (func_header)
 
 
-State 158
+State 163
+
+   25 var_decl: ID '*' ID . '=' expr ';'
+   27         | ID '*' ID . ';'
+   29         | ID '*' ID . '[' INT_CONST ']' ';'
+   31         | ID '*' ID . '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
+
+    '='  shift, and go to state 204
+    '['  shift, and go to state 205
+    ';'  shift, and go to state 206
+
+
+State 164
 
    71 expr: ID '(' ')' .
 
     $default  reduce using rule 71 (expr)
 
 
-State 159
+State 165
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2527,7 +2499,7 @@ State 159
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  132 expr_list: expr .
+  141 expr_list: expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -2546,24 +2518,24 @@ State 159
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 132 (expr_list)
+    $default  reduce using rule 141 (expr_list)
 
 
-State 160
+State 166
 
    70 expr: ID '(' expr_list . ')'
-  133 expr_list: expr_list . ',' expr
+  142 expr_list: expr_list . ',' expr
 
-    ','  shift, and go to state 193
-    ')'  shift, and go to state 194
+    ','  shift, and go to state 207
+    ')'  shift, and go to state 208
 
 
-State 161
+State 167
 
-   24 while_stmt: WHILE '(' expr . ')' stmt
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   23 while_stmt: WHILE '(' expr . ')' stmt
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2595,16 +2567,16 @@ State 161
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ')'               shift, and go to state 195
+    ')'               shift, and go to state 209
 
 
-State 162
+State 168
 
-   22 if_stmt: IF '(' expr . ')' stmt
-   23        | IF '(' expr . ')' stmt ELSE stmt
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   21 if_stmt: IF '(' expr . ')' stmt
+   22        | IF '(' expr . ')' stmt ELSE stmt
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2636,100 +2608,98 @@ State 162
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ')'               shift, and go to state 196
+    ')'               shift, and go to state 210
 
 
-State 163
+State 169
 
-   13 stmt: RETURN expr ';' .
+   12 stmt: RETURN expr ';' .
 
-    $default  reduce using rule 13 (stmt)
+    $default  reduce using rule 12 (stmt)
 
 
-State 164
+State 170
 
    66 expr: '[' expr ID . method_call_args ']'
    67     | '[' expr ID . ']'
 
-    ']'  shift, and go to state 197
-    ':'  shift, and go to state 198
+    ']'  shift, and go to state 211
+    ':'  shift, and go to state 212
 
-    method_call_noname_arg   go to state 199
-    method_call_noname_args  go to state 200
-    method_call_args         go to state 201
+    method_call_noname_arg   go to state 213
+    method_call_noname_args  go to state 214
+    method_call_args         go to state 215
 
 
-State 165
+State 171
 
    59 expr: '(' expr ')' .
 
     $default  reduce using rule 59 (expr)
 
 
-State 166
+State 172
 
-   25 var_decl: type ID '=' . expr ';'
+   24 var_decl: type ID '=' . expr ';'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 202
-
-
-State 167
-
-   27 var_decl: type ID '[' . INT_CONST ']' ';'
-   28         | type ID '[' . INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
-
-    INT_CONST  shift, and go to state 203
+    expr  go to state 216
 
 
-State 168
+State 173
+
+   28 var_decl: type ID '[' . INT_CONST ']' ';'
+   30         | type ID '[' . INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
+
+    INT_CONST  shift, and go to state 217
+
+
+State 174
 
    26 var_decl: type ID ';' .
 
     $default  reduce using rule 26 (var_decl)
 
 
-State 169
+State 175
 
    47 expr: expr '=' '{' . array_elems_or_empty '}'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    $default  reduce using rule 135 (array_elems_or_empty)
+    $default  reduce using rule 144 (array_elems_or_empty)
 
-    pointer_custom_type   go to state 114
-    expr                  go to state 159
-    expr_list             go to state 204
-    array_elems_or_empty  go to state 205
+    expr                  go to state 165
+    expr_list             go to state 218
+    array_elems_or_empty  go to state 219
 
 
-State 170
+State 176
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2766,11 +2736,11 @@ State 170
     $default  reduce using rule 46 (expr)
 
 
-State 171
+State 177
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2805,11 +2775,11 @@ State 171
     $default  reduce using rule 55 (expr)
 
 
-State 172
+State 178
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2843,11 +2813,11 @@ State 172
     $default  reduce using rule 54 (expr)
 
 
-State 173
+State 179
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2879,11 +2849,11 @@ State 173
     $default  reduce using rule 53 (expr)
 
 
-State 174
+State 180
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2915,11 +2885,11 @@ State 174
     $default  reduce using rule 52 (expr)
 
 
-State 175
+State 181
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2947,11 +2917,11 @@ State 175
     $default  reduce using rule 48 (expr)
 
 
-State 176
+State 182
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -2979,11 +2949,11 @@ State 176
     $default  reduce using rule 50 (expr)
 
 
-State 177
+State 183
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3011,11 +2981,11 @@ State 177
     $default  reduce using rule 51 (expr)
 
 
-State 178
+State 184
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3043,12 +3013,42 @@ State 178
     $default  reduce using rule 49 (expr)
 
 
-State 179
+State 185
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   41     | expr '-' expr .
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   42     | expr '-' expr .
+   43     | expr . '*' expr
+   44     | expr . '/' expr
+   45     | expr . '%' expr
+   46     | expr . '=' expr
+   47     | expr . '=' '{' array_elems_or_empty '}'
+   48     | expr . '<' expr
+   49     | expr . LESS_OR_EQUAL expr
+   50     | expr . '>' expr
+   51     | expr . GREATER_OR_EQUAL expr
+   52     | expr . EQUAL expr
+   53     | expr . NOT_EQUAL expr
+   54     | expr . AND expr
+   55     | expr . OR expr
+   68     | expr . '[' expr ']'
+   69     | expr . ARROW ID
+
+    '*'    shift, and go to state 136
+    '/'    shift, and go to state 137
+    '%'    shift, and go to state 138
+    ARROW  shift, and go to state 139
+    '['    shift, and go to state 140
+
+    $default  reduce using rule 42 (expr)
+
+
+State 186
+
+   41 expr: expr . '+' expr
+   41     | expr '+' expr .
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3073,42 +3073,12 @@ State 179
     $default  reduce using rule 41 (expr)
 
 
-State 180
+State 187
 
-   40 expr: expr . '+' expr
-   40     | expr '+' expr .
-   41     | expr . '-' expr
-   42     | expr . '*' expr
-   44     | expr . '/' expr
-   45     | expr . '%' expr
-   46     | expr . '=' expr
-   47     | expr . '=' '{' array_elems_or_empty '}'
-   48     | expr . '<' expr
-   49     | expr . LESS_OR_EQUAL expr
-   50     | expr . '>' expr
-   51     | expr . GREATER_OR_EQUAL expr
-   52     | expr . EQUAL expr
-   53     | expr . NOT_EQUAL expr
-   54     | expr . AND expr
-   55     | expr . OR expr
-   68     | expr . '[' expr ']'
-   69     | expr . ARROW ID
-
-    '*'    shift, and go to state 136
-    '/'    shift, and go to state 137
-    '%'    shift, and go to state 138
-    ARROW  shift, and go to state 139
-    '['    shift, and go to state 140
-
-    $default  reduce using rule 40 (expr)
-
-
-State 181
-
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
-   42     | expr '*' expr .
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
+   43     | expr '*' expr .
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3127,14 +3097,14 @@ State 181
     ARROW  shift, and go to state 139
     '['    shift, and go to state 140
 
-    $default  reduce using rule 42 (expr)
+    $default  reduce using rule 43 (expr)
 
 
-State 182
+State 188
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    44     | expr '/' expr .
    45     | expr . '%' expr
@@ -3157,11 +3127,11 @@ State 182
     $default  reduce using rule 44 (expr)
 
 
-State 183
+State 189
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    45     | expr '%' expr .
@@ -3184,18 +3154,18 @@ State 183
     $default  reduce using rule 45 (expr)
 
 
-State 184
+State 190
 
    69 expr: expr ARROW ID .
 
     $default  reduce using rule 69 (expr)
 
 
-State 185
+State 191
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3228,100 +3198,173 @@ State 185
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ']'               shift, and go to state 206
+    ']'               shift, and go to state 220
 
 
-State 186
+State 192
 
-  101 class_method: '-' '(' type ')' . ID ':' class_method_params
-  103             | '-' '(' type ')' . ID
+  154 func_header: ID '*' ID '(' func_args_or_empty ')' .
 
-    ID  shift, and go to state 207
-
-
-State 187
-
-  102 class_method: '+' '(' type ')' . ID ':' class_method_params
-  104             | '+' '(' type ')' . ID
-
-    ID  shift, and go to state 208
+    $default  reduce using rule 154 (func_header)
 
 
-State 188
+State 193
+
+  107 class_method: '-' '(' ID '*' . ')' ID ':' class_method_params
+  111             | '-' '(' ID '*' . ')' ID
+
+    ')'  shift, and go to state 221
+
+
+State 194
+
+  106 class_method: '-' '(' type ')' . ID ':' class_method_params
+  110             | '-' '(' type ')' . ID
+
+    ID  shift, and go to state 222
+
+
+State 195
+
+  109 class_method: '+' '(' ID '*' . ')' ID ':' class_method_params
+  113             | '+' '(' ID '*' . ')' ID
+
+    ')'  shift, and go to state 223
+
+
+State 196
+
+  108 class_method: '+' '(' type ')' . ID ':' class_method_params
+  112             | '+' '(' type ')' . ID
+
+    ID  shift, and go to state 224
+
+
+State 197
+
+   81 class_invariant_declaration: ID '*' ID . ';'
+
+    ';'  shift, and go to state 225
+
+
+State 198
 
    80 class_invariant_declaration: type ID ';' .
 
     $default  reduce using rule 80 (class_invariant_declaration)
 
 
-State 189
+State 199
 
-  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty . END
+  123 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty . END
 
-    END  shift, and go to state 209
-
-
-State 190
-
-  116 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty END .
-
-    $default  reduce using rule 116 (class_declaration)
+    END  shift, and go to state 226
 
 
-State 191
+State 200
 
-  137 func_arg: type ID '[' . ']'
+  125 class_declaration: INTERFACE ID ':' ID class_methods_declaration_or_empty END .
 
-    ']'  shift, and go to state 210
-
-
-State 192
-
-  139 func_args: func_args ',' func_arg .
-
-    $default  reduce using rule 139 (func_args)
+    $default  reduce using rule 125 (class_declaration)
 
 
-State 193
+State 201
 
-  133 expr_list: expr_list ',' . expr
+  146 func_arg: ID '*' ID .
+  148         | ID '*' ID . '[' ']'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    '['  shift, and go to state 227
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 211
+    $default  reduce using rule 146 (func_arg)
 
 
-State 194
+State 202
+
+  147 func_arg: type ID '[' . ']'
+
+    ']'  shift, and go to state 228
+
+
+State 203
+
+  150 func_args: func_args ',' func_arg .
+
+    $default  reduce using rule 150 (func_args)
+
+
+State 204
+
+   25 var_decl: ID '*' ID '=' . expr ';'
+
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
+
+    expr  go to state 229
+
+
+State 205
+
+   29 var_decl: ID '*' ID '[' . INT_CONST ']' ';'
+   31         | ID '*' ID '[' . INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'
+
+    INT_CONST  shift, and go to state 230
+
+
+State 206
+
+   27 var_decl: ID '*' ID ';' .
+
+    $default  reduce using rule 27 (var_decl)
+
+
+State 207
+
+  142 expr_list: expr_list ',' . expr
+
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
+
+    expr  go to state 231
+
+
+State 208
 
    70 expr: ID '(' expr_list ')' .
 
     $default  reduce using rule 70 (expr)
 
 
-State 195
+State 209
 
-   24 while_stmt: WHILE '(' expr ')' . stmt
+   23 while_stmt: WHILE '(' expr ')' . stmt
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    WHILE         shift, and go to state 64
-    IF            shift, and go to state 65
-    RETURN        shift, and go to state 66
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 61
+    WHILE         shift, and go to state 62
+    IF            shift, and go to state 63
+    RETURN        shift, and go to state 64
     ENUM          shift, and go to state 4
     INT           shift, and go to state 5
     FLOAT         shift, and go to state 6
@@ -3329,40 +3372,39 @@ State 195
     CHAR          shift, and go to state 8
     BOOL          shift, and go to state 9
     VOID          shift, and go to state 10
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    ';'           shift, and go to state 71
-    '{'           shift, and go to state 33
-    '('           shift, and go to state 72
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    ';'           shift, and go to state 69
+    '{'           shift, and go to state 30
+    '('           shift, and go to state 70
 
-    stmt                 go to state 212
-    compound_stmt        go to state 76
-    if_stmt              go to state 77
-    while_stmt           go to state 78
-    var_decl             go to state 79
-    pointer_custom_type  go to state 80
-    enum_type            go to state 81
-    type                 go to state 82
-    default_type         go to state 17
-    expr                 go to state 83
+    stmt           go to state 232
+    compound_stmt  go to state 74
+    if_stmt        go to state 75
+    while_stmt     go to state 76
+    var_decl       go to state 77
+    enum_type      go to state 78
+    type           go to state 79
+    default_type   go to state 16
+    expr           go to state 80
 
 
-State 196
+State 210
 
-   22 if_stmt: IF '(' expr ')' . stmt
-   23        | IF '(' expr ')' . stmt ELSE stmt
+   21 if_stmt: IF '(' expr ')' . stmt
+   22        | IF '(' expr ')' . stmt ELSE stmt
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    WHILE         shift, and go to state 64
-    IF            shift, and go to state 65
-    RETURN        shift, and go to state 66
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 61
+    WHILE         shift, and go to state 62
+    IF            shift, and go to state 63
+    RETURN        shift, and go to state 64
     ENUM          shift, and go to state 4
     INT           shift, and go to state 5
     FLOAT         shift, and go to state 6
@@ -3370,91 +3412,89 @@ State 196
     CHAR          shift, and go to state 8
     BOOL          shift, and go to state 9
     VOID          shift, and go to state 10
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    ';'           shift, and go to state 71
-    '{'           shift, and go to state 33
-    '('           shift, and go to state 72
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    ';'           shift, and go to state 69
+    '{'           shift, and go to state 30
+    '('           shift, and go to state 70
 
-    stmt                 go to state 213
-    compound_stmt        go to state 76
-    if_stmt              go to state 77
-    while_stmt           go to state 78
-    var_decl             go to state 79
-    pointer_custom_type  go to state 80
-    enum_type            go to state 81
-    type                 go to state 82
-    default_type         go to state 17
-    expr                 go to state 83
+    stmt           go to state 233
+    compound_stmt  go to state 74
+    if_stmt        go to state 75
+    while_stmt     go to state 76
+    var_decl       go to state 77
+    enum_type      go to state 78
+    type           go to state 79
+    default_type   go to state 16
+    expr           go to state 80
 
 
-State 197
+State 211
 
    67 expr: '[' expr ID ']' .
 
     $default  reduce using rule 67 (expr)
 
 
-State 198
+State 212
 
-  124 method_call_noname_arg: ':' . expr
+  133 method_call_noname_arg: ':' . expr
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    pointer_custom_type  go to state 114
-    expr                 go to state 214
-
-
-State 199
-
-  126 method_call_noname_args: method_call_noname_arg .
-  130 method_call_args: method_call_noname_arg . method_call_name_args
-
-    ID  shift, and go to state 215
-
-    $default  reduce using rule 126 (method_call_noname_args)
-
-    method_call_name_arg   go to state 216
-    method_call_name_args  go to state 217
+    expr  go to state 234
 
 
-State 200
+State 213
 
-  127 method_call_noname_args: method_call_noname_args . method_call_noname_arg
-  131 method_call_args: method_call_noname_args .
+  135 method_call_noname_args: method_call_noname_arg .
+  139 method_call_args: method_call_noname_arg . method_call_name_args
 
-    ':'  shift, and go to state 198
+    ID  shift, and go to state 235
 
-    $default  reduce using rule 131 (method_call_args)
+    $default  reduce using rule 135 (method_call_noname_args)
 
-    method_call_noname_arg  go to state 218
+    method_call_name_arg   go to state 236
+    method_call_name_args  go to state 237
 
 
-State 201
+State 214
+
+  136 method_call_noname_args: method_call_noname_args . method_call_noname_arg
+  140 method_call_args: method_call_noname_args .
+
+    ':'  shift, and go to state 212
+
+    $default  reduce using rule 140 (method_call_args)
+
+    method_call_noname_arg  go to state 238
+
+
+State 215
 
    66 expr: '[' expr ID method_call_args . ']'
 
-    ']'  shift, and go to state 219
+    ']'  shift, and go to state 239
 
 
-State 202
+State 216
 
-   25 var_decl: type ID '=' expr . ';'
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   24 var_decl: type ID '=' expr . ';'
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3486,80 +3526,111 @@ State 202
     '%'               shift, and go to state 138
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
-    ';'               shift, and go to state 220
+    ';'               shift, and go to state 240
 
 
-State 203
+State 217
 
-   27 var_decl: type ID '[' INT_CONST . ']' ';'
-   28         | type ID '[' INT_CONST . ']' '=' '{' array_elems_or_empty '}' ';'
+   28 var_decl: type ID '[' INT_CONST . ']' ';'
+   30         | type ID '[' INT_CONST . ']' '=' '{' array_elems_or_empty '}' ';'
 
-    ']'  shift, and go to state 221
-
-
-State 204
-
-  133 expr_list: expr_list . ',' expr
-  134 array_elems_or_empty: expr_list .
-
-    ','  shift, and go to state 193
-
-    $default  reduce using rule 134 (array_elems_or_empty)
+    ']'  shift, and go to state 241
 
 
-State 205
+State 218
+
+  142 expr_list: expr_list . ',' expr
+  143 array_elems_or_empty: expr_list .
+
+    ','  shift, and go to state 207
+
+    $default  reduce using rule 143 (array_elems_or_empty)
+
+
+State 219
 
    47 expr: expr '=' '{' array_elems_or_empty . '}'
 
-    '}'  shift, and go to state 222
+    '}'  shift, and go to state 242
 
 
-State 206
+State 220
 
    68 expr: expr '[' expr ']' .
 
     $default  reduce using rule 68 (expr)
 
 
-State 207
+State 221
 
-  101 class_method: '-' '(' type ')' ID . ':' class_method_params
-  103             | '-' '(' type ')' ID .
+  107 class_method: '-' '(' ID '*' ')' . ID ':' class_method_params
+  111             | '-' '(' ID '*' ')' . ID
 
-    ':'  shift, and go to state 223
-
-    $default  reduce using rule 103 (class_method)
+    ID  shift, and go to state 243
 
 
-State 208
+State 222
 
-  102 class_method: '+' '(' type ')' ID . ':' class_method_params
-  104             | '+' '(' type ')' ID .
+  106 class_method: '-' '(' type ')' ID . ':' class_method_params
+  110             | '-' '(' type ')' ID .
 
-    ':'  shift, and go to state 224
+    ':'  shift, and go to state 244
 
-    $default  reduce using rule 104 (class_method)
-
-
-State 209
-
-  114 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END .
-
-    $default  reduce using rule 114 (class_declaration)
+    $default  reduce using rule 110 (class_method)
 
 
-State 210
+State 223
 
-  137 func_arg: type ID '[' ']' .
+  109 class_method: '+' '(' ID '*' ')' . ID ':' class_method_params
+  113             | '+' '(' ID '*' ')' . ID
 
-    $default  reduce using rule 137 (func_arg)
+    ID  shift, and go to state 245
 
 
-State 211
+State 224
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+  108 class_method: '+' '(' type ')' ID . ':' class_method_params
+  112             | '+' '(' type ')' ID .
+
+    ':'  shift, and go to state 246
+
+    $default  reduce using rule 112 (class_method)
+
+
+State 225
+
+   81 class_invariant_declaration: ID '*' ID ';' .
+
+    $default  reduce using rule 81 (class_invariant_declaration)
+
+
+State 226
+
+  123 class_declaration: INTERFACE ID ':' ID class_invariants_declaration class_methods_declaration_or_empty END .
+
+    $default  reduce using rule 123 (class_declaration)
+
+
+State 227
+
+  148 func_arg: ID '*' ID '[' . ']'
+
+    ']'  shift, and go to state 247
+
+
+State 228
+
+  147 func_arg: type ID '[' ']' .
+
+    $default  reduce using rule 147 (func_arg)
+
+
+State 229
+
+   25 var_decl: ID '*' ID '=' expr . ';'
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3574,7 +3645,54 @@ State 211
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  133 expr_list: expr_list ',' expr .
+
+    '='               shift, and go to state 125
+    OR                shift, and go to state 126
+    AND               shift, and go to state 127
+    NOT_EQUAL         shift, and go to state 128
+    EQUAL             shift, and go to state 129
+    '<'               shift, and go to state 130
+    '>'               shift, and go to state 131
+    GREATER_OR_EQUAL  shift, and go to state 132
+    LESS_OR_EQUAL     shift, and go to state 133
+    '-'               shift, and go to state 134
+    '+'               shift, and go to state 135
+    '*'               shift, and go to state 136
+    '/'               shift, and go to state 137
+    '%'               shift, and go to state 138
+    ARROW             shift, and go to state 139
+    '['               shift, and go to state 140
+    ';'               shift, and go to state 248
+
+
+State 230
+
+   29 var_decl: ID '*' ID '[' INT_CONST . ']' ';'
+   31         | ID '*' ID '[' INT_CONST . ']' '=' '{' array_elems_or_empty '}' ';'
+
+    ']'  shift, and go to state 249
+
+
+State 231
+
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
+   44     | expr . '/' expr
+   45     | expr . '%' expr
+   46     | expr . '=' expr
+   47     | expr . '=' '{' array_elems_or_empty '}'
+   48     | expr . '<' expr
+   49     | expr . LESS_OR_EQUAL expr
+   50     | expr . '>' expr
+   51     | expr . GREATER_OR_EQUAL expr
+   52     | expr . EQUAL expr
+   53     | expr . NOT_EQUAL expr
+   54     | expr . AND expr
+   55     | expr . OR expr
+   68     | expr . '[' expr ']'
+   69     | expr . ARROW ID
+  142 expr_list: expr_list ',' expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -3593,32 +3711,32 @@ State 211
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 133 (expr_list)
+    $default  reduce using rule 142 (expr_list)
 
 
-State 212
+State 232
 
-   24 while_stmt: WHILE '(' expr ')' stmt .
+   23 while_stmt: WHILE '(' expr ')' stmt .
 
-    $default  reduce using rule 24 (while_stmt)
-
-
-State 213
-
-   22 if_stmt: IF '(' expr ')' stmt .
-   23        | IF '(' expr ')' stmt . ELSE stmt
-
-    ELSE  shift, and go to state 225
-
-    ELSE      [reduce using rule 22 (if_stmt)]
-    $default  reduce using rule 22 (if_stmt)
+    $default  reduce using rule 23 (while_stmt)
 
 
-State 214
+State 233
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+   21 if_stmt: IF '(' expr ')' stmt .
+   22        | IF '(' expr ')' stmt . ELSE stmt
+
+    ELSE  shift, and go to state 250
+
+    ELSE      [reduce using rule 21 (if_stmt)]
+    $default  reduce using rule 21 (if_stmt)
+
+
+State 234
+
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3633,7 +3751,7 @@ State 214
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  124 method_call_noname_arg: ':' expr .
+  133 method_call_noname_arg: ':' expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -3652,113 +3770,156 @@ State 214
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 124 (method_call_noname_arg)
+    $default  reduce using rule 133 (method_call_noname_arg)
 
 
-State 215
+State 235
 
-  125 method_call_name_arg: ID . ':' expr
+  134 method_call_name_arg: ID . ':' expr
 
-    ':'  shift, and go to state 226
-
-
-State 216
-
-  128 method_call_name_args: method_call_name_arg .
-
-    $default  reduce using rule 128 (method_call_name_args)
+    ':'  shift, and go to state 251
 
 
-State 217
+State 236
 
-  129 method_call_name_args: method_call_name_args . method_call_name_arg
-  130 method_call_args: method_call_noname_arg method_call_name_args .
+  137 method_call_name_args: method_call_name_arg .
 
-    ID  shift, and go to state 215
-
-    $default  reduce using rule 130 (method_call_args)
-
-    method_call_name_arg  go to state 227
+    $default  reduce using rule 137 (method_call_name_args)
 
 
-State 218
+State 237
 
-  127 method_call_noname_args: method_call_noname_args method_call_noname_arg .
+  138 method_call_name_args: method_call_name_args . method_call_name_arg
+  139 method_call_args: method_call_noname_arg method_call_name_args .
 
-    $default  reduce using rule 127 (method_call_noname_args)
+    ID  shift, and go to state 235
+
+    $default  reduce using rule 139 (method_call_args)
+
+    method_call_name_arg  go to state 252
 
 
-State 219
+State 238
+
+  136 method_call_noname_args: method_call_noname_args method_call_noname_arg .
+
+    $default  reduce using rule 136 (method_call_noname_args)
+
+
+State 239
 
    66 expr: '[' expr ID method_call_args ']' .
 
     $default  reduce using rule 66 (expr)
 
 
-State 220
+State 240
 
-   25 var_decl: type ID '=' expr ';' .
+   24 var_decl: type ID '=' expr ';' .
 
-    $default  reduce using rule 25 (var_decl)
-
-
-State 221
-
-   27 var_decl: type ID '[' INT_CONST ']' . ';'
-   28         | type ID '[' INT_CONST ']' . '=' '{' array_elems_or_empty '}' ';'
-
-    '='  shift, and go to state 228
-    ';'  shift, and go to state 229
+    $default  reduce using rule 24 (var_decl)
 
 
-State 222
+State 241
+
+   28 var_decl: type ID '[' INT_CONST ']' . ';'
+   30         | type ID '[' INT_CONST ']' . '=' '{' array_elems_or_empty '}' ';'
+
+    '='  shift, and go to state 253
+    ';'  shift, and go to state 254
+
+
+State 242
 
    47 expr: expr '=' '{' array_elems_or_empty '}' .
 
     $default  reduce using rule 47 (expr)
 
 
-State 223
+State 243
 
-  101 class_method: '-' '(' type ')' ID ':' . class_method_params
+  107 class_method: '-' '(' ID '*' ')' ID . ':' class_method_params
+  111             | '-' '(' ID '*' ')' ID .
 
-    '('  shift, and go to state 230
+    ':'  shift, and go to state 255
 
-    $default  reduce using rule 100 (class_method_params)
-
-    class_method_first_param     go to state 231
-    class_method_params_nonamed  go to state 232
-    class_method_all_params      go to state 233
-    class_method_params          go to state 234
+    $default  reduce using rule 111 (class_method)
 
 
-State 224
+State 244
 
-  102 class_method: '+' '(' type ')' ID ':' . class_method_params
+  106 class_method: '-' '(' type ')' ID ':' . class_method_params
 
-    '('  shift, and go to state 230
+    '('  shift, and go to state 256
 
-    $default  reduce using rule 100 (class_method_params)
+    $default  reduce using rule 105 (class_method_params)
 
-    class_method_first_param     go to state 231
-    class_method_params_nonamed  go to state 232
-    class_method_all_params      go to state 233
-    class_method_params          go to state 235
+    class_method_first_param     go to state 257
+    class_method_params_nonamed  go to state 258
+    class_method_all_params      go to state 259
+    class_method_params          go to state 260
 
 
-State 225
+State 245
 
-   23 if_stmt: IF '(' expr ')' stmt ELSE . stmt
+  109 class_method: '+' '(' ID '*' ')' ID . ':' class_method_params
+  113             | '+' '(' ID '*' ')' ID .
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    WHILE         shift, and go to state 64
-    IF            shift, and go to state 65
-    RETURN        shift, and go to state 66
+    ':'  shift, and go to state 261
+
+    $default  reduce using rule 113 (class_method)
+
+
+State 246
+
+  108 class_method: '+' '(' type ')' ID ':' . class_method_params
+
+    '('  shift, and go to state 256
+
+    $default  reduce using rule 105 (class_method_params)
+
+    class_method_first_param     go to state 257
+    class_method_params_nonamed  go to state 258
+    class_method_all_params      go to state 259
+    class_method_params          go to state 262
+
+
+State 247
+
+  148 func_arg: ID '*' ID '[' ']' .
+
+    $default  reduce using rule 148 (func_arg)
+
+
+State 248
+
+   25 var_decl: ID '*' ID '=' expr ';' .
+
+    $default  reduce using rule 25 (var_decl)
+
+
+State 249
+
+   29 var_decl: ID '*' ID '[' INT_CONST ']' . ';'
+   31         | ID '*' ID '[' INT_CONST ']' . '=' '{' array_elems_or_empty '}' ';'
+
+    '='  shift, and go to state 263
+    ';'  shift, and go to state 264
+
+
+State 250
+
+   22 if_stmt: IF '(' expr ')' stmt ELSE . stmt
+
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 61
+    WHILE         shift, and go to state 62
+    IF            shift, and go to state 63
+    RETURN        shift, and go to state 64
     ENUM          shift, and go to state 4
     INT           shift, and go to state 5
     FLOAT         shift, and go to state 6
@@ -3766,73 +3927,87 @@ State 225
     CHAR          shift, and go to state 8
     BOOL          shift, and go to state 9
     VOID          shift, and go to state 10
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    ';'           shift, and go to state 71
-    '{'           shift, and go to state 33
-    '('           shift, and go to state 72
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    ';'           shift, and go to state 69
+    '{'           shift, and go to state 30
+    '('           shift, and go to state 70
 
-    stmt                 go to state 236
-    compound_stmt        go to state 76
-    if_stmt              go to state 77
-    while_stmt           go to state 78
-    var_decl             go to state 79
-    pointer_custom_type  go to state 80
-    enum_type            go to state 81
-    type                 go to state 82
-    default_type         go to state 17
-    expr                 go to state 83
-
-
-State 226
-
-  125 method_call_name_arg: ID ':' . expr
-
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
-
-    pointer_custom_type  go to state 114
-    expr                 go to state 237
+    stmt           go to state 265
+    compound_stmt  go to state 74
+    if_stmt        go to state 75
+    while_stmt     go to state 76
+    var_decl       go to state 77
+    enum_type      go to state 78
+    type           go to state 79
+    default_type   go to state 16
+    expr           go to state 80
 
 
-State 227
+State 251
 
-  129 method_call_name_args: method_call_name_args method_call_name_arg .
+  134 method_call_name_arg: ID ':' . expr
 
-    $default  reduce using rule 129 (method_call_name_args)
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-
-State 228
-
-   28 var_decl: type ID '[' INT_CONST ']' '=' . '{' array_elems_or_empty '}' ';'
-
-    '{'  shift, and go to state 238
-
-
-State 229
-
-   27 var_decl: type ID '[' INT_CONST ']' ';' .
-
-    $default  reduce using rule 27 (var_decl)
+    expr  go to state 266
 
 
-State 230
+State 252
 
-   89 class_method_first_param: '(' . type ')' ID
-   90                         | '(' . type '[' ']' ')' ID
+  138 method_call_name_args: method_call_name_args method_call_name_arg .
 
-    ID      shift, and go to state 1
+    $default  reduce using rule 138 (method_call_name_args)
+
+
+State 253
+
+   30 var_decl: type ID '[' INT_CONST ']' '=' . '{' array_elems_or_empty '}' ';'
+
+    '{'  shift, and go to state 267
+
+
+State 254
+
+   28 var_decl: type ID '[' INT_CONST ']' ';' .
+
+    $default  reduce using rule 28 (var_decl)
+
+
+State 255
+
+  107 class_method: '-' '(' ID '*' ')' ID ':' . class_method_params
+
+    '('  shift, and go to state 256
+
+    $default  reduce using rule 105 (class_method_params)
+
+    class_method_first_param     go to state 257
+    class_method_params_nonamed  go to state 258
+    class_method_all_params      go to state 259
+    class_method_params          go to state 268
+
+
+State 256
+
+   90 class_method_first_param: '(' . type ')' ID
+   91                         | '(' . ID '*' ')' ID
+   92                         | '(' . type '[' ']' ')' ID
+   93                         | '(' . ID '*' '[' ']' ')' ID
+
+    ID      shift, and go to state 269
     ENUM    shift, and go to state 4
     INT     shift, and go to state 5
     FLOAT   shift, and go to state 6
@@ -3841,70 +4016,97 @@ State 230
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    pointer_custom_type  go to state 14
-    enum_type            go to state 81
-    type                 go to state 239
-    default_type         go to state 17
+    enum_type     go to state 78
+    type          go to state 270
+    default_type  go to state 16
 
 
-State 231
+State 257
 
-   95 class_method_params_nonamed: class_method_first_param .
-   97 class_method_all_params: class_method_first_param . class_method_other_params_named
+  100 class_method_params_nonamed: class_method_first_param .
+  102 class_method_all_params: class_method_first_param . class_method_other_params_named
 
-    ID  shift, and go to state 240
+    ID  shift, and go to state 271
 
-    $default  reduce using rule 95 (class_method_params_nonamed)
+    $default  reduce using rule 100 (class_method_params_nonamed)
 
-    class_method_other_param_named   go to state 241
-    class_method_other_params_named  go to state 242
-
-
-State 232
-
-   96 class_method_params_nonamed: class_method_params_nonamed . class_method_first_param
-   98 class_method_all_params: class_method_params_nonamed .
-
-    '('  shift, and go to state 230
-
-    $default  reduce using rule 98 (class_method_all_params)
-
-    class_method_first_param  go to state 243
+    class_method_other_param_named   go to state 272
+    class_method_other_params_named  go to state 273
 
 
-State 233
+State 258
 
-   99 class_method_params: class_method_all_params .
+  101 class_method_params_nonamed: class_method_params_nonamed . class_method_first_param
+  103 class_method_all_params: class_method_params_nonamed .
 
-    $default  reduce using rule 99 (class_method_params)
+    '('  shift, and go to state 256
 
+    $default  reduce using rule 103 (class_method_all_params)
 
-State 234
-
-  101 class_method: '-' '(' type ')' ID ':' class_method_params .
-
-    $default  reduce using rule 101 (class_method)
+    class_method_first_param  go to state 274
 
 
-State 235
+State 259
 
-  102 class_method: '+' '(' type ')' ID ':' class_method_params .
+  104 class_method_params: class_method_all_params .
 
-    $default  reduce using rule 102 (class_method)
-
-
-State 236
-
-   23 if_stmt: IF '(' expr ')' stmt ELSE stmt .
-
-    $default  reduce using rule 23 (if_stmt)
+    $default  reduce using rule 104 (class_method_params)
 
 
-State 237
+State 260
 
-   40 expr: expr . '+' expr
-   41     | expr . '-' expr
-   42     | expr . '*' expr
+  106 class_method: '-' '(' type ')' ID ':' class_method_params .
+
+    $default  reduce using rule 106 (class_method)
+
+
+State 261
+
+  109 class_method: '+' '(' ID '*' ')' ID ':' . class_method_params
+
+    '('  shift, and go to state 256
+
+    $default  reduce using rule 105 (class_method_params)
+
+    class_method_first_param     go to state 257
+    class_method_params_nonamed  go to state 258
+    class_method_all_params      go to state 259
+    class_method_params          go to state 275
+
+
+State 262
+
+  108 class_method: '+' '(' type ')' ID ':' class_method_params .
+
+    $default  reduce using rule 108 (class_method)
+
+
+State 263
+
+   31 var_decl: ID '*' ID '[' INT_CONST ']' '=' . '{' array_elems_or_empty '}' ';'
+
+    '{'  shift, and go to state 276
+
+
+State 264
+
+   29 var_decl: ID '*' ID '[' INT_CONST ']' ';' .
+
+    $default  reduce using rule 29 (var_decl)
+
+
+State 265
+
+   22 if_stmt: IF '(' expr ')' stmt ELSE stmt .
+
+    $default  reduce using rule 22 (if_stmt)
+
+
+State 266
+
+   41 expr: expr . '+' expr
+   42     | expr . '-' expr
+   43     | expr . '*' expr
    44     | expr . '/' expr
    45     | expr . '%' expr
    46     | expr . '=' expr
@@ -3919,7 +4121,7 @@ State 237
    55     | expr . OR expr
    68     | expr . '[' expr ']'
    69     | expr . ARROW ID
-  125 method_call_name_arg: ID ':' expr .
+  134 method_call_name_arg: ID ':' expr .
 
     '='               shift, and go to state 125
     OR                shift, and go to state 126
@@ -3938,139 +4140,219 @@ State 237
     ARROW             shift, and go to state 139
     '['               shift, and go to state 140
 
-    $default  reduce using rule 125 (method_call_name_arg)
+    $default  reduce using rule 134 (method_call_name_arg)
 
 
-State 238
+State 267
 
-   28 var_decl: type ID '[' INT_CONST ']' '=' '{' . array_elems_or_empty '}' ';'
+   30 var_decl: type ID '[' INT_CONST ']' '=' '{' . array_elems_or_empty '}' ';'
 
-    INT_CONST     shift, and go to state 58
-    FLOAT_CONST   shift, and go to state 59
-    CHAR_CONST    shift, and go to state 60
-    BOOL_CONST    shift, and go to state 61
-    STRING_CONST  shift, and go to state 62
-    ID            shift, and go to state 63
-    '-'           shift, and go to state 67
-    '+'           shift, and go to state 68
-    '!'           shift, and go to state 69
-    '['           shift, and go to state 70
-    '('           shift, and go to state 72
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
-    $default  reduce using rule 135 (array_elems_or_empty)
+    $default  reduce using rule 144 (array_elems_or_empty)
 
-    pointer_custom_type   go to state 114
-    expr                  go to state 159
-    expr_list             go to state 204
-    array_elems_or_empty  go to state 244
+    expr                  go to state 165
+    expr_list             go to state 218
+    array_elems_or_empty  go to state 277
 
 
-State 239
+State 268
 
-   89 class_method_first_param: '(' type . ')' ID
-   90                         | '(' type . '[' ']' ')' ID
+  107 class_method: '-' '(' ID '*' ')' ID ':' class_method_params .
 
-    '['  shift, and go to state 245
-    ')'  shift, and go to state 246
+    $default  reduce using rule 107 (class_method)
 
 
-State 240
+State 269
 
-   91 class_method_other_param_named: ID . ':' '(' type ')' ID
-   92                               | ID . ':' '(' type '[' ']' ')' ID
+   91 class_method_first_param: '(' ID . '*' ')' ID
+   93                         | '(' ID . '*' '[' ']' ')' ID
 
-    ':'  shift, and go to state 247
+    '*'  shift, and go to state 278
 
 
-State 241
+State 270
 
-   93 class_method_other_params_named: class_method_other_param_named .
+   90 class_method_first_param: '(' type . ')' ID
+   92                         | '(' type . '[' ']' ')' ID
 
-    $default  reduce using rule 93 (class_method_other_params_named)
+    '['  shift, and go to state 279
+    ')'  shift, and go to state 280
 
 
-State 242
+State 271
 
-   94 class_method_other_params_named: class_method_other_params_named . class_method_other_param_named
-   97 class_method_all_params: class_method_first_param class_method_other_params_named .
+   94 class_method_other_param_named: ID . ':' '(' type ')' ID
+   95                               | ID . ':' '(' ID '*' ')' ID
+   96                               | ID . ':' '(' type '[' ']' ')' ID
+   97                               | ID . ':' '(' ID '*' '[' ']' ')' ID
 
-    ID  shift, and go to state 240
+    ':'  shift, and go to state 281
 
-    $default  reduce using rule 97 (class_method_all_params)
 
-    class_method_other_param_named  go to state 248
+State 272
 
+   98 class_method_other_params_named: class_method_other_param_named .
 
-State 243
+    $default  reduce using rule 98 (class_method_other_params_named)
 
-   96 class_method_params_nonamed: class_method_params_nonamed class_method_first_param .
 
-    $default  reduce using rule 96 (class_method_params_nonamed)
+State 273
 
+   99 class_method_other_params_named: class_method_other_params_named . class_method_other_param_named
+  102 class_method_all_params: class_method_first_param class_method_other_params_named .
 
-State 244
+    ID  shift, and go to state 271
 
-   28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty . '}' ';'
+    $default  reduce using rule 102 (class_method_all_params)
 
-    '}'  shift, and go to state 249
+    class_method_other_param_named  go to state 282
 
 
-State 245
+State 274
 
-   90 class_method_first_param: '(' type '[' . ']' ')' ID
+  101 class_method_params_nonamed: class_method_params_nonamed class_method_first_param .
 
-    ']'  shift, and go to state 250
+    $default  reduce using rule 101 (class_method_params_nonamed)
 
 
-State 246
+State 275
 
-   89 class_method_first_param: '(' type ')' . ID
+  109 class_method: '+' '(' ID '*' ')' ID ':' class_method_params .
 
-    ID  shift, and go to state 251
+    $default  reduce using rule 109 (class_method)
 
 
-State 247
+State 276
 
-   91 class_method_other_param_named: ID ':' . '(' type ')' ID
-   92                               | ID ':' . '(' type '[' ']' ')' ID
+   31 var_decl: ID '*' ID '[' INT_CONST ']' '=' '{' . array_elems_or_empty '}' ';'
 
-    '('  shift, and go to state 252
+    INT_CONST     shift, and go to state 56
+    FLOAT_CONST   shift, and go to state 57
+    CHAR_CONST    shift, and go to state 58
+    BOOL_CONST    shift, and go to state 59
+    STRING_CONST  shift, and go to state 60
+    ID            shift, and go to state 114
+    '-'           shift, and go to state 65
+    '+'           shift, and go to state 66
+    '!'           shift, and go to state 67
+    '['           shift, and go to state 68
+    '('           shift, and go to state 70
 
+    $default  reduce using rule 144 (array_elems_or_empty)
 
-State 248
+    expr                  go to state 165
+    expr_list             go to state 218
+    array_elems_or_empty  go to state 283
 
-   94 class_method_other_params_named: class_method_other_params_named class_method_other_param_named .
 
-    $default  reduce using rule 94 (class_method_other_params_named)
+State 277
 
+   30 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty . '}' ';'
 
-State 249
+    '}'  shift, and go to state 284
 
-   28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' . ';'
 
-    ';'  shift, and go to state 253
+State 278
 
+   91 class_method_first_param: '(' ID '*' . ')' ID
+   93                         | '(' ID '*' . '[' ']' ')' ID
 
-State 250
+    '['  shift, and go to state 285
+    ')'  shift, and go to state 286
 
-   90 class_method_first_param: '(' type '[' ']' . ')' ID
 
-    ')'  shift, and go to state 254
+State 279
 
+   92 class_method_first_param: '(' type '[' . ']' ')' ID
 
-State 251
+    ']'  shift, and go to state 287
 
-   89 class_method_first_param: '(' type ')' ID .
 
-    $default  reduce using rule 89 (class_method_first_param)
+State 280
 
+   90 class_method_first_param: '(' type ')' . ID
 
-State 252
+    ID  shift, and go to state 288
 
-   91 class_method_other_param_named: ID ':' '(' . type ')' ID
-   92                               | ID ':' '(' . type '[' ']' ')' ID
 
-    ID      shift, and go to state 1
+State 281
+
+   94 class_method_other_param_named: ID ':' . '(' type ')' ID
+   95                               | ID ':' . '(' ID '*' ')' ID
+   96                               | ID ':' . '(' type '[' ']' ')' ID
+   97                               | ID ':' . '(' ID '*' '[' ']' ')' ID
+
+    '('  shift, and go to state 289
+
+
+State 282
+
+   99 class_method_other_params_named: class_method_other_params_named class_method_other_param_named .
+
+    $default  reduce using rule 99 (class_method_other_params_named)
+
+
+State 283
+
+   31 var_decl: ID '*' ID '[' INT_CONST ']' '=' '{' array_elems_or_empty . '}' ';'
+
+    '}'  shift, and go to state 290
+
+
+State 284
+
+   30 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' . ';'
+
+    ';'  shift, and go to state 291
+
+
+State 285
+
+   93 class_method_first_param: '(' ID '*' '[' . ']' ')' ID
+
+    ']'  shift, and go to state 292
+
+
+State 286
+
+   91 class_method_first_param: '(' ID '*' ')' . ID
+
+    ID  shift, and go to state 293
+
+
+State 287
+
+   92 class_method_first_param: '(' type '[' ']' . ')' ID
+
+    ')'  shift, and go to state 294
+
+
+State 288
+
+   90 class_method_first_param: '(' type ')' ID .
+
+    $default  reduce using rule 90 (class_method_first_param)
+
+
+State 289
+
+   94 class_method_other_param_named: ID ':' '(' . type ')' ID
+   95                               | ID ':' '(' . ID '*' ')' ID
+   96                               | ID ':' '(' . type '[' ']' ')' ID
+   97                               | ID ':' '(' . ID '*' '[' ']' ')' ID
+
+    ID      shift, and go to state 295
     ENUM    shift, and go to state 4
     INT     shift, and go to state 5
     FLOAT   shift, and go to state 6
@@ -4079,79 +4361,179 @@ State 252
     BOOL    shift, and go to state 9
     VOID    shift, and go to state 10
 
-    pointer_custom_type  go to state 14
-    enum_type            go to state 81
-    type                 go to state 255
-    default_type         go to state 17
+    enum_type     go to state 78
+    type          go to state 296
+    default_type  go to state 16
 
 
-State 253
+State 290
 
-   28 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';' .
+   31 var_decl: ID '*' ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' . ';'
 
-    $default  reduce using rule 28 (var_decl)
-
-
-State 254
-
-   90 class_method_first_param: '(' type '[' ']' ')' . ID
-
-    ID  shift, and go to state 256
+    ';'  shift, and go to state 297
 
 
-State 255
+State 291
 
-   91 class_method_other_param_named: ID ':' '(' type . ')' ID
-   92                               | ID ':' '(' type . '[' ']' ')' ID
+   30 var_decl: type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';' .
 
-    '['  shift, and go to state 257
-    ')'  shift, and go to state 258
+    $default  reduce using rule 30 (var_decl)
 
 
-State 256
+State 292
 
-   90 class_method_first_param: '(' type '[' ']' ')' ID .
+   93 class_method_first_param: '(' ID '*' '[' ']' . ')' ID
 
-    $default  reduce using rule 90 (class_method_first_param)
-
-
-State 257
-
-   92 class_method_other_param_named: ID ':' '(' type '[' . ']' ')' ID
-
-    ']'  shift, and go to state 259
+    ')'  shift, and go to state 298
 
 
-State 258
+State 293
 
-   91 class_method_other_param_named: ID ':' '(' type ')' . ID
+   91 class_method_first_param: '(' ID '*' ')' ID .
 
-    ID  shift, and go to state 260
-
-
-State 259
-
-   92 class_method_other_param_named: ID ':' '(' type '[' ']' . ')' ID
-
-    ')'  shift, and go to state 261
+    $default  reduce using rule 91 (class_method_first_param)
 
 
-State 260
+State 294
 
-   91 class_method_other_param_named: ID ':' '(' type ')' ID .
+   92 class_method_first_param: '(' type '[' ']' ')' . ID
 
-    $default  reduce using rule 91 (class_method_other_param_named)
-
-
-State 261
-
-   92 class_method_other_param_named: ID ':' '(' type '[' ']' ')' . ID
-
-    ID  shift, and go to state 262
+    ID  shift, and go to state 299
 
 
-State 262
+State 295
 
-   92 class_method_other_param_named: ID ':' '(' type '[' ']' ')' ID .
+   95 class_method_other_param_named: ID ':' '(' ID . '*' ')' ID
+   97                               | ID ':' '(' ID . '*' '[' ']' ')' ID
 
-    $default  reduce using rule 92 (class_method_other_param_named)
+    '*'  shift, and go to state 300
+
+
+State 296
+
+   94 class_method_other_param_named: ID ':' '(' type . ')' ID
+   96                               | ID ':' '(' type . '[' ']' ')' ID
+
+    '['  shift, and go to state 301
+    ')'  shift, and go to state 302
+
+
+State 297
+
+   31 var_decl: ID '*' ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';' .
+
+    $default  reduce using rule 31 (var_decl)
+
+
+State 298
+
+   93 class_method_first_param: '(' ID '*' '[' ']' ')' . ID
+
+    ID  shift, and go to state 303
+
+
+State 299
+
+   92 class_method_first_param: '(' type '[' ']' ')' ID .
+
+    $default  reduce using rule 92 (class_method_first_param)
+
+
+State 300
+
+   95 class_method_other_param_named: ID ':' '(' ID '*' . ')' ID
+   97                               | ID ':' '(' ID '*' . '[' ']' ')' ID
+
+    '['  shift, and go to state 304
+    ')'  shift, and go to state 305
+
+
+State 301
+
+   96 class_method_other_param_named: ID ':' '(' type '[' . ']' ')' ID
+
+    ']'  shift, and go to state 306
+
+
+State 302
+
+   94 class_method_other_param_named: ID ':' '(' type ')' . ID
+
+    ID  shift, and go to state 307
+
+
+State 303
+
+   93 class_method_first_param: '(' ID '*' '[' ']' ')' ID .
+
+    $default  reduce using rule 93 (class_method_first_param)
+
+
+State 304
+
+   97 class_method_other_param_named: ID ':' '(' ID '*' '[' . ']' ')' ID
+
+    ']'  shift, and go to state 308
+
+
+State 305
+
+   95 class_method_other_param_named: ID ':' '(' ID '*' ')' . ID
+
+    ID  shift, and go to state 309
+
+
+State 306
+
+   96 class_method_other_param_named: ID ':' '(' type '[' ']' . ')' ID
+
+    ')'  shift, and go to state 310
+
+
+State 307
+
+   94 class_method_other_param_named: ID ':' '(' type ')' ID .
+
+    $default  reduce using rule 94 (class_method_other_param_named)
+
+
+State 308
+
+   97 class_method_other_param_named: ID ':' '(' ID '*' '[' ']' . ')' ID
+
+    ')'  shift, and go to state 311
+
+
+State 309
+
+   95 class_method_other_param_named: ID ':' '(' ID '*' ')' ID .
+
+    $default  reduce using rule 95 (class_method_other_param_named)
+
+
+State 310
+
+   96 class_method_other_param_named: ID ':' '(' type '[' ']' ')' . ID
+
+    ID  shift, and go to state 312
+
+
+State 311
+
+   97 class_method_other_param_named: ID ':' '(' ID '*' '[' ']' ')' . ID
+
+    ID  shift, and go to state 313
+
+
+State 312
+
+   96 class_method_other_param_named: ID ':' '(' type '[' ']' ')' ID .
+
+    $default  reduce using rule 96 (class_method_other_param_named)
+
+
+State 313
+
+   97 class_method_other_param_named: ID ':' '(' ID '*' '[' ']' ')' ID .
+
+    $default  reduce using rule 97 (class_method_other_param_named)

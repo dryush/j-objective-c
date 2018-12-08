@@ -324,7 +324,8 @@ public:
             retType = new TypeNode(*node->right->returnType->childType);
         }
         else if ( node->exprType == ExprType::EXPR_ARRAY_ELEM_CALL ) {
-            retType = new TypeNode(*node->left->returnType->childType);
+            if (node->left->returnType->childType)
+				retType = new TypeNode(*node->left->returnType->childType);
         }
        
         node->returnType = retType;

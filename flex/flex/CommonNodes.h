@@ -315,6 +315,9 @@ ExprNode::ExprNode(Expression_st* st) {
 			else if (this->constType == TYPE_STRING) {
 				this->strVal = st->string_value;
 			}
+			else if (this->constType == TYPE_ARRAY) {
+				
+			}
 		}
 		else if (this->operationType == OP_UPLUS
 			|| this->operationType == OP_UMINUS
