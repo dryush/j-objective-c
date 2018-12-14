@@ -6,11 +6,15 @@
 #include <locale.h>
 #include <process.h>
 
+#include <codecvt>
+
 #include "ProgramNode.h"
 #include "struct_print.h"
 #include "objectivec.tab.c"
 #include "lex.yy.c"
- 
+
+#include "_ClassFileGenerator.h"
+
 
 #include "FunctionLocalVarChecker.h"
 #include "ArrayAndFieldAssignTransform.h"
@@ -25,6 +29,10 @@
 using namespace std;
 
 extern struct Program_st* root;
+
+namespace Win {
+#include <Windows.h>
+};
 
 int main(int argc, char *argv[]) {
     
@@ -51,7 +59,7 @@ int main(int argc, char *argv[]) {
 
 	visiters.push_back( new VariableTypeChecker());
 	visiters.push_back( new ReturnChecker());
-	//visiters.push_back( new JVMTableFiller());
+	visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
     //prog->visit( visiters.back());
     try{
@@ -78,8 +86,19 @@ int main(int argc, char *argv[]) {
         printf("COMPILATION STOPPED!!!\n");
 
     }
+
+    vector<JavaConstantTable*> tbls;
+    FOR_EACH( cl, classes){
+        tbls.push_back( cl->second->table);
+    }
+
+    ClassFileGenerator fileGen;
+    
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    Win::CreateDirectoryW( converter.from_bytes( "./" + fileGen.sourceDir).c_str(), 0);
+    fileGen.genClassFiles( tbls);
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
-    execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
+    //execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
 	
     //system("graphSemantic.bat");
     //system("graph.bat");

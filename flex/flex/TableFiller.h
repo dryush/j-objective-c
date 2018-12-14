@@ -15,7 +15,7 @@ return std::hash<T>()(x.first) ^ std::hash<U>()(x.second);
 
 
 
-class JavaTable;
+class JavaConstantTable;
 
 /// TODO::: Прописать деструкторы
 
@@ -216,7 +216,7 @@ class ClassInfo {
 public:
     bool isDefault;
     ClassInfo(){
-        this->isDefault = true;
+        this->isDefault = false;
     }
 
     string name;
@@ -228,7 +228,7 @@ public:
     ClassDeclarationNode* classDeclNode;
     ClassImplementationNode* classImlpNode;
 
-    JavaTable* table;
+    JavaConstantTable* table;
     
     bool getMethod( string& name, MethodInfo* retMethod = nullptr){
         auto m = this->staticMethods.find( name);
@@ -341,7 +341,7 @@ unordered_map<string, EnumInfo*> enums;
 */
 
 
-const string FUNCTIONS_CLASS = "<MAIN_CLASS>";
+const string FUNCTIONS_CLASS = "#MAIN_CLASS#";
 
 
 string genDescriptor( const TypeInfo& type){
@@ -432,6 +432,7 @@ public:
     int intvalue;
     float floatvalue;
     pair<int, int> twointvalue;
+
     
     JavaTableRecordValueType valueType;
     JavaTableRecordType constantType;
@@ -503,8 +504,82 @@ public:
     }
 
 };
-class JavaTable {
+
+enum JVMFieldAccess{
+    ACC_PUBLIC    =	0x0001,//	Declared public; may be accessed from outside its package.
+    ACC_PRIVATE   =	0x0002,//	Declared private; usable only within the defining class.
+    ACC_PROTECTED =	0x0004,//	Declared protected; may be accessed within subclasses.
+    ACC_STATIC	  = 0x0008,//	Declared static.
+    ACC_FINAL	  = 0x0010,//	Declared final; never directly assigned to after object construction (JLS §17.5).
+    ACC_VOLATILE  =	0x0040,//	Declared volatile; cannot be cached.
+    ACC_TRANSIENT =	0x0080,//	Declared transient; not written or read by a persistent object manager.
+    ACC_SYNTHETIC =	0x1000,//	Declared synthetic; not present in the source code.
+    ACC_ENUM	  = 0x4000,//	Declared as an element of an enum.
+};
+
+
+class JavaFieldTableRecord{
+public:    
+    int access;
+    int nameId;
+    int descriptorId; //NameType
+    int atributesCount; // =0
+
+    JavaFieldTableRecord() {
+        access = ACC_PUBLIC;
+        nameId = -1;
+        descriptorId = -1;
+        atributesCount = 0;
+    }
+
+    JavaFieldTableRecord( FieldInfo* field, int name, int descriptor) {
+        if( field->access == ACCESS_PUBLIC)
+            access = ACC_PUBLIC;
+        else if( field->access == ACCESS_PROTECTED)
+            access = ACC_PROTECTED;
+        else if( field->access == ACCESS_PRIVATE)
+            access = ACC_PRIVATE;
+        
+        nameId = name;
+        descriptorId = descriptor;
+        atributesCount = 0;
+    }
+};
+
+class JavaMethodTableRecord : public JavaFieldTableRecord {
 public:
+     JavaMethodTableRecord( MethodInfo* method, int name, int descriptor){
+        if( method->access == ACCESS_PUBLIC)
+            access = ACC_PUBLIC;
+        else if( method->access == ACCESS_PROTECTED)
+            access = ACC_PROTECTED;
+        else if( method->access == ACCESS_PRIVATE)
+            access = ACC_PRIVATE;
+        
+        if( method->methodType == MethodType::METHOD_STATIC)
+            access |= ACC_STATIC;
+
+        nameId = name;
+        descriptorId = descriptor;
+        atributesCount = 0;
+     }
+     JavaMethodTableRecord( FunctionInfo* method, int name, int descriptor){
+        
+        access = ACC_PUBLIC;
+        access |= ACC_STATIC;
+
+        nameId = name;
+        descriptorId = descriptor;
+        atributesCount = 0;
+     }
+};
+class JavaConstantTable {
+public:
+    ///
+    bool isDefault;
+
+    //// КОНСТАНТЫ
+    
     unordered_map<string, int> utf8s;
     unordered_map<int, int> ints;
     unordered_map<float, int> floats;
@@ -514,7 +589,19 @@ public:
     unordered_map<pair<int, int>, int, pairhash> fields;
     unordered_map<pair<int, int>, int, pairhash> methods;
 
+    ///
+    int classconst;
+    int superclassconst;
+    string classname;
+
+    /// 
     vector<JavaTableRecord> records;
+
+
+    ///
+    vector<JavaFieldTableRecord> fieldsTable;
+    vector<JavaFieldTableRecord> methodsTable;
+
     string to_csv_string(){
         string res;
         for( int i =1; i < records.size(); i++){
@@ -522,7 +609,7 @@ public:
         }
         return res;
     }
-    JavaTable(){
+    JavaConstantTable(){
         //Нумерация с единицы, вроде как
         records.push_back(JavaTableRecord("", CONSTANT_NOT_SET));
     }
@@ -616,6 +703,7 @@ public:
             num = this->fields[classfield] = records.size()-1;
         }
         );
+
         return num;
     }
 
@@ -634,38 +722,70 @@ public:
         return num;
     }
 
-    void addFunction( FunctionInfo* func){
+
+    int addFunction( FunctionInfo* func){
         string typeDescr = genDescriptor( func);
-        addMethod( FUNCTIONS_CLASS, func->name, typeDescr);
+        int mn = addMethod( FUNCTIONS_CLASS, func->name, typeDescr);
+
+        JavaMethodTableRecord methodRecord( func, this->utf8s[ func->name], this->utf8s[func->descriptor]);
+        this->methodsTable.push_back( methodRecord);
+
+        return mn;
     }
 
-    void addMethod( MethodInfo* method){
+    int addMethod( MethodInfo* method){
         
         string typeDescr = genDescriptor( method);
-        addMethod( method->classname, method->name, typeDescr);
+        return addMethod( method->classname, method->name, typeDescr);
     }
 
-    void addField( FieldInfo* field) {
+    void addClassMethod( MethodInfo* method){
+        this->addMethod( method);
+        
+        JavaMethodTableRecord methodRecord ( method, this->utf8s[ method->name], this->utf8s[method->descriptor]); 
+        
+        this->methodsTable.push_back( methodRecord);
+
+    } 
+
+    int addField( FieldInfo* field) {
         
         string typeDescr = genDescriptor( field);
-        addField( field->classname, field->name, typeDescr);
+        return addField( field->classname, field->name, typeDescr);
+        
+    }
+
+    void addClassField( FieldInfo* field){
+        this->addField( field);
+        
+        JavaFieldTableRecord fieldRecord ( field, this->utf8s[ field->name], this->utf8s[field->descriptor]); 
+        
+        this->fieldsTable.push_back( fieldRecord);
     }
 
     void addClass( ClassInfo* classinfo){
         FOR_EACH( imeth, classinfo->localMethods) {
             auto meth = *imeth; 
-            addMethod( meth.second);
+            addClassMethod( meth.second);
         }
         FOR_EACH( imeth, classinfo->staticMethods) {
             auto meth = *imeth; 
-            addMethod( meth.second);
+            addClassMethod( meth.second);
         }
         FOR_EACH( ifield, classinfo->fields) {
             auto field = *ifield; 
-            addField( field.second);
+            addClassField( field.second);
         }
+        this->classconst = this->addClass( classinfo->name);
+        this->superclassconst = this->addClass( classinfo->parentName);
+        this->classname = classinfo->name;
+        this->isDefault = classinfo->isDefault;
+
     }
+
+
 };
+
 
 
 
@@ -674,16 +794,16 @@ void fillDefaultClasses() {
     nsoclassinfo->isDefault = true;
     nsoclassinfo->name = "NSObject";
     nsoclassinfo->parentName = JavaLangObject;
-    nsoclassinfo->table = new JavaTable();
+    nsoclassinfo->table = new JavaConstantTable();
 
     ClassInfo* nssclassinfo = new ClassInfo();
-    nssclassinfo->isDefault = false;
+    nssclassinfo->isDefault = true;
     nssclassinfo->name = "NSString";
     nssclassinfo->parentName = defaultParentClass;
-    nssclassinfo->table = new JavaTable();
+    nssclassinfo->table = new JavaConstantTable();
     ///TODO::: Список методов NSString
     auto nssinitm = new MethodInfo();
-    nssinitm->isDefault = false;
+    nssinitm->isDefault = true;
     nssinitm->name = "init";
     auto stringParam = new MethodParamInfo();
     stringParam->name = "string";
@@ -705,7 +825,7 @@ void fillDefaultClasses() {
     NSScanner->name = "NSScanner";
     NSScanner->isDefault = false;
     NSScanner->parentName = defaultParentClass;
-    NSScanner->table = new JavaTable();
+    NSScanner->table = new JavaConstantTable();
     vector<string> scanNames;
     scanNames.push_back( "scanInt");
     scanNames.push_back( "scanString");
@@ -724,23 +844,34 @@ void fillDefaultClasses() {
     classes[ NSScanner->name] = NSScanner;
 }
 void fillDefaultMethods() {
-    MethodInfo mi;
-    mi.name = "alloc";
-    mi.access = ACCESS_PUBLIC;
-    mi.methodType = MethodType::METHOD_STATIC;
-    
-    FOR_EACH( cl, classes){
-        auto cmi = new MethodInfo( mi);
-        cmi->classname = cl->second->name;
-        cmi->access = ACCESS_PUBLIC;
-        cmi->isDefault = false;
-        cmi->methodType = METHOD_STATIC;
+    MethodInfo alloc;
+    alloc.name = "alloc";
+    alloc.access = ACCESS_PUBLIC;
+    alloc.methodType = MethodType::METHOD_STATIC;
+    alloc.isDefault = true;
 
+    
+    MethodInfo constructor;
+    constructor.name = "<init>";
+    constructor.access = ACCESS_PUBLIC;
+    constructor.methodType = MethodType::METHOD_LOCAL;
+    constructor.isDefault = true;
+
+    TypeInfo cRetType;
+    cRetType.type = TYPE_VOID;
+    constructor.returnType = cRetType;
+
+    FOR_EACH( cl, classes){
+        alloc.classname = cl->second->name;
+        
         TypeInfo t;
         t.type = TYPE_POINTER;
         t.name = cl->second->name;
-        cmi->returnType = t;
-        cl->second->staticMethods[ cmi->name] = cmi;
+        alloc.returnType = t;
+        cl->second->staticMethods[ alloc.name] = new MethodInfo( alloc);
+        
+        constructor.classname = cl->second->name;
+        cl->second->localMethods[ constructor.classname] = new MethodInfo( constructor); 
     }
 }
 
@@ -796,7 +927,7 @@ public:
             addError("Class " + node->name + " redefinition");    
         }
         this->currentClass = new ClassInfo();
-        this->currentClass->table = new JavaTable();
+        this->currentClass->table = new JavaConstantTable();
 
         this->currentClass->name = node->name; 
         this->currentClass->parentName = node->parentName;
@@ -926,13 +1057,13 @@ public:
 	void visit( ProgramNode * node) override {
 		RETURN_IF_NODE_NULL;
 		
-        fillDefaultClasses();
-        fillDefaultFunctions();
+        //fillDefaultClasses();
+        //fillDefaultFunctions();
 
         classes[FUNCTIONS_CLASS] = new ClassInfo();
         classes[FUNCTIONS_CLASS]->parentName = defaultParentClass;
         classes[FUNCTIONS_CLASS]->name= FUNCTIONS_CLASS;
-        classes[FUNCTIONS_CLASS]->table= new JavaTable();
+        classes[FUNCTIONS_CLASS]->table= new JavaConstantTable();
         
         classes[FUNCTIONS_CLASS]->table->addClass( classes[FUNCTIONS_CLASS]);
 
@@ -970,6 +1101,15 @@ public:
 };
 
 class JVMTableFiller : public NodeVisiter {
+
+    void visit( ProgramNode* node){
+        NodeVisiter::visit( node);
+        FOR_EACH( cl ,classes){
+            if( cl->second->isDefault){
+                cl->second->table->addClass( cl->second);
+            }
+        }
+    }
 
     bool isFunc;
     FunctionNode* curFunc;

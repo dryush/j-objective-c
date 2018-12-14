@@ -78,6 +78,9 @@
     <ClInclude Include="FunctionCallChecker.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="_ClassFileGenerator.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="objectivec.tab.c">
