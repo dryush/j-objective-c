@@ -47,9 +47,11 @@ protected:
             if( c->constantType == CONSTANT_UTF8){
                 consts += U1(1).toBytes() + U2( c->strvalue.size()).toBytes() + c->strvalue;
             } else if ( c->constantType == CONSTANT_Integer){
-                consts += U1(3).toBytes()  + /**S2**/ U2( c->intvalue).toBytes();
-            } else if ( /*c->constantType  == CONSTANT_String*/ false) {
-
+                consts += U1(3).toBytes()  + /**S2**/ U4( c->intvalue).toBytes();
+            } else if ( c->constantType == CONSTANT_Float ){
+                consts += U1(4).toBytes()  + /**S2**/ U<float>( c->floatvalue).toBytes();
+            } else if ( c->constantType  == CONSTANT_String) {
+                consts += U1(8).toBytes() + U2( c->intvalue).toBytes();
             } else if ( c->constantType == CONSTANT_NameAndType) {
                 consts += U1(12).toBytes() + U2( c->twointvalue.first).toBytes() + U2( c->twointvalue.second).toBytes();
             } else if ( c->constantType == CONSTANT_Class) {

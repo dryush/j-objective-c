@@ -596,6 +596,8 @@ public:
     unordered_map<int, int> classes;
     unordered_map<pair<int, int>, int, pairhash> fields;
     unordered_map<pair<int, int>, int, pairhash> methods;
+    
+
 
     ///
     int classconst;
@@ -663,7 +665,8 @@ public:
         IF_FIND_ELSE( strings, str,
         { return elem->second;},
         {
-            records.push_back(JavaTableRecord(str, CONSTANT_String));
+            int utf8num = addUtf8( str);
+            records.push_back(JavaTableRecord(utf8num, CONSTANT_String));
             int num = records.size()-1;
             strings[ str] = num;
             return num;
@@ -730,6 +733,20 @@ public:
         return num;
     }
 
+    int addValue( ExprNode * valueNode){
+        int nm = -1;
+        if( valueNode->exprType == EXPR_OPERATION){
+            if( valueNode->operationType == OP_VALUE){
+                if      ( valueNode->constType ==VarType::TYPE_BOOL ) nm = addInt( valueNode->boolVal);
+                else if ( valueNode->constType == VarType::TYPE_CHAR) nm = addInt( valueNode->charVal);
+                else if ( valueNode->constType == VarType::TYPE_INT)  nm = addInt( valueNode->intVal);
+                else if ( valueNode->constType == VarType::TYPE_FLOAT) nm = addFloat( valueNode->floatVal);
+                else if ( valueNode->constType == VarType::TYPE_STRING) nm = addStr(valueNode->strVal);
+
+            }
+        }
+        return nm;
+    }
 
     int addFunction( FunctionInfo* func){
         string typeDescr = genDescriptor( func);
@@ -1190,8 +1207,16 @@ class JVMTableFiller : public NodeVisiter {
                 else
                     classes[ FUNCTIONS_CLASS]->table->addField( f);
             }
+        } else if( node->exprType == EXPR_OPERATION && node->operationType == OP_VALUE) {
+            
+            if( isClass)
+                classes[this->curClass->name]->table->addValue( node);
+            else
+                classes[ FUNCTIONS_CLASS]->table->addValue( node);
+            
         }
     }
+
 public: 
     JVMTableFiller() {
 		this->curClass = nullptr;
