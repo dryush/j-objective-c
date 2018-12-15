@@ -32,19 +32,26 @@ public:
 
     void visit( StatementNode* node) override {
         if( node->stmtType == STMT_COMPOUND) {
-
+			for (auto ichildStmt = node->childs.begin(); ichildStmt != node->childs.end(); ichildStmt++)
+			{
+				 auto childStmt = *ichildStmt;
+				 childStmt->visit(this);
+			}
         } else if( node->stmtType == STMT_ARRAY_DECL) {
-
-        } else if( node->stmtType == STMT_EXPR) {
-            node->expr->visit( this);
-        } else if( node->stmtType == STMT_IF) {
-
-        } else if( node->stmtType == STMT_RETURN) {
 
         } else if( node->stmtType == STMT_VAR_DECL) {
             
-        } else if( node->stmtType == STMT_WHILE) {
+        } else if( node->stmtType == STMT_EXPR) {
+            node->expr->visit( this);
+        } else if( node->stmtType == STMT_IF) {
+			node->condition->visit(this);
+			node->truthStmt->visit(this);
+			node->wrongStmt->visit(this);
+        } else if( node->stmtType == STMT_RETURN) {
 
+        } else if( node->stmtType == STMT_WHILE) {
+			node->condition->visit(this);
+			node->truthStmt->visit(this);
         }
     }
 
@@ -55,7 +62,48 @@ public:
                     commands.push_back( new LDC_W(2)); 
                 }
             } else if( node->operationType == OP_ADD) {
-                commands.push_back( new IADD());
+				node->left->visit(this);
+				node->right->visit(this);
+				commands.push_back( IADD());
+			}  else if( node->operationType == OP_SUB) {
+				node->left->visit(this);
+				node->right->visit(this);
+                commands.push_back( ISUB());
+			} else if( node->operationType == OP_MUL) {
+				node->left->visit(this);
+				node->right->visit(this);
+                commands.push_back( IMUL());
+            } else if( node->operationType == OP_DIV) {
+				node->left->visit(this);
+				node->right->visit(this);
+                commands.push_back( IDIV());
+            } else if( node->operationType == OP_MOD) {
+				node->left->visit(this);
+				node->right->visit(this);
+                // a % b === a - (c * b), ��� c = a / b - ����� ����� �������
+				commands.push_back( IDIV());
+				commands.push_back( IMUL());
+				commands.push_back( ISUB());
+			} else if( node->operationType == OP_ASSIGN) {
+                node->right->visit(this);
+				// �������� ����� ����� ����������
+				commands.push_back( ISTORE());
+            } else if( node->operationType == OP_ASSIGN_ARRAY) { // ��� �������� ��� ���-�� �����
+                node->right->visit(this);
+				// �������� ����� ����� ����������
+				commands.push_back( ISTORE());
+            } else if( node->operationType == OP_LESS) {
+                
+            } else if( node->operationType == OP_LESS_OR_EQUAL) {
+                
+            } else if( node->operationType == OP_GREATER) {
+                
+            } else if( node->operationType == OP_GREATER_OR_EQUAL) {
+                
+            } else if( node->operationType == OP_EQUAL) {
+                
+            } else if( node->operationType == OP_NOT_EQUAL) {
+                
             }
         }
     }
