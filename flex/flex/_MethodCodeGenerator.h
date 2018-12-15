@@ -9,11 +9,19 @@ class MethodCodeGenerator : public NodeVisiter {
     
     unsigned short localVarsCount;
     string code;
-    
+    vector<JVMCommand*> commands;
+    unordered_map<string, TypeInfo> localVars;
+    unordered_map<string, int> localVarsNumber;
+
     void genCode( FunctionInfo* info){
         localVarsCount = 0;
         localVarsCount += info->params.size();
         info->functionNode->body->visit(this);
+		
+		localVars.clear();
+		localVars = info->localVars;
+		localVarsNumber.clear();
+		localVarsNumber = info->localVarsNumber;
     }
 
     void genCode( MethodInfo* info){
@@ -21,10 +29,15 @@ class MethodCodeGenerator : public NodeVisiter {
             localVarsCount = 1;
         else localVarsCount = 0;
         localVarsCount += info->params.size();
+		
+		localVars.clear();
+		localVars = info->localVars;
+		localVarsNumber.clear();
+		localVarsNumber = info->localVarsNumber;
     }
 
-    vector<JVMCommand*> commands;
     
+
 public:
     unsigned short getLocalVarsCount(){
         return this->localVarsCount;
@@ -40,7 +53,7 @@ public:
         } else if( node->stmtType == STMT_ARRAY_DECL) {
 
         } else if( node->stmtType == STMT_VAR_DECL) {
-            
+
         } else if( node->stmtType == STMT_EXPR) {
             node->expr->visit( this);
         } else if( node->stmtType == STMT_IF) {
@@ -93,18 +106,29 @@ public:
 				node->right->visit(this);
 				// сюда передаём номер левой переменной
 				//commands.push_back( new ISTORE());
-            } else if( node->operationType == OP_LESS) {
+            } else if( node->operationType == OP_LESS || 
+						node->operationType == OP_LESS_OR_EQUAL ||
+						node->operationType == OP_GREATER ||
+						node->operationType == OP_GREATER_OR_EQUAL ||
+						node->operationType == OP_EQUAL ||
+						node->operationType == OP_NOT_EQUAL )
+			{
+				node->left->visit(this);
+				node->right->visit(this);
+				int shift = 0;
+				commands.push_back( new IF_ICMP(node->operationType, shift));
+            } else if( node->operationType == OP_LOGICAL_NOT) {
                 
-            } else if( node->operationType == OP_LESS_OR_EQUAL) {
+            } else if( node->operationType == OP_AND) {
                 
-            } else if( node->operationType == OP_GREATER) {
+            } else if( node->operationType == OP_OR) {
                 
-            } else if( node->operationType == OP_GREATER_OR_EQUAL) {
-                
-            } else if( node->operationType == OP_EQUAL) {
-                
-            } else if( node->operationType == OP_NOT_EQUAL) {
-                
+            } else if( node->operationType == OP_UPLUS) {
+                node->left->visit(this);
+            } else if( node->operationType == OP_UMINUS) {
+                commands.push_back( new IConst(-1));
+				node->left->visit(this);
+				commands.push_back( new IMUL());
             }
         }
     }
