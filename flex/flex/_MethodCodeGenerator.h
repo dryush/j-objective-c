@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <vector>
 #include "TableFiller.h"
 
 #include "_JVMCommands.h"
@@ -21,7 +23,7 @@ class MethodCodeGenerator : public NodeVisiter {
         localVarsCount += info->params.size();
     }
 
-    //vector<JVMCommand*> commands;
+    vector<JVMCommand*> commands;
     
 public:
     unsigned short getLocalVarsCount(){
@@ -50,10 +52,10 @@ public:
         if( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
                 if( node->returnType->varType == VarType::TYPE_INT) {
-                    //commands.push_back( new LDC_W(2)); 
+                    commands.push_back( new LDC_W(2)); 
                 }
             } else if( node->operationType == OP_ADD) {
-                //commands.push_back( new IADD());
+                commands.push_back( new IADD());
             }
         }
     }
@@ -67,9 +69,9 @@ public:
         else 
             this->genCode( method.funcInfo);
         string methodCode;
-        //FOR_EACH( com, commands){
-            //methodCode += (*com)->toBytes();
-        //}
+        FOR_EACH( com, commands){
+            methodCode += (*com)->toBytes();
+        }
         return methodCode;
     }
     

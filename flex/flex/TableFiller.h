@@ -1,8 +1,10 @@
 ﻿#pragma once
 
-#include "NodeVisiter.h"
 #include <unordered_map>
 #include <string>
+#include <vector>
+
+#include "NodeVisiter.h"
 
 struct pairhash { 
 public: 
