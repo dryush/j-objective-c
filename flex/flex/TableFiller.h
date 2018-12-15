@@ -686,6 +686,9 @@ public:
             num = this->classes[ numutf8] = (int)records.size()-1;
         }
         );
+
+        //Константа для атрибута Code
+        addUtf8( "Code");
         return num;
     }
 

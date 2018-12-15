@@ -117,31 +117,43 @@ protected:
 #endif
         string ms;
         FOR_EACH( method, table->methodsTable) {
-            ms += U2( method->access).toBytes() + U2( method->nameId).toBytes()
-                + U2( method->descriptorId).toBytes();
-            ms += U2( 0).toBytes();
-            /*
-            //Говоорим, что у нас есть один атриут - код
-            ms += U2( 1).toBytes() + U2( table->addUtf8("Code")).toBytes();
+            ms += U2( method->access).toBytes(); 
+            ms += U2( method->nameId).toBytes();
+            ms += U2( method->descriptorId).toBytes();
+            if( !method->methodInfo && !method->funcInfo)
+            //if( !method->methodInfo || method->methodInfo->isDefault) {
+                // Тут надо будет иначе
+                ms += U2( 0).toBytes();
+            //} 
+            else 
+            {
 
-            //
+                //Говоорим, что у нас есть один атриут - код
+                ms += U2( 1).toBytes() + U2( table->addUtf8("Code")).toBytes();
 
-            string methodCode = genCode( *method);
+                //
 
-            //Размер стека - просто ставим много
-            methodCode = U2( 2000).toBytes() 
-                // Кол-во переменных
-                + U2( this->getLocalVarsCount()).toBytes()
-                // Длина самого кода
-                + U4( methodCode.size()).toBytes() 
-                //Сам код
-                + methodCode
-                //Ноль исключений
-                + U2( 0).toBytes();
+                string methodCode = genCode( *method);
+
+                //Размер стека - просто ставим много
+                methodCode = U2( 2000).toBytes() 
+                    // Кол-во переменных
+                    + U2( this->getLocalVarsCount()).toBytes()
+                    // Длина самого кода
+                    + U4( methodCode.size()).toBytes() 
+                    //Сам код
+                    + methodCode
+                    //Ноль исключений
+                    + U2( 0).toBytes()
+                    //Ноль атрибутов
+                    + U2( 0).toBytes();
+
+
+                methodCode = U4( methodCode.size()).toBytes() + methodCode;
+
+                ms += methodCode;
+            }
             
-            ms += U2( methodCode.size()).toBytes();
-            ms += methodCode;
-            */
         }
         return ms;
     }

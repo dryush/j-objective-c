@@ -64,34 +64,34 @@ public:
             } else if( node->operationType == OP_ADD) {
 				node->left->visit(this);
 				node->right->visit(this);
-				commands.push_back( IADD());
+				commands.push_back( new IADD());
 			}  else if( node->operationType == OP_SUB) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( ISUB());
+                commands.push_back( new ISUB());
 			} else if( node->operationType == OP_MUL) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( IMUL());
+                commands.push_back( new IMUL());
             } else if( node->operationType == OP_DIV) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( IDIV());
+                commands.push_back( new IDIV());
             } else if( node->operationType == OP_MOD) {
 				node->left->visit(this);
 				node->right->visit(this);
                 // a % b === a - (c * b), ��� c = a / b - ����� ����� �������
-				commands.push_back( IDIV());
-				commands.push_back( IMUL());
-				commands.push_back( ISUB());
+				commands.push_back( new IDIV());
+				commands.push_back( new IMUL());
+				commands.push_back( new ISUB());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
 				// �������� ����� ����� ����������
-				commands.push_back( ISTORE());
+				//commands.push_back( new ISTORE());
             } else if( node->operationType == OP_ASSIGN_ARRAY) { // ��� �������� ��� ���-�� �����
                 node->right->visit(this);
 				// �������� ����� ����� ����������
-				commands.push_back( ISTORE());
+				//commands.push_back( new ISTORE());
             } else if( node->operationType == OP_LESS) {
                 
             } else if( node->operationType == OP_LESS_OR_EQUAL) {
