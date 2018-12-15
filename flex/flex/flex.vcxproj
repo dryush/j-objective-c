@@ -100,6 +100,8 @@
     <ClInclude Include="TypeCalculation.h" />
     <ClInclude Include="VariableTypeChecker.h" />
     <ClInclude Include="_ClassFileGenerator.h" />
+    <ClInclude Include="_JVMCommands.h" />
+    <ClInclude Include="_MethodCodeGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lex.yy.c" />

@@ -1,66 +1,15 @@
 #pragma once
 #include "TableFiller.h"
+
+#include "_MethodCodeGenerator.h"
+
 #include <fstream>
 #include <string>
 
 #define MY_DEBUG 0
 
-template< typename TNumberType>
-class U{
-    union {
-        TNumberType number;
-        char bytes[sizeof(TNumberType)];
-    } u;
-public:
-    U( TNumberType num){
-        u.number = num;
 
-    }
-    
-    U() {
-        this->u.number = 0;
-    }
-    string toBytes(){
-        int bl = sizeof(TNumberType);
-        string bytes( bl, 0);
-        for( int i = 0; i < bl; i++){
-            bytes[ i] = this->u.bytes[bl- i - 1];
-        }
-        return bytes;
-    }
-};
-
-class U4 : public U <int> {
-public:
-    U4():U(){
-    }
-
-    U4( int num):U(num){
-    }
-
-};
-
-class U2 : public U <short int> {
-public:
-    U2():U(){
-    }
-
-    U2( short int num):U(num){
-    }
-
-};
-
-class U1 : public U <char> {
-public:
-    U1():U(){
-    }
-
-    U1( char num):U(num){
-    }
-
-};
-
-class ClassFileGenerator { 
+class ClassFileGenerator : protected MethodCodeGenerator { 
 
 protected:
 
@@ -166,7 +115,30 @@ protected:
         string ms;
         FOR_EACH( method, table->methodsTable) {
             ms += U2( method->access).toBytes() + U2( method->nameId).toBytes()
-                + U2( method->descriptorId).toBytes() + U2(0).toBytes();
+                + U2( method->descriptorId).toBytes();
+            ms += U2( 0).toBytes();
+            /*
+            //Говоорим, что у нас есть один атриут - код
+            ms += U2( 1).toBytes() + U2( table->addUtf8("Code")).toBytes();
+
+            //
+
+            string methodCode = genCode( *method);
+
+            //Размер стека - просто ставим много
+            methodCode = U2( 2000).toBytes() 
+                // Кол-во переменных
+                + U2( this->getLocalVarsCount()).toBytes()
+                // Длина самого кода
+                + U4( methodCode.size()).toBytes() 
+                //Сам код
+                + methodCode
+                //Ноль исключений
+                + U2( 0).toBytes();
+            
+            ms += U2( methodCode.size()).toBytes();
+            ms += methodCode;
+            */
         }
         return ms;
     }

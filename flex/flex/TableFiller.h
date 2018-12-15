@@ -524,7 +524,7 @@ public:
     int nameId;
     int descriptorId; //NameType
     int atributesCount; // =0
-
+    
     JavaFieldTableRecord() {
         access = ACC_PUBLIC;
         nameId = -1;
@@ -547,8 +547,12 @@ public:
 };
 
 class JavaMethodTableRecord : public JavaFieldTableRecord {
+
 public:
-     JavaMethodTableRecord( MethodInfo* method, int name, int descriptor){
+    MethodInfo* methodInfo;
+    FunctionInfo* funcInfo;
+
+    JavaMethodTableRecord( MethodInfo* method, int name, int descriptor){
         if( method->access == ACCESS_PUBLIC)
             access = ACC_PUBLIC;
         else if( method->access == ACCESS_PROTECTED)
@@ -562,8 +566,10 @@ public:
         nameId = name;
         descriptorId = descriptor;
         atributesCount = 0;
+        methodInfo = method;
+        funcInfo = nullptr;
      }
-     JavaMethodTableRecord( FunctionInfo* method, int name, int descriptor){
+    JavaMethodTableRecord( FunctionInfo* method, int name, int descriptor){
         
         access = ACC_PUBLIC;
         access |= ACC_STATIC;
@@ -571,6 +577,8 @@ public:
         nameId = name;
         descriptorId = descriptor;
         atributesCount = 0;
+        funcInfo = method;
+        methodInfo = nullptr;
      }
 };
 class JavaConstantTable {
@@ -600,8 +608,8 @@ public:
 
     ///
     vector<JavaFieldTableRecord> fieldsTable;
-    vector<JavaFieldTableRecord> methodsTable;
-
+    vector<JavaMethodTableRecord> methodsTable;
+    
     string to_csv_string(){
         string res;
         for( int i =1; i < records.size(); i++){
