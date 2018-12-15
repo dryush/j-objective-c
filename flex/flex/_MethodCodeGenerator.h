@@ -21,7 +21,7 @@ class MethodCodeGenerator : public NodeVisiter {
         localVarsCount += info->params.size();
     }
 
-    vector<JVMCommand> commands;
+    //vector<JVMCommand*> commands;
     
 public:
     unsigned short getLocalVarsCount(){
@@ -57,7 +57,7 @@ public:
         if( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
                 if( node->returnType->varType == VarType::TYPE_INT) {
-                    commands.push_back( LDC_W(2)); 
+                    //commands.push_back( new LDC_W(2)); 
                 }
             } else if( node->operationType == OP_ADD) {
 				node->left->visit(this);
@@ -78,17 +78,17 @@ public:
             } else if( node->operationType == OP_MOD) {
 				node->left->visit(this);
 				node->right->visit(this);
-                // a % b === a - (c * b), где c = a / b - целая часть деления
+                // a % b === a - (c * b), пїЅпїЅпїЅ c = a / b - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				commands.push_back( IDIV());
 				commands.push_back( IMUL());
 				commands.push_back( ISUB());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
-				// передать номер левой переменной
+				// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				commands.push_back( ISTORE());
-            } else if( node->operationType == OP_ASSIGN_ARRAY) { // тут наверное ещё что-то нужно
+            } else if( node->operationType == OP_ASSIGN_ARRAY) { // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                 node->right->visit(this);
-				// передать номер левой переменной
+				// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				commands.push_back( ISTORE());
             } else if( node->operationType == OP_LESS) {
                 
@@ -115,9 +115,9 @@ public:
         else 
             this->genCode( method.funcInfo);
         string methodCode;
-        FOR_EACH( com, commands){
-            methodCode += com->toBytes();
-        }
+        //FOR_EACH( com, commands){
+            //methodCode += (*com)->toBytes();
+        //}
         return methodCode;
     }
     
