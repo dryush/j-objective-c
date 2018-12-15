@@ -52,6 +52,7 @@ public:
 			}
         } else if( node->stmtType == STMT_ARRAY_DECL) {
 
+
         } else if( node->stmtType == STMT_VAR_DECL) {
 
         } else if( node->stmtType == STMT_EXPR) {
@@ -69,7 +70,10 @@ public:
     }
 
     void visit( ExprNode* node) override {
-        if( node->exprType == EXPR_OPERATION) {
+        if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
+            //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
+        }
+        else if ( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
                 if( node->returnType->varType == VarType::TYPE_INT) {
                     commands.push_back( new LDC_W(2)); 
@@ -129,7 +133,7 @@ public:
                 commands.push_back( new IConst(-1));
 				node->left->visit(this);
 				commands.push_back( new IMUL());
-            }
+            } 
         }
     }
 

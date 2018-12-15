@@ -46,7 +46,7 @@ public:
     U2():U(){
     }
 
-    U2( unsigned short int num):U(num){
+    U2( unsigned unsigned short int num):U(num){
     }
 
 };
@@ -91,7 +91,7 @@ public:
 class IConst : public JVMCommand {
     char number;
 public:
-    IConst( char num){
+    IConst( unsigned char num){
         if( num < -1 || num > 5)
             throw new runtime_error("IConst > 5 || <-1");
         this->number = num;
@@ -104,9 +104,9 @@ public:
 };
 
 class SIPush : public JVMCommand {
-    short int num;
+    signed short int num;
 public:
-    SIPush( short int num) {
+    SIPush( signed short int num) {
         this->num = num;
     }
 
@@ -120,9 +120,9 @@ public:
 
 
 class BIPush : public JVMCommand {
-    char num;
+    signed char num;
 public:
-    BIPush( char num) {
+    BIPush( signed char num) {
         this->num = num;
     }
 
@@ -135,9 +135,9 @@ public:
 };
     
 class LDC : public JVMCommand {
-    char constnum;
+    unsigned char constnum;
 public:
-    LDC( char constnum) {
+    LDC( unsigned char constnum) {
         this->constnum = constnum;
     }
 
@@ -151,9 +151,9 @@ public:
 
   
 class LDC_W : public JVMCommand {
-    short int constnum;
+    unsigned short int constnum;
 public:
-    LDC_W( short int constnum) {
+    LDC_W( unsigned short int constnum) {
         this->constnum = constnum;
     }
 
@@ -168,32 +168,32 @@ public:
 
 
 class ILOAD : public JVMCommand {
-    short int constnum;
+    unsigned char constnum;
 public:
-    ILOAD( short int constnum) {
+    ILOAD( unsigned char constnum) {
         this->constnum = constnum;
     }
 
     string toBytes() override {
         string c;
         c += U1( 0x15).toBytes();
-        c += U2( constnum).toBytes();
+        c += U1( constnum).toBytes();
         return c;
     }
 };
 
 
 class ALOAD : public JVMCommand {
-    short int constnum;
+    unsigned char constnum;
 public:
-    ALOAD( short int constnum) {
+    ALOAD( unsigned char constnum) {
         this->constnum = constnum;
     }
 
     string toBytes() override {
         string c;
         c += U1( 0x19).toBytes();
-        c += U2( constnum).toBytes();
+        c += U1( constnum).toBytes();
         return c;
     }
 };
@@ -201,9 +201,9 @@ public:
 
 
 class ISTORE : public JVMCommand {
-    short int constnum;
+    unsigned char constnum;
 public:
-    ISTORE( short int constnum) {
+    ISTORE( unsigned char constnum) {
         this->constnum = constnum;
     }
 
@@ -217,9 +217,9 @@ public:
 
 
 class ASTORE : public JVMCommand {
-    short int constnum;
+    unsigned char constnum;
 public:
-    ASTORE( short int constnum) {
+    ASTORE( unsigned char constnum) {
         this->constnum = constnum;
     }
 
@@ -307,10 +307,10 @@ public:
 
 class IF_ICMP : public JVMCommand {
     OperationType compType;
-    short int shift;
+    signed short int shift;
 
 public:
-    IF_ICMP( OperationType compareType, short int shift){
+    IF_ICMP( OperationType compareType, signed short int shift){
         this->shift = shift;
         this->compType = compareType;
     }
@@ -339,9 +339,9 @@ public:
 
 class IF_ACMP : public JVMCommand {
     OperationType compType;
-    short int shift;
+    signed short int shift;
 public:
-    IF_ACMP( OperationType compareType, short int shift){
+    IF_ACMP( OperationType compareType, signed short int shift){
         this->compType = compareType;
         this->shift = shift;
     }
@@ -360,9 +360,9 @@ public:
 };
 
 class GOTO : public JVMCommand {
-    short int shift;
+    signed short int shift;
 public:
-    GOTO( short int shift){
+    GOTO( signed short int shift){
         this->shift = shift;
     }
 
@@ -375,9 +375,9 @@ public:
 };
 
 class INVOKE_STATIC : public JVMCommand {
-    short int methodConstNum;
+    unsigned short int methodConstNum;
 public:
-    INVOKE_STATIC( short int methodConstNum){
+    INVOKE_STATIC( unsigned short int methodConstNum){
         this->methodConstNum = methodConstNum;
     }
 
@@ -391,9 +391,9 @@ public:
 
 
 class INVOKE_SPECIAL : public JVMCommand {
-    short int methodConstNum;
+    unsigned short int methodConstNum;
 public:
-    INVOKE_SPECIAL( short int methodConstNum){
+    INVOKE_SPECIAL( unsigned short int methodConstNum){
         this->methodConstNum = methodConstNum;
     }
 
@@ -407,9 +407,9 @@ public:
 
 
 class INVOKE_VIRTUAL : public JVMCommand {
-    short int methodConstNum;
+    unsigned short int methodConstNum;
 public:
-    INVOKE_VIRTUAL( short int methodConstNum){
+    INVOKE_VIRTUAL( unsigned short int methodConstNum){
         this->methodConstNum = methodConstNum;
     }
 
@@ -420,3 +420,115 @@ public:
         return c;
     }
 };
+
+
+/*Размер - на  стеке*/
+class NEW_ARRAY : public JVMCommand {
+    
+    enum {
+
+        T_BOOLEAN = 4,
+        T_CHAR = 5,
+        T_FLOAT = 6,
+        T_DOUBLE = 7,
+        T_BYTE = 8,
+        T_SHORT = 9,
+        T_INT = 10,
+        T_LONG = 11
+    } type;
+
+public:
+    NEW_ARRAY( VarType type){
+        if( type == TYPE_BOOL)
+            this->type = T_BOOLEAN;
+        else if ( type == TYPE_CHAR)
+            this->type = T_CHAR;
+        else if ( type == TYPE_INT)
+            this->type = T_INT;
+        else if ( type == TYPE_FLOAT)
+            this->type = T_FLOAT;
+        else throw new runtime_error("Unsupported array type");
+    }
+
+    string toBytes() override {
+        string c;
+        c += U1( 0xBC).toBytes();
+        c += U1( this->type).toBytes();
+        return c;
+    }
+};
+
+class ANEW_ARRAY : public JVMCommand {
+    unsigned short int typeNum;
+public:
+    ANEW_ARRAY( unsigned short int typeNum){
+        this->typeNum = typeNum;
+    }
+
+    string toBytes() override {
+        string c;
+        c += U1( 0xBD).toBytes();
+        c += U2( this->typeNum).toBytes();
+        return c;
+    }
+};
+
+/*
+Стек до команды 
+Индекс элемента массива
+Ссылка на массив 
+*/
+class IALOAD : public JVMCommand {
+public:
+    string toBytes() override {
+        string c;
+        c += U1( 0x2E).toBytes();
+        return c;
+    }
+};
+
+/*
+Стек до команды 
+Индекс элемента массива
+Ссылка на массив 
+*/
+class AALOAD : public JVMCommand {
+public:
+    string toBytes() override {
+        string c;
+        c += U1( 0x2E).toBytes();
+        return c;
+    }
+};
+
+/*
+Стек до команды
+Записываемое значение
+Индекс элемента массива
+Ссылка на массив 
+*/
+class IASTORE : public JVMCommand {
+public:
+    string toBytes() override {
+        string c;
+        c += U1( 0x4F).toBytes();
+        return c;
+    }
+};
+
+
+/*
+Стек до команды
+Записываемое значение
+Индекс элемента массива
+Ссылка на массив 
+*/
+class AASTORE : public JVMCommand {
+public:
+    string toBytes() override {
+        string c;
+        c += U1( 0x53).toBytes();
+        return c;
+    }
+};
+
