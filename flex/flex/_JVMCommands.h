@@ -1,7 +1,7 @@
 #pragma once
-#include "TableFiller.h"
 #include <exception>
 #include <string>
+#include "TableFiller.h"
 
 
 template< typename TNumberType>
@@ -84,7 +84,7 @@ public:
 
 class JVMCommand {
 public:
-    virtual string toBytes();
+    virtual string toBytes() =0;
     //virtual int size();
 };
 

@@ -1,10 +1,11 @@
 #pragma once
+#include <fstream>
+#include <string>
+#include <vector>
 #include "TableFiller.h"
 
 #include "_MethodCodeGenerator.h"
 
-#include <fstream>
-#include <string>
 
 #define MY_DEBUG 0
 
