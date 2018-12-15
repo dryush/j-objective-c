@@ -99,8 +99,7 @@ int main(int argc, char *argv[]) {
     fileGen.genClassFiles( tbls);
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
     //execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
-	
-    //system("graphSemantic.bat");
+	//system("graphSemantic.bat");
     //system("graph.bat");
 	return 0;
 }
