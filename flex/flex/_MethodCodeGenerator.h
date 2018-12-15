@@ -21,7 +21,7 @@ class MethodCodeGenerator : public NodeVisiter {
         localVarsCount += info->params.size();
     }
 
-    //vector<JVMCommand*> commands;
+    vector<JVMCommand*> commands;
     
 public:
     unsigned short getLocalVarsCount(){
@@ -62,34 +62,35 @@ public:
             } else if( node->operationType == OP_ADD) {
 				node->left->visit(this);
 				node->right->visit(this);
-				commands.push_back( IADD());
+				commands.push_back( new IADD());
 			}  else if( node->operationType == OP_SUB) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( ISUB());
+                commands.push_back( new ISUB());
 			} else if( node->operationType == OP_MUL) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( IMUL());
+                commands.push_back( new IMUL());
             } else if( node->operationType == OP_DIV) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( IDIV());
+                commands.push_back( new IDIV());
             } else if( node->operationType == OP_MOD) {
 				node->left->visit(this);
 				node->right->visit(this);
-                // a % b === a - (c * b), пїЅпїЅпїЅ c = a / b - пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-				commands.push_back( IDIV());
-				commands.push_back( IMUL());
-				commands.push_back( ISUB());
+                // a % b === a - (c * b), где c = a / b - целая часть деления
+				commands.push_back( new IDIV());
+				commands.push_back( new IMUL());
+				commands.push_back( new ISUB());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
-				// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-				commands.push_back( ISTORE());
-            } else if( node->operationType == OP_ASSIGN_ARRAY) { // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-                node->right->visit(this);
-				// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
-				commands.push_back( ISTORE());
+				// сюда передаём номер левой переменной
+				//commands.push_back( new ISTORE());
+            } else if( node->operationType == OP_ASSIGN_ARRAY) {
+                // наверное что-то ещё добавить нужно
+				node->right->visit(this);
+				// сюда передаём номер левой переменной
+				//commands.push_back( new ISTORE());
             } else if( node->operationType == OP_LESS) {
                 
             } else if( node->operationType == OP_LESS_OR_EQUAL) {
