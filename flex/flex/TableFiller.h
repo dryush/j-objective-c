@@ -910,18 +910,18 @@ void fillDefaultMethods() {
     }
 }
 
-void fillDefaultFunctions() {
-
-    FunctionInfo* printf = new FunctionInfo();
-    printf->isDefault = true;
-    printf->name = "printf";
-    
-    FunctionParamInfo* stringParam = new FunctionParamInfo();
-    stringParam->name = "string";
-    stringParam->type = TypeInfo::Pointer("NSString");
-    printf->params[ stringParam->name] = stringParam;
-    functions[ printf->name] = printf;
-}
+//void fillDefaultFunctions() {
+//
+//    FunctionInfo* printf = new FunctionInfo();
+//    printf->isDefault = true;
+//    printf->name = "printf";
+//    
+//    FunctionParamInfo* stringParam = new FunctionParamInfo();
+//    stringParam->name = "string";
+//    stringParam->type = TypeInfo::Pointer("NSString");
+//    printf->params[ stringParam->name] = stringParam;
+//    functions[ printf->name] = printf;
+//}
 
 /**
  * 
@@ -1093,7 +1093,7 @@ public:
 		RETURN_IF_NODE_NULL;
 		
         fillDefaultClasses();
-        fillDefaultFunctions();
+        //fillDefaultFunctions();
 
         classes[FUNCTIONS_CLASS] = new ClassInfo();
         classes[FUNCTIONS_CLASS]->parentName = defaultParentClass;

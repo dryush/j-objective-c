@@ -12,6 +12,7 @@ class MethodCodeGenerator : public NodeVisiter {
     vector<JVMCommand*> commands;
     unordered_map<string, TypeInfo> localVars;
     unordered_map<string, int> localVarsNumber;
+	int numberCurrentRow;
 
     void genCode( FunctionInfo* info){
         localVarsCount = 0;
@@ -20,8 +21,10 @@ class MethodCodeGenerator : public NodeVisiter {
 		localVars = info->localVars;
 		localVarsNumber.clear();
 		localVarsNumber = info->localVarsNumber;
+		numberCurrentRow = 0;
 
-        info->functionNode->body->visit(this);
+		if (info->functionNode->body != NULL)
+			info->functionNode->body->visit(this);
     }
 
     void genCode( MethodInfo* info){
@@ -36,7 +39,10 @@ class MethodCodeGenerator : public NodeVisiter {
         localVarsCount += info->params.size();
     }
 
-    
+    void addCommand(JVMCommand* command) {
+		numberCurrentRow += command->toBytes().size();
+		commands.push_back( command );
+	}
 
 public:
     unsigned short getLocalVarsCount(){
@@ -63,7 +69,7 @@ public:
 			node->wrongStmt->visit(this);
         } else if( node->stmtType == STMT_RETURN) {
 			node->expr->visit(this);	
-			commands.push_back( new IRETURN()); 
+			addCommand( new IRETURN());
         } else if( node->stmtType == STMT_WHILE) {
 			node->condition->visit(this);
 			node->truthStmt->visit(this);
@@ -80,39 +86,39 @@ public:
 					VarType type = localVars[node->name].type;
 					int number = localVarsNumber[node->name];
 					if ( type == TYPE_INT) {
-						commands.push_back( new ILOAD(number));
+						addCommand( new ILOAD(number));
 					}
 				} else if (node->constType == TYPE_INT) {
-					commands.push_back( new IConst(node->intVal));
+					addCommand( new IConst(node->intVal));
 				}
                 
             } else if( node->operationType == OP_ADD) {
 				node->left->visit(this);
 				node->right->visit(this);
-				commands.push_back( new IADD());
+				addCommand( new IADD());
 			}  else if( node->operationType == OP_SUB) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( new ISUB());
+				addCommand( new ISUB());
 			} else if( node->operationType == OP_MUL) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( new IMUL());
+                addCommand( new IMUL());
             } else if( node->operationType == OP_DIV) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( new IDIV());
+                addCommand( new IDIV());
             } else if( node->operationType == OP_MOD) {
 				node->left->visit(this);
 				node->right->visit(this);
                 // a % b === a - (c * b), ��� c = a / b - ����� ����� �����
-				commands.push_back( new IDIV());
-				commands.push_back( new IMUL());
-				commands.push_back( new ISUB());
+				addCommand( new IDIV());
+				addCommand( new IMUL());
+				addCommand( new ISUB());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
 				int number = localVarsNumber[node->left->name];
-				commands.push_back( new ISTORE(number));
+				addCommand( new ISTORE(number));
             } else if( node->operationType == OP_ASSIGN_ARRAY) {
                 // �������� ���-�� ��� �������� �����
 				node->right->visit(this);
@@ -128,7 +134,7 @@ public:
 				node->left->visit(this);
 				node->right->visit(this);
 				int shift = 0;
-				commands.push_back( new IF_ICMP(node->operationType, shift));
+				addCommand( new IF_ICMP(node->operationType, shift));
             } else if( node->operationType == OP_LOGICAL_NOT) {
                 
             } else if( node->operationType == OP_AND) {
@@ -138,9 +144,9 @@ public:
             } else if( node->operationType == OP_UPLUS) {
                 node->left->visit(this);
             } else if( node->operationType == OP_UMINUS) {
-                commands.push_back( new IConst(-1));
+                addCommand( new IConst(-1));
 				node->left->visit(this);
-				commands.push_back( new IMUL());
+				addCommand( new IMUL());
             } 
         }
     }
