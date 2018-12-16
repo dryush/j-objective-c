@@ -220,7 +220,7 @@ public:
                     }
                     file.close();
                 } else {
-                    throw "Can`t create or open class file";
+                    throw new runtime_error("Can`t create or open class file");
                 }
             }
         }

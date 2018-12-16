@@ -136,7 +136,7 @@ public:
 
     FunctionInfo(){
         this->localVarNum = 0;
-        isDefault = true;
+        isDefault = false;
     }
 
    
@@ -686,11 +686,14 @@ public:
         {
             records.push_back( JavaTableRecord( numutf8, CONSTANT_Class));
             num = this->classes[ numutf8] = (int)records.size()-1;
+            
+            //Константа для атрибута Code
+            addUtf8( "Code");
+            //Константа деффолтного конструктора
+           // addMethod(JavaLangObject, "<init>", "()V");
         }
         );
 
-        //Константа для атрибута Code
-        addUtf8( "Code");
         return num;
     }
 
@@ -830,7 +833,7 @@ void fillDefaultClasses() {
     nsoclassinfo->name = "NSObject";
     nsoclassinfo->parentName = JavaLangObject;
     nsoclassinfo->table = new JavaConstantTable();
-
+    
     ClassInfo* nssclassinfo = new ClassInfo();
     nssclassinfo->isDefault = true;
     nssclassinfo->name = "NSString";
@@ -858,7 +861,7 @@ void fillDefaultClasses() {
 
     ClassInfo* NSScanner = new ClassInfo();
     NSScanner->name = "NSScanner";
-    NSScanner->isDefault = false;
+    NSScanner->isDefault = true;
     NSScanner->parentName = defaultParentClass;
     NSScanner->table = new JavaConstantTable();
     vector<string> scanNames;
@@ -868,7 +871,7 @@ void fillDefaultClasses() {
 
     FOR_EACH( scanname, scanNames){
         auto scan = new MethodInfo();
-        scan->isDefault = false;
+        scan->isDefault = true;
         scan->name = *scanname;
         scan->classname = NSScanner->name;
         scan->returnType = TypeInfo::Pointer( nssclassinfo->name);
@@ -876,7 +879,13 @@ void fillDefaultClasses() {
         scan->methodType = METHOD_LOCAL;
         NSScanner->localMethods[ scan->name] = scan;
     }
+
     classes[ NSScanner->name] = NSScanner;
+
+    FOR_EACH( cl, classes){
+        if( cl->second->isDefault)
+            cl->second->table->addClass( cl->second);
+    }
 }
 void fillDefaultMethods() {
     MethodInfo alloc;
@@ -904,9 +913,10 @@ void fillDefaultMethods() {
         t.name = cl->second->name;
         alloc.returnType = t;
         cl->second->staticMethods[ alloc.name] = new MethodInfo( alloc);
+        //cl->second->staticMethods[ alloc.name]
         
         constructor.classname = cl->second->name;
-        cl->second->localMethods[ constructor.classname] = new MethodInfo( constructor); 
+        //cl->second->localMethods[ constructor.classname] = new MethodInfo( constructor); 
     }
 }
 
@@ -1225,6 +1235,7 @@ class JVMTableFiller : public NodeVisiter {
                 node->constantNum = classes[ FUNCTIONS_CLASS]->table->addValue( node);
             
         }
+        NodeVisiter::visit( node);
     }
 
 public: 

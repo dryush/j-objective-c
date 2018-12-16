@@ -80,6 +80,22 @@ public:
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
         }
+        else if ( node->exprType == EXPR_FUNC_CALL) {
+            commands.push_back( new INVOKE_STATIC( node->constantNum));
+        }
+        else if ( node->exprType == EXPR_INVAR_CALL) {
+
+        }
+        else if ( node->exprType == EXPR_METHOD_CALL) {
+            FOR_EACH( methodNode, node->methodCallArgs){
+                VISIT_IF_NOT_NULL( (*methodNode));
+            }
+            if ( node->object->returnType->varType = TYPEE_CLASS) {
+                commands.push_back( new INVOKE_STATIC( node->constantNum));
+            } else if ( node->object->returnType->varType = TYPE_POINTER) {
+                commands.push_back( new INVOKE_VIRTUAL( node->constantNum));
+            } else throw new runtime_error( "method call from not object (code gen)");
+        }
         else if ( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
 				if (node->constType == TYPE_CUSTOM) {

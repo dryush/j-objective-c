@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "CommonNodes.h"
 
-const string defaultParentClass = "NSObject";
 const string JavaLangObject = "java/lang/object";
+const string defaultParentClass = "NSObject";
+//const string defaultParentClass = JavaLangObject;
 
 enum FieldAccess {
     ACCESS_PUBLIC,
@@ -212,7 +213,7 @@ public:
     void visit(NodeVisiter*) override;
     
     MethodCallArgNode( Method_call_arg_st* st) : ExprNode(st->value){
-        this->outerName = st->outer_name;
+        this->outerName = st->outer_name ? st->outer_name : "";
     }
 
     static void FillFrom( list<MethodCallArgNode*> list, Method_call_arg_list_st* st){
