@@ -64,9 +64,28 @@ public:
         } else if( node->stmtType == STMT_EXPR) {
             node->expr->visit( this);
         } else if( node->stmtType == STMT_IF) {
-			node->condition->visit(this);
+
+			node->condition->left->visit(this);
+			node->condition->right->visit(this);
+
+			int ifLine = numberCurrentRow;
+			int numberIfCommand = commands.size();
+			addCommand( new IF_ICMP(node->condition->operationType, 0));
+
 			node->truthStmt->visit(this);
+
+			int shift = numberCurrentRow - ifLine;
+			commands[numberIfCommand] = new IF_ICMP(node->condition->operationType, shift);
+
+			int gotoLine = numberCurrentRow;
+			int numberGotoCommand = commands.size();
+			addCommand( new GOTO(0));
+
 			node->wrongStmt->visit(this);
+
+			shift = numberCurrentRow - gotoLine;
+			commands[numberGotoCommand] = new GOTO(shift);
+			
         } else if( node->stmtType == STMT_RETURN) {
 			node->expr->visit(this);	
 			addCommand( new IRETURN());
@@ -147,10 +166,8 @@ public:
 						node->operationType == OP_EQUAL ||
 						node->operationType == OP_NOT_EQUAL )
 			{
-				node->left->visit(this);
-				node->right->visit(this);
-				int shift = 0;
-				addCommand( new IF_ICMP(node->operationType, shift));
+				/*node->left->visit(this);
+				node->right->visit(this);*/
             } else if( node->operationType == OP_LOGICAL_NOT) {
                 
             } else if( node->operationType == OP_AND) {
