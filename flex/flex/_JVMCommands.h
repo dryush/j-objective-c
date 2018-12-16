@@ -421,6 +421,14 @@ public:
     }
 };
 
+class IRETURN : public JVMCommand {
+public:
+    string toBytes() override {
+        string c;
+        c += U1( 0xAC).toBytes();
+        return c;
+    }
+};
 
 /*Размер - на  стеке*/
 class NEW_ARRAY : public JVMCommand {

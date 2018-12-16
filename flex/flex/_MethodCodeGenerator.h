@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <vector>
 #include "TableFiller.h"
@@ -13,37 +13,27 @@ class MethodCodeGenerator : public NodeVisiter {
     unordered_map<string, TypeInfo> localVars;
     unordered_map<string, int> localVarsNumber;
 
-    unordered_map<string, string> defaultMethods;
-
-    JavaConstantTable* constantTable;
-
     void genCode( FunctionInfo* info){
-        if ( !info->isDefault) {
-            localVarsCount = 0;
-            localVarsCount += info->params.size();
-            info->functionNode->body->visit(this);
-		
-		    localVars.clear();
-		    localVars = info->localVars;
-		    localVarsNumber.clear();
-		    localVarsNumber = info->localVarsNumber;
-        } else {
-            ;
-        }
+        localVarsCount = 0;
+        localVarsCount += info->params.size();
+		localVars.clear();
+		localVars = info->localVars;
+		localVarsNumber.clear();
+		localVarsNumber = info->localVarsNumber;
+
+        info->functionNode->body->visit(this);
     }
 
     void genCode( MethodInfo* info){
-        if( !info->isDefault) {
-            if( info->methodType == METHOD_LOCAL)
-                localVarsCount = 1;
-            else localVarsCount = 0;
-            localVarsCount += info->params.size();
-		
-		    localVars.clear();
-		    localVars = info->localVars;
-		    localVarsNumber.clear();
-		    localVarsNumber = info->localVarsNumber;
-        }
+        if( info->methodType == METHOD_LOCAL)
+            localVarsCount = 1;
+        else localVarsCount = 0;
+		localVars.clear();
+		localVars = info->localVars;
+		localVarsNumber.clear();
+		localVarsNumber = info->localVarsNumber;
+
+        localVarsCount += info->params.size();
     }
 
     
@@ -72,16 +62,12 @@ public:
 			node->truthStmt->visit(this);
 			node->wrongStmt->visit(this);
         } else if( node->stmtType == STMT_RETURN) {
-            VISIT_IF_NOT_NULL( node->expr);
-            if ( !node->expr || node->expr->returnType->varType == TYPE_VOID)
-                commands.push_back( new VRETURN() );
-            else if ( node->expr->returnType->varType == TYPE_BOOL 
-                || node->expr->returnType->varType == TYPE_CHAR 
-                || node->expr->returnType->varType == TYPE_INT
-            )
-                commands.push_back( new IRETURN() );
-            else if ( node->expr->returnType->varType == TYPE_POINTER)
-                commands.push_back( new ARETURN() );
+			VarType type = localVars[node->expr->name].type;
+			int number = localVarsNumber[node->expr->name];
+			if ( type == TYPE_INT) {
+				commands.push_back( new ILOAD(number));
+			}	
+			commands.push_back( new IRETURN()); 
         } else if( node->stmtType == STMT_WHILE) {
 			node->condition->visit(this);
 			node->truthStmt->visit(this);
@@ -92,25 +78,24 @@ public:
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
         }
-        else if ( node->exprType == EXPR_FUNC_CALL) {
-                commands.push_back( new INVOKE_STATIC( node->constantNum));
-        }
-        else if ( node->exprType == EXPR_INVAR_CALL) {
-
-        }
-        else if ( node->exprType == EXPR_METHOD_CALL) {
-            node->funcArgs->visit( this);
-            if ( node->object->returnType->varType = TYPEE_CLASS) {
-                commands.push_back( new INVOKE_STATIC( node->constantNum));
-            } else if ( node->object->returnType->varType = TYPE_POINTER) {
-                commands.push_back( new INVOKE_VIRTUAL( node->constantNum));
-            } else throw new runtime_error( "method call from not object (code gen)");
-        }
         else if ( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
-                if( node->returnType->varType == VarType::TYPE_INT) {
-                    commands.push_back( new LDC_W(2)); 
-                }
+				if (node->constType == TYPE_CUSTOM) {
+					/*if( node->returnType->varType == VarType::TYPE_INT ) {
+					commands.push_back( new LDC_W(node->intVal)); 
+					}
+					else if (node->returnType->varType == VarType::TYPE_FLOAT) {
+						commands.push_back( new LDC_W(node->floatVal));
+					}
+					else if (node->returnType->varType == VarType::TYPE_CUSTOM)
+					{
+						int number = localVarsNumber[node->name];
+						commands.push_back( new ALOAD(number));
+					}*/
+				} else if (node->constType == TYPE_INT) {
+					commands.push_back( new IConst(node->intVal));
+				}
+                
             } else if( node->operationType == OP_ADD) {
 				node->left->visit(this);
 				node->right->visit(this);
@@ -130,14 +115,14 @@ public:
             } else if( node->operationType == OP_MOD) {
 				node->left->visit(this);
 				node->right->visit(this);
-                // a % b === a - (c * b), ��� c = a / b - ����� ����� �������
+                // a % b === a - (c * b), ��� c = a / b - ����� ����� �����
 				commands.push_back( new IDIV());
 				commands.push_back( new IMUL());
 				commands.push_back( new ISUB());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
-				// ���� ������� ����� ����� ����������
-				//commands.push_back( new ISTORE());
+				int number = localVarsNumber[node->left->name];
+				commands.push_back( new ISTORE(number));
             } else if( node->operationType == OP_ASSIGN_ARRAY) {
                 // �������� ���-�� ��� �������� �����
 				node->right->visit(this);
@@ -171,18 +156,13 @@ public:
     }
 
 
-    string genCode( JavaMethodTableRecord& method, JavaConstantTable* cTable){
-        
-        this->constantTable = cTable;
+    string genCode( JavaMethodTableRecord& method){
+            
         
         if ( method.methodInfo)
             this->genCode( method.methodInfo);
         else 
-            if( method.funcInfo->isDefault) {
-                return this->defaultMethods[ method.funcInfo->name];
-            } else {
-                this->genCode( method.funcInfo);
-            }
+            this->genCode( method.funcInfo);
         string methodCode;
         FOR_EACH( com, commands){
             methodCode += (*com)->toBytes();
