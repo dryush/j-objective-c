@@ -133,7 +133,7 @@ protected:
 
                 //
 
-                string methodCode = genCode( *method);
+                string methodCode = genCode( *method, table);
 
                 //Размер стека - просто ставим много
                 methodCode = U2( 2000).toBytes() 
@@ -206,22 +206,23 @@ public:
     void genClassFiles( vector< JavaConstantTable*>& classes){
         ofstream file;
         FOR_EACH( info, classes){
-            this->setClass( *info);
-            string classname = (*info)->classname;
+            if ( !(*info)->isDefault) {
+                this->setClass( *info);
+                string classname = (*info)->classname;
 
-            string path = this->sourceDir + "/" + classname + ".class";
-            file.open( path, std::ios::out | std::ios::binary);
-            if( file.is_open()){
-                string str = gen();
-                for( int i =0; i < str.size(); i++){
-                    char ch = str[i];
-                    file << ch;
+                string path = this->sourceDir + "/" + classname + ".class";
+                file.open( path, std::ios::out | std::ios::binary);
+                if( file.is_open()){
+                    string str = gen();
+                    for( int i =0; i < str.size(); i++){
+                        char ch = str[i];
+                        file << ch;
+                    }
+                    file.close();
+                } else {
+                    throw "Can`t create or open class file";
                 }
-                file.close();
-            } else {
-                throw "Can`t create or open class file";
             }
-            //Записать в файл
         }
     }
 };

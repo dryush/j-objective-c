@@ -63,19 +63,24 @@ public:
         }
 
 		if (curstmt->stmtType == STMT_RETURN) {
-			curstmt->expr->returnType = calcOperation(curstmt->expr);
-			if( this->isMethod) {
-				if (castIfPossible(curstmt->expr, curMethod->returnType) == false) {
-					addError("Return type does not match type of method " + curMethod->name + "() in class " + curClass->name);
-					return;
-				}
-			}
-			else {
-				if (castIfPossible(curstmt->expr, curFunc->returnType) == false) {
-					addError("Return type does not match type of function " + curFunc->name + "()");
-					return;
-				}
-			}
+            if ( !curstmt->expr) {
+                // NOTHING
+            } 
+            else {
+			    curstmt->expr->returnType = calcOperation(curstmt->expr);
+			    if( this->isMethod) {
+				    if (castIfPossible(curstmt->expr, curMethod->returnType) == false) {
+					    addError("Return type does not match type of method " + curMethod->name + "() in class " + curClass->name);
+					    return;
+				    }
+			    }
+			    else {
+				    if (castIfPossible(curstmt->expr, curFunc->returnType) == false) {
+					    addError("Return type does not match type of function " + curFunc->name + "()");
+					    return;
+				    }
+			    }
+            }
 		}
 
         NodeVisiter::visit( node);

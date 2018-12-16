@@ -98,6 +98,8 @@ public:
 	/* ����� �������*/
 	ExprListNode* funcArgs;
 
+    int constantNum;
+
     void visit(NodeVisiter* visiter);
     
     TypeNode* returnType; // 
