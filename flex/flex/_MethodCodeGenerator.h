@@ -62,18 +62,8 @@ public:
 			node->truthStmt->visit(this);
 			node->wrongStmt->visit(this);
         } else if( node->stmtType == STMT_RETURN) {
-            VISIT_IF_NOT_NULL( node->expr);
-            
-            if ( !node->expr || node->expr->returnType->varType == TYPE_VOID)
-                commands.push_back( new VRETURN() );
-            else if ( node->expr->returnType->varType == TYPE_BOOL 
-                || node->expr->returnType->varType == TYPE_CHAR 
-                || node->expr->returnType->varType == TYPE_INT
-            )
-                commands.push_back( new IRETURN() );
-            else if ( node->expr->returnType->varType == TYPE_POINTER)
-                commands.push_back( new ARETURN() );
-
+			node->expr->visit(this);	
+			commands.push_back( new IRETURN()); 
         } else if( node->stmtType == STMT_WHILE) {
 			node->condition->visit(this);
 			node->truthStmt->visit(this);
@@ -103,17 +93,11 @@ public:
         else if ( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
 				if (node->constType == TYPE_CUSTOM) {
-					/*if( node->returnType->varType == VarType::TYPE_INT ) {
-					commands.push_back( new LDC_W(node->intVal)); 
+					VarType type = localVars[node->name].type;
+					int number = localVarsNumber[node->name];
+					if ( type == TYPE_INT) {
+						commands.push_back( new ILOAD(number));
 					}
-					else if (node->returnType->varType == VarType::TYPE_FLOAT) {
-						commands.push_back( new LDC_W(node->floatVal));
-					}
-					else if (node->returnType->varType == VarType::TYPE_CUSTOM)
-					{
-						int number = localVarsNumber[node->name];
-						commands.push_back( new ALOAD(number));
-					}*/
 				} else if (node->constType == TYPE_INT) {
 					commands.push_back( new IConst(node->intVal));
 				}
@@ -184,8 +168,7 @@ public:
         if ( method.methodInfo)
             this->genCode( method.methodInfo);
         else 
-            if( !method.funcInfo->isDefault)
-                this->genCode( method.funcInfo);
+            this->genCode( method.funcInfo);
         string methodCode;
         FOR_EACH( com, commands){
             methodCode += (*com)->toBytes();
