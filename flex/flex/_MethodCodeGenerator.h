@@ -91,7 +91,9 @@ public:
 
         }
         else if ( node->exprType == EXPR_METHOD_CALL) {
-            node->funcArgs->visit( this);
+            FOR_EACH( methodNode, node->methodCallArgs){
+                VISIT_IF_NOT_NULL( (*methodNode));
+            }
             if ( node->object->returnType->varType = TYPEE_CLASS) {
                 commands.push_back( new INVOKE_STATIC( node->constantNum));
             } else if ( node->object->returnType->varType = TYPE_POINTER) {
