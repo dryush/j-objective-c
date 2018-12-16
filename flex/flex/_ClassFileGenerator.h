@@ -133,7 +133,7 @@ protected:
 
                 //
 
-                string methodCode = genCode( *method, table);
+                string methodCode = genCode( *method);
 
                 //Размер стека - просто ставим много
                 methodCode = U2( 2000).toBytes() 

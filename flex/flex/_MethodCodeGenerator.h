@@ -62,12 +62,18 @@ public:
 			node->truthStmt->visit(this);
 			node->wrongStmt->visit(this);
         } else if( node->stmtType == STMT_RETURN) {
-			VarType type = localVars[node->expr->name].type;
-			int number = localVarsNumber[node->expr->name];
-			if ( type == TYPE_INT) {
-				commands.push_back( new ILOAD(number));
-			}	
-			commands.push_back( new IRETURN()); 
+            VISIT_IF_NOT_NULL( node->expr);
+            
+            if ( !node->expr || node->expr->returnType->varType == TYPE_VOID)
+                commands.push_back( new VRETURN() );
+            else if ( node->expr->returnType->varType == TYPE_BOOL 
+                || node->expr->returnType->varType == TYPE_CHAR 
+                || node->expr->returnType->varType == TYPE_INT
+            )
+                commands.push_back( new IRETURN() );
+            else if ( node->expr->returnType->varType == TYPE_POINTER)
+                commands.push_back( new ARETURN() );
+
         } else if( node->stmtType == STMT_WHILE) {
 			node->condition->visit(this);
 			node->truthStmt->visit(this);
@@ -77,6 +83,20 @@ public:
     void visit( ExprNode* node) override {
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
+        }
+        else if ( node->exprType == EXPR_FUNC_CALL) {
+            commands.push_back( new INVOKE_STATIC( node->constantNum));
+        }
+        else if ( node->exprType == EXPR_INVAR_CALL) {
+
+        }
+        else if ( node->exprType == EXPR_METHOD_CALL) {
+            node->funcArgs->visit( this);
+            if ( node->object->returnType->varType = TYPEE_CLASS) {
+                commands.push_back( new INVOKE_STATIC( node->constantNum));
+            } else if ( node->object->returnType->varType = TYPE_POINTER) {
+                commands.push_back( new INVOKE_VIRTUAL( node->constantNum));
+            } else throw new runtime_error( "method call from not object (code gen)");
         }
         else if ( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
@@ -162,7 +182,8 @@ public:
         if ( method.methodInfo)
             this->genCode( method.methodInfo);
         else 
-            this->genCode( method.funcInfo);
+            if( !method.funcInfo->isDefault)
+                this->genCode( method.funcInfo);
         string methodCode;
         FOR_EACH( com, commands){
             methodCode += (*com)->toBytes();
