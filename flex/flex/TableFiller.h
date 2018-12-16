@@ -599,8 +599,6 @@ public:
     unordered_map<pair<int, int>, int, pairhash> fields;
     unordered_map<pair<int, int>, int, pairhash> methods;
     
-
-
     ///
     int classconst;
     int superclassconst;
@@ -614,6 +612,10 @@ public:
     vector<JavaFieldTableRecord> fieldsTable;
     vector<JavaMethodTableRecord> methodsTable;
     
+    ///
+    unordered_map<pair<string,string>, int, pairhash> methodNumByName;
+    unordered_map<pair<string,string>, int, pairhash> fieldNumByName;
+
     string to_csv_string(){
         string res;
         for( int i =1; i < records.size(); i++){
@@ -719,6 +721,8 @@ public:
             num = this->fields[classfield] = records.size()-1;
         }
         );
+        
+        this->fieldNumByName[ make_pair( classname, fieldname)] = num;
 
         return num;
     }
@@ -735,6 +739,7 @@ public:
             num = this->methods[classmethod] = records.size()-1;
         }
         );
+        this->methodNumByName[ make_pair( classname, methodname)] = num;
         return num;
     }
 
@@ -915,7 +920,7 @@ void fillDefaultFunctions() {
     stringParam->name = "string";
     stringParam->type = TypeInfo::Pointer("NSString");
     printf->params[ stringParam->name] = stringParam;
-    
+    functions[ printf->name] = printf;
 }
 
 /**
@@ -1087,8 +1092,8 @@ public:
 	void visit( ProgramNode * node) override {
 		RETURN_IF_NODE_NULL;
 		
-        //fillDefaultClasses();
-        //fillDefaultFunctions();
+        fillDefaultClasses();
+        fillDefaultFunctions();
 
         classes[FUNCTIONS_CLASS] = new ClassInfo();
         classes[FUNCTIONS_CLASS]->parentName = defaultParentClass;
@@ -1191,33 +1196,33 @@ class JVMTableFiller : public NodeVisiter {
 
             if( isOk)
                 if( isClass)
-                    classes[this->curClass->name]->table->addMethod( m);
+                    node->constantNum = classes[this->curClass->name]->table->addMethod( m);
                 else
-                    classes[ FUNCTIONS_CLASS]->table->addMethod( m);
+                    node->constantNum = classes[ FUNCTIONS_CLASS]->table->addMethod( m);
 
         } else if( node->exprType == EXPR_FUNC_CALL) {
 
             auto f = functions[ node->name];
             if( isClass)
-                classes[this->curClass->name]->table->addFunction( f);
+                node->constantNum = classes[this->curClass->name]->table->addFunction( f);
             else
-                classes[ FUNCTIONS_CLASS]->table->addFunction( f);
+                node->constantNum = classes[ FUNCTIONS_CLASS]->table->addFunction( f);
         } else if( node->exprType == EXPR_INVAR_CALL) {
 
             auto f = getField( node->object->returnType->childType->name, node->name);
             
             if( f){
                 if( isClass)
-                    classes[this->curClass->name]->table->addField( f);
+                    node->constantNum = classes[this->curClass->name]->table->addField( f);
                 else
-                    classes[ FUNCTIONS_CLASS]->table->addField( f);
+                    node->constantNum = classes[ FUNCTIONS_CLASS]->table->addField( f);
             }
         } else if( node->exprType == EXPR_OPERATION && node->operationType == OP_VALUE) {
             
             if( isClass)
-                classes[this->curClass->name]->table->addValue( node);
+                node->constantNum = classes[this->curClass->name]->table->addValue( node);
             else
-                classes[ FUNCTIONS_CLASS]->table->addValue( node);
+                node->constantNum = classes[ FUNCTIONS_CLASS]->table->addValue( node);
             
         }
     }
