@@ -79,17 +79,24 @@ public:
 
 			node->truthStmt->visit(this);
 
+			int gotoLine = 0;
+			int numberGotoCommand = 0;
+			if (node->wrongStmt != NULL) {
+				gotoLine = numberCurrentRow;
+				numberGotoCommand = commands.size();
+				addCommand( new GOTO(0));
+			}
+			
+
 			int shift = numberCurrentRow - ifLine;
 			commands[numberIfCommand] = new IF_ICMP(node->condition->operationType, shift);
 
-			int gotoLine = numberCurrentRow;
-			int numberGotoCommand = commands.size();
-			addCommand( new GOTO(0));
+			if (node->wrongStmt != NULL) {
+				node->wrongStmt->visit(this);
 
-			node->wrongStmt->visit(this);
-
-			shift = numberCurrentRow - gotoLine;
-			commands[numberGotoCommand] = new GOTO(shift);
+				shift = numberCurrentRow - gotoLine;
+				commands[numberGotoCommand] = new GOTO(shift);
+			}
 			
         } else if( node->stmtType == STMT_RETURN) {
             VISIT_IF_NOT_NULL(node->expr);	
