@@ -324,22 +324,28 @@ public:
         this->shift = shift;
         this->compType = compareType;
     }
-
+	// левый операнд - второй операнд в условии
+	// 9F ==
+	// A0 !=
+	// A1 <
+	// A4 <=
+	// A3 >
+	// A2 >=
     string toBytes() override {
         
         string c;
         if( this->compType == OP_EQUAL)
-            c += U1( 0x9F).toBytes();
-        else if( this->compType == OP_NOT_EQUAL)
             c += U1( 0xA0).toBytes();
+        else if( this->compType == OP_NOT_EQUAL)
+            c += U1( 0x9F).toBytes();
         else if( this->compType == OP_LESS)
-            c += U1( 0xA1).toBytes();
-        else if( this->compType == OP_LESS_OR_EQUAL)
-            c += U1( 0xA4).toBytes();
-        else if( this->compType == OP_GREATER)
-            c += U1( 0xA3).toBytes();
-        else if( this->compType == OP_GREATER_OR_EQUAL)
             c += U1( 0xA2).toBytes();
+        else if( this->compType == OP_LESS_OR_EQUAL)
+            c += U1( 0xA3).toBytes();
+        else if( this->compType == OP_GREATER)
+            c += U1( 0xA4).toBytes();
+        else if( this->compType == OP_GREATER_OR_EQUAL)
+            c += U1( 0xA1).toBytes();
         else throw new runtime_error("IF_ICMP must have compare OP_TYPE");
         c+= S2( shift).toBytes();
         return c;
