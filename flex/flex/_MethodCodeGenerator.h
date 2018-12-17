@@ -87,7 +87,7 @@ public:
 			commands[numberGotoCommand] = new GOTO(shift);
 			
         } else if( node->stmtType == STMT_RETURN) {
-			node->expr->visit(this);	
+			VISIT_IF_NOT_NULL(node->expr);	
 			addCommand( new IRETURN());
         } else if( node->stmtType == STMT_WHILE) {
 			node->condition->visit(this);
