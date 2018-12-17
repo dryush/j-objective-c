@@ -368,7 +368,7 @@ public:
 
     string toBytes() override {
         string c;
-        c += U1( 0x84).toBytes();
+        c += U1( 0xA7).toBytes();
         c += S2(shift).toBytes();
         return c;
     }
