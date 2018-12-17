@@ -12,6 +12,7 @@ class MethodCodeGenerator : public NodeVisiter {
     vector<JVMCommand*> commands;
     unordered_map<string, TypeInfo> localVars;
     unordered_map<string, int> localVarsNumber;
+	FunctionInfo* info;
 	int numberCurrentRow;
 
     void genCode( FunctionInfo* info){
@@ -22,7 +23,7 @@ class MethodCodeGenerator : public NodeVisiter {
 		localVarsNumber.clear();
 		localVarsNumber = info->localVarsNumber;
 		numberCurrentRow = 0;
-
+		this->info = info;
 		if (info->functionNode->body != NULL)
 			info->functionNode->body->visit(this);
     }
@@ -87,8 +88,11 @@ public:
 			commands[numberGotoCommand] = new GOTO(shift);
 			
         } else if( node->stmtType == STMT_RETURN) {
-			VISIT_IF_NOT_NULL(node->expr);	
-			addCommand( new IRETURN());
+			VISIT_IF_NOT_NULL(node->expr);
+			if (info->returnType.type == TYPE_VOID)
+				addCommand( new VRETURN());
+			else
+				addCommand( new IRETURN());
         } else if( node->stmtType == STMT_WHILE) {
 			node->condition->visit(this);
 			node->truthStmt->visit(this);
