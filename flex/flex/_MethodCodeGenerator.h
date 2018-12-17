@@ -14,34 +14,38 @@ class MethodCodeGenerator : public NodeVisiter {
     unordered_map<string, int> localVarsNumber;
     
     JavaConstantTable* table;
+    FunctionInfo* info;
+	int numberCurrentRow;
 
     void genCode( FunctionInfo* info){
         
 
 
-        localVarsCount = 0;
-        localVarsCount += info->params.size();
-		localVars.clear();
-		localVars = info->localVars;
-		localVarsNumber.clear();
-		//localVarsNumber = info->localVarsNumber;
+		this->info = info;
 
-        info->functionNode->body->visit(this);
+		if (info->functionNode->body != NULL)
+			info->functionNode->body->visit(this);
     }
 
     void genCode( MethodInfo* info){
+
+        this->info = info;
+        
+
         if( info->methodType == METHOD_LOCAL)
             localVarsCount = 1;
         else localVarsCount = 0;
 		localVars.clear();
-		localVars = info->localVars;
 		localVarsNumber.clear();
 		//localVarsNumber = info->localVarsNumber;
 
         //localVarsCount += info->params.size();
     }
 
-    
+    void addCommand(JVMCommand* command) {
+		numberCurrentRow += command->toBytes().size();
+		commands.push_back( command );
+	}
 
 public:
     unsigned short getLocalVarsCount(){
@@ -65,12 +69,37 @@ public:
         } else if( node->stmtType == STMT_EXPR) {
             node->expr->visit( this);
         } else if( node->stmtType == STMT_IF) {
-			node->condition->visit(this);
+
+			node->condition->left->visit(this);
+			node->condition->right->visit(this);
+
+			int ifLine = numberCurrentRow;
+			int numberIfCommand = commands.size();
+			addCommand( new IF_ICMP(node->condition->operationType, 0));
+
 			node->truthStmt->visit(this);
+
+			int shift = numberCurrentRow - ifLine;
+			commands[numberIfCommand] = new IF_ICMP(node->condition->operationType, shift);
+
+			int gotoLine = numberCurrentRow;
+			int numberGotoCommand = commands.size();
+			addCommand( new GOTO(0));
+
 			node->wrongStmt->visit(this);
+
+			shift = numberCurrentRow - gotoLine;
+			commands[numberGotoCommand] = new GOTO(shift);
+			
         } else if( node->stmtType == STMT_RETURN) {
-			node->expr->visit(this);	
-			commands.push_back( new IRETURN()); 
+            VISIT_IF_NOT_NULL(node->expr);	
+			
+            if ( info->returnType.type == TYPE_VOID)
+                addCommand( new VRETURN());
+            else if ( info->returnType.type == TYPE_POINTER)
+                addCommand( new ARETURN());
+            else
+                addCommand( new IRETURN());
         } else if( node->stmtType == STMT_WHILE) {
 			node->condition->visit(this);
 			node->truthStmt->visit(this);
@@ -82,15 +111,21 @@ public:
             //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
         }
         else if ( node->exprType == EXPR_FUNC_CALL) {
+            FOR_EACH( methodNode, node->methodCallArgs){
+                VISIT_IF_NOT_NULL( (*methodNode));
+            }
             commands.push_back( new INVOKE_STATIC( node->constantNum));
         }
         else if ( node->exprType == EXPR_INVAR_CALL) {
 
         }
         else if ( node->exprType == EXPR_METHOD_CALL) {
+            
+            VISIT_IF_NOT_NULL( node->object);
             FOR_EACH( methodNode, node->methodCallArgs){
                 VISIT_IF_NOT_NULL( (*methodNode));
             }
+
             if ( node->object->returnType->varType == TYPEE_CLASS) {
                 if ( node->isAlloc) {
                     int classid = table->classByMethod[ node->constantNum];
@@ -102,13 +137,7 @@ public:
                     commands.push_back( new INVOKE_STATIC( node->constantNum));
                 }
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
-                VISIT_IF_NOT_NULL( node->object);
                 
-                FOR_EACH( methodNode, node->methodCallArgs){
-                    VISIT_IF_NOT_NULL( (*methodNode));
-                }
-
-
 
                 commands.push_back( new INVOKE_VIRTUAL( node->constantNum));
             } else throw new runtime_error( "method call from not object (code gen)");
@@ -119,39 +148,45 @@ public:
 					VarType type = localVars[node->name].type;
 					int number = localVarsNumber[node->name];
 					if ( type == TYPE_INT) {
-						commands.push_back( new ILOAD(number));
+						addCommand( new ILOAD(number));
 					}
 				} else if (node->constType == TYPE_INT) {
-					commands.push_back( new IConst(node->intVal));
-				}
+					addCommand( new IConst(node->intVal));
+                } else if ( node->constType == TYPE_STRING) {
+                    addCommand( new LDC_W( table->strings[ node->strVal]));
+                }
                 
             } else if( node->operationType == OP_ADD) {
 				node->left->visit(this);
 				node->right->visit(this);
-				commands.push_back( new IADD());
+				addCommand( new IADD());
 			}  else if( node->operationType == OP_SUB) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( new ISUB());
+				addCommand( new ISUB());
 			} else if( node->operationType == OP_MUL) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( new IMUL());
+                addCommand( new IMUL());
             } else if( node->operationType == OP_DIV) {
 				node->left->visit(this);
 				node->right->visit(this);
-                commands.push_back( new IDIV());
+                addCommand( new IDIV());
             } else if( node->operationType == OP_MOD) {
 				node->left->visit(this);
 				node->right->visit(this);
                 // a % b === a - (c * b), ��� c = a / b - ����� ����� �����
-				commands.push_back( new IDIV());
-				commands.push_back( new IMUL());
-				commands.push_back( new ISUB());
+				addCommand( new IDIV());
+				addCommand( new IMUL());
+				addCommand( new ISUB());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
-				int number = localVarsNumber[node->left->name];
-				commands.push_back( new ISTORE(number));
+                int number = localVarsNumber[node->left->name];
+                if ( node->right->returnType->varType == TYPE_INT){
+				    addCommand( new ISTORE(number));
+                } else if (node->right->returnType->varType == TYPE_POINTER){
+                    addCommand( new ASTORE(number)); 
+                }
             } else if( node->operationType == OP_ASSIGN_ARRAY) {
                 // �������� ���-�� ��� �������� �����
 				node->right->visit(this);
@@ -164,10 +199,8 @@ public:
 						node->operationType == OP_EQUAL ||
 						node->operationType == OP_NOT_EQUAL )
 			{
-				node->left->visit(this);
-				node->right->visit(this);
-				int shift = 0;
-				commands.push_back( new IF_ICMP(node->operationType, shift));
+				/*node->left->visit(this);
+				node->right->visit(this);*/
             } else if( node->operationType == OP_LOGICAL_NOT) {
                 
             } else if( node->operationType == OP_AND) {
@@ -177,17 +210,23 @@ public:
             } else if( node->operationType == OP_UPLUS) {
                 node->left->visit(this);
             } else if( node->operationType == OP_UMINUS) {
-                commands.push_back( new IConst(-1));
+                addCommand( new IConst(-1));
 				node->left->visit(this);
-				commands.push_back( new IMUL());
+				addCommand( new IMUL());
             } 
         }
     }
 
 
     string genCode( JavaMethodTableRecord& method, JavaConstantTable* table){
-            
+        commands.clear();
         this->table = table;
+        localVars.clear();
+		localVarsNumber.clear();
+		//localVarsNumber = info->localVarsNumber;
+		numberCurrentRow = 0;
+        
+
         if ( method.methodInfo)
             this->genCode( method.methodInfo);
         else 

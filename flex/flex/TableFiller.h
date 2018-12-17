@@ -345,6 +345,7 @@ unordered_map<string, EnumInfo*> enums;
 
 const string FUNCTIONS_CLASS = "______________________FUNCTIONS_CLASS______________________";
 const string MAIN_CLASS = "______________________MAIN_CLASS______________________";
+const string DEFAULT_FUNCTIONS_CLASS= "______________________DEFAULT_FUNCTIONS______________________";
 
 string genClassDescriptor( const string& classname){
     return string("L") + classname +";";
@@ -773,6 +774,14 @@ public:
         string typeDescr = genDescriptor( func);
         int mn = addMethod( FUNCTIONS_CLASS, func->name, typeDescr);
 
+        //JavaMethodTableRecord methodRecord( func, this->utf8s[ func->name], this->utf8s[func->descriptor]);
+        //this->methodsTable.push_back( methodRecord);
+
+        return mn;
+    }
+    
+    int addFunctionImpl( FunctionInfo* func){
+        int mn = addFunction( func); 
         JavaMethodTableRecord methodRecord( func, this->utf8s[ func->name], this->utf8s[func->descriptor]);
         this->methodsTable.push_back( methodRecord);
 
@@ -1161,7 +1170,7 @@ public:
         }
         
         FOR_EACH( ifunc, functions){ 
-            classes[FUNCTIONS_CLASS]->table->addFunction( ifunc->second);
+            classes[FUNCTIONS_CLASS]->table->addFunctionImpl( ifunc->second);
         }
 
         fillDefaultMethods();
@@ -1224,6 +1233,12 @@ class JVMTableFiller : public NodeVisiter {
         isClass = false;
         curClass = nullptr;
     }
+
+    
+	virtual void visit( MethodCallArgNode* node){
+		RETURN_IF_NODE_NULL;
+        static_cast<ExprNode*>(node)->visit(this);
+	}
 
     void visit( ExprNode* node) override {
         if( node->exprType == EXPR_METHOD_CALL) {

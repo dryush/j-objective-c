@@ -1,5 +1,7 @@
-int main()
+
+void main()
 {
-	int a = 2 + 2;
-	return a;
+	
+	NSString* str = [[NSString alloc] init: "o da"];
+	return;
 }

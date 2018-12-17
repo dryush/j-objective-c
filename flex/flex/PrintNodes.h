@@ -343,7 +343,7 @@ public:
 						g[node].push_back(Edge(node->object,"object"));
 						node->object->visit(this);
 					}
-					
+					/*
 					g[node].push_back(&(node->methodArgs));
 					ids[&(node->methodArgs)] = getNextId();
 					labels[&(node->methodArgs)] = "Method Args";
@@ -353,7 +353,7 @@ public:
 						g[&(node->methodArgs)].push_back(Edge::numb(*it, number));
 						(*it)->visit(this);
 						number++;
-					}
+					}*/
 					break;
 				}
 				case EXPR_INVAR_CALL: {

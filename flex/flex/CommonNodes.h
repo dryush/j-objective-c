@@ -91,7 +91,7 @@ public:
 	/* ����� ������ */
 	ExprNode* object; /* ������ � �������� ���������� ���� ��� ����� */
 	/// TODO:: struct Method_call_arg_list_st* method_args; 
-	list<ExprNode*> methodArgs;
+	//list<ExprNode*> methodArgs;
 	// TODO:: replace args and convert to exprNode
 	list<MethodCallArgNode*> methodCallArgs;
 	/*!!!!!!!!!!!!!!!!!!!!!!!!!!*/

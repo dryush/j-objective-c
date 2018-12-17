@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
         FOR_EACH( ivisiter, visiters){
 	        prog->visit(*ivisiter);
 	        //auto test = (*++prog->functions[0]->body->childs.begin())->expr;
+            auto test = (*++prog->functions[0]->body->childs.begin())->expr->right->returnType;
 	        delete*ivisiter;
         }
     

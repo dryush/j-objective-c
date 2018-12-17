@@ -48,6 +48,7 @@ public:
             ( node->object)->visit( this);
 		if( node->funcArgs)
             ( node->funcArgs)->visit( this);
+        FOR_EACH( arg,node->methodCallArgs) VISIT_IF_NOT_NULL( (*arg))
 	}
 
 
