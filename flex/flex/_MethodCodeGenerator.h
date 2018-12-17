@@ -153,7 +153,7 @@ public:
                         addCommand( new ALOAD(number));
                     }
 				} else if (node->constType == TYPE_INT) {
-					addCommand( new IConst(node->intVal));
+					addCommand( new SIPush(node->intVal));
                 } else if ( node->constType == TYPE_STRING) {
                     addCommand( new LDC_W( table->strings[ node->strVal]));
                 }
@@ -212,7 +212,7 @@ public:
             } else if( node->operationType == OP_UPLUS) {
                 node->left->visit(this);
             } else if( node->operationType == OP_UMINUS) {
-                addCommand( new IConst(-1));
+                addCommand( new SIPush(-1));
 				node->left->visit(this);
 				addCommand( new IMUL());
             } 
