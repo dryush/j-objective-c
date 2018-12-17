@@ -188,7 +188,7 @@ public:
             return false;
         }
 
-        if( node->returnType->varType == TYPE_STRING){
+        if( node->returnType->varType == TYPE_STRING && typeToCast->name == "NSString" ){
 
             ExprNode nssClassObject;
             nssClassObject.exprType = EXPR_OPERATION;
@@ -211,7 +211,7 @@ public:
             nsstringInitFromString->object = nsstringAlloc;
             nsstringInitFromString->returnType = classes[ nssClassObject.name]->localMethods[ nsstringInitFromString->name]->returnType.toNode();
 
-            nsstringInitFromString->methodArgs.push_back( new ExprNode(*node));
+            nsstringInitFromString->methodCallArgs.push_back( new MethodCallArgNode( new ExprNode(*node)));
             
             *node = *nsstringInitFromString;
 
@@ -263,9 +263,9 @@ public:
             } else {
 				
 				if (node->left)
-					node->left->returnType = calcOperation(node->left);
+					node->left->visit(this);
 				if (node->right)
-					node->right->returnType = calcOperation(node->right);
+					node->right->visit(this);
 
 				if ( node->isBinnaryOnlyNumbers()) {
 				
@@ -461,7 +461,10 @@ public:
         }
        
         node->returnType = retType;
+        
     }
+
+
 public:
 	TypeCalculation() {
 		this->curClass = nullptr;

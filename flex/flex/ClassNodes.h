@@ -215,8 +215,32 @@ public:
     MethodCallArgNode( Method_call_arg_st* st) : ExprNode(st->value){
         this->outerName = st->outer_name ? st->outer_name : "";
     }
+    MethodCallArgNode( ExprNode* n){
+        this->arrayElems = n->arrayElems;
+        this->boolVal = n->boolVal;
+        this->charVal = n->charVal;
+        this->constantNum = n->constantNum;
+        this->constType = n->constType;
+        this->exprType = n->exprType;
+        this->floatVal = n->floatVal;
+        this->funcArgs = n->funcArgs;
+        this->intVal = n->intVal;
+        this->isAlloc = n->isAlloc;
+        this->left = n->left;
+        this->methodCallArgs = n->methodCallArgs;
+        this->name = n->name;
+        this->object = n->object;
+        this->operationType = n->operationType;
+        this->outerName = "";
+        this->returnType = n->returnType;
+        this->right = n->right;
+        this->strVal = n->strVal;
+        
+//        this->
+    }
 
-    static void FillFrom( list<MethodCallArgNode*> list, Method_call_arg_list_st* st){
+
+    static void FillFrom( list<MethodCallArgNode*>& list, Method_call_arg_list_st* st){
         auto last = st;
         while ( last){
             list.push_back( new MethodCallArgNode(last->arg));

@@ -244,6 +244,16 @@ public:
 };
 
 
+class DUP : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x59).toBytes();
+        return c;
+    }
+};
+
 class DUP2 : public JVMCommand {
 public:
 
@@ -421,7 +431,7 @@ public:
 
     string toBytes() override {
         string c;
-        c += U1( 0xB7).toBytes();
+        c += U1( 0xB6).toBytes();
         c += U2( methodConstNum).toBytes();
         return c;
     }
@@ -564,3 +574,20 @@ public:
         return c;
     }
 };
+
+class NEW : public JVMCommand {
+    unsigned short classnum;
+public:
+    NEW ( unsigned short cl){
+        this->classnum = cl;
+    }
+
+    string toBytes() override {
+        string c;
+        c += U1( 0xBB).toBytes();
+        c += U2( this->classnum).toBytes();
+        return c;
+    }
+};
+
+

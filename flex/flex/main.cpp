@@ -34,6 +34,9 @@ namespace Win {
 #include <Windows.h>
 };
 
+
+
+
 int main(int argc, char *argv[]) {
     
 	//freopen("output.txt", "w", stdout);
@@ -66,6 +69,7 @@ int main(int argc, char *argv[]) {
         FOR_EACH( ivisiter, visiters){
 	        prog->visit(*ivisiter);
 	        //auto test = (*++prog->functions[0]->body->childs.begin())->expr;
+            auto test = (*++prog->functions[0]->body->childs.begin())->expr->right->returnType;
 	        delete*ivisiter;
         }
     
@@ -99,7 +103,7 @@ int main(int argc, char *argv[]) {
     fileGen.genClassFiles( tbls);
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
     //execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
-	//system("graphSemantic.bat");
+	system("graphSemantic.bat");
     //system("graph.bat");
 	return 0;
 }
