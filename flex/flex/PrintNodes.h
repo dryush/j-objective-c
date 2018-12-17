@@ -333,9 +333,11 @@ public:
 				}
 				case EXPR_FUNC_CALL: {
 					labels[node] = "Func_call " + node->name + "()";
-					g[node].push_back(node->funcArgs);
-					node->funcArgs->visit(this);
-					break;
+					if ( node->object) {
+						g[node].push_back(Edge(node->object,"object"));
+						node->object->visit(this);
+					}
+                    break;
 				}
 				case EXPR_METHOD_CALL: {
 					labels[node] = "Method_call: " + node->name;

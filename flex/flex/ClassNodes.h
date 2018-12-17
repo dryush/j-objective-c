@@ -215,6 +215,11 @@ public:
     MethodCallArgNode( Method_call_arg_st* st) : ExprNode(st->value){
         this->outerName = st->outer_name ? st->outer_name : "";
     }
+    
+    MethodCallArgNode( Expression_st* st) : ExprNode(st){
+        this->outerName = "";
+    }
+
     MethodCallArgNode( ExprNode* n){
         this->arrayElems = n->arrayElems;
         this->boolVal = n->boolVal;
@@ -247,6 +252,16 @@ public:
             last = last->next;
         }
     }
+
+    
+    static void FillFrom( list<MethodCallArgNode*>& list, Expr_list_st* st){
+        auto last = st;
+        while ( last){
+            list.push_back( new MethodCallArgNode(last->expr));
+            last = last->next;
+        }
+    }
+    
 };
 
 class EnumElem {

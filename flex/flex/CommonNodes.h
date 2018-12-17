@@ -364,8 +364,10 @@ ExprNode::ExprNode(Expression_st* st) {
 	}
 	else if (this->exprType == EXPR_FUNC_CALL) {
 		this->name = st->identifier;
-		this->funcArgs = new ExprListNode(st->func_args);
-	}
+		//this->funcArgs = new ExprListNode(st->func_args);
+
+        MethodCallArgNode::FillFrom(this->methodCallArgs, st->func_args);
+    }
 	else if (this->exprType == EXPR_INVAR_CALL) {
 		this->object = new ExprNode(st->object);
 		this->name = st->identifier;

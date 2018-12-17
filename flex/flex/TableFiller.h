@@ -15,6 +15,9 @@ return std::hash<T>()(x.first) ^ std::hash<U>()(x.second);
 } 
 }; 
 
+const string FUNCTIONS_CLASS = "______________________FUNCTIONS_CLASS______________________";
+const string MAIN_CLASS = "______________________MAIN_CLASS______________________";
+const string DEFAULT_FUNCTIONS_CLASS= "______________________DEFAULT_FUNCTIONS______________________";
 
 
 class JavaConstantTable;
@@ -193,9 +196,8 @@ public:
 
 class MethodInfo : public FunctionInfo {
 public:
-    string name;
     string classname;
-    TypeInfo returnType;
+    
     MethodType methodType;
 
     ClassMethodDeclarationNode* methodDeclNode;
@@ -206,8 +208,7 @@ public:
     unordered_map<string, MethodParamInfo*> outerParams;
 
 
-    string descriptor;
-
+    
     void addParam( MethodParamInfo* param) {
         this->params[ param->name] = param;
         this->outerParams[ param->outerName] = param;
@@ -303,6 +304,30 @@ FieldInfo* getField( string& classname, string& fieldname){
 unordered_map<string, FunctionInfo*> functions;
 unordered_map<string, EnumInfo*> enums;
 
+FunctionInfo* findFunction( const string& name){
+    FunctionInfo* func = nullptr;
+
+    auto ifunc = functions.find( name); 
+        if( ifunc != functions.end())
+            func = ifunc->second; 
+        else
+        {
+            auto iclass = classes.find( DEFAULT_FUNCTIONS_CLASS); 
+            if ( iclass != classes.end()) {
+                
+                auto im = iclass->second->staticMethods.find( name);
+                if ( im != iclass->second->staticMethods.end()){
+                    auto mp = *im;
+                    func = static_cast<FunctionInfo*>( mp.second);
+                    //////////////////КОСТЫЛИЩЕ НЕПОНЯТНОЕ ХЕРНИЩЕ
+                    //func->name = im->second->name;
+                    //func->returnType = im->second->returnType;
+                    
+                }
+            }
+        }
+    return func;
+}
 
 /**
 *
@@ -343,9 +368,6 @@ unordered_map<string, EnumInfo*> enums;
 */
 
 
-const string FUNCTIONS_CLASS = "______________________FUNCTIONS_CLASS______________________";
-const string MAIN_CLASS = "______________________MAIN_CLASS______________________";
-const string DEFAULT_FUNCTIONS_CLASS= "______________________DEFAULT_FUNCTIONS______________________";
 
 string genClassDescriptor( const string& classname){
     return string("L") + classname +";";
@@ -772,7 +794,11 @@ public:
 
     int addFunction( FunctionInfo* func){
         string typeDescr = genDescriptor( func);
-        int mn = addMethod( FUNCTIONS_CLASS, func->name, typeDescr);
+        int mn = -1;
+        if( func->isDefault)
+            mn = addMethod( DEFAULT_FUNCTIONS_CLASS, func->name, typeDescr);
+        else
+            mn = addMethod( FUNCTIONS_CLASS, func->name, typeDescr);
 
         //JavaMethodTableRecord methodRecord( func, this->utf8s[ func->name], this->utf8s[func->descriptor]);
         //this->methodsTable.push_back( methodRecord);
@@ -787,6 +813,8 @@ public:
 
         return mn;
     }
+
+
 
     int addMethod( MethodInfo* method){
         
@@ -872,6 +900,39 @@ void fillDefaultClasses() {
     nssinitm->methodType = METHOD_LOCAL;
 
     nssclassinfo->localMethods[ nssinitm->name] = nssinitm;
+
+
+    auto fromInt = new MethodInfo();
+    fromInt->isDefault = true;
+    fromInt->name = "fromInt";
+    auto intParam = new MethodParamInfo();
+    intParam ->name = "number";
+    intParam ->outerName = "number";
+    intParam ->type.type = TYPE_INT;
+    fromInt ->addParam( intParam);
+
+    fromInt ->returnType = TypeInfo::Pointer( nssclassinfo->name);
+    fromInt ->classname = nssclassinfo->name;
+    fromInt ->access = ACCESS_PUBLIC;
+    fromInt ->methodType = METHOD_STATIC;
+    nssclassinfo->staticMethods[ fromInt->name] = fromInt;
+
+    
+    auto strAppnend = new MethodInfo();
+    strAppnend->isDefault = true;
+    strAppnend->name = "append";
+    auto nsstringParam = new MethodParamInfo();
+    nsstringParam ->name = "string";
+    nsstringParam ->outerName = "string";
+    nsstringParam ->type.type = TYPE_POINTER;
+    nsstringParam ->type.name = "NSString";
+    strAppnend->addParam( nsstringParam );
+
+    strAppnend->returnType = TypeInfo::Pointer( nssclassinfo->name);
+    strAppnend->classname = nssclassinfo->name;
+    strAppnend->access = ACCESS_PUBLIC;
+    strAppnend->methodType = METHOD_STATIC;
+    nssclassinfo->localMethods[ strAppnend->name] = strAppnend;
 
     classes[nsoclassinfo->name] = nsoclassinfo;
     classes[nssclassinfo->name] = nssclassinfo;
@@ -962,7 +1023,18 @@ void fillDefaultMethods() {
 
 void fillDefaultFunctions() {
 
-    FunctionInfo* printf = new FunctionInfo();
+    auto defFuncClass = new ClassInfo();
+    if( classes[ DEFAULT_FUNCTIONS_CLASS]){
+        throw "why2";
+    } else {
+        defFuncClass->parentName = defaultParentClass;
+        defFuncClass->name= FUNCTIONS_CLASS;
+        defFuncClass->table= new JavaConstantTable();
+        classes[ DEFAULT_FUNCTIONS_CLASS] = defFuncClass;
+    }
+
+    MethodInfo* printf = new MethodInfo();
+    printf->classname = DEFAULT_FUNCTIONS_CLASS;
     printf->isDefault = true;
     printf->name = "printf";
     printf->returnType.type = TYPE_VOID;
@@ -971,8 +1043,10 @@ void fillDefaultFunctions() {
     stringParam->name = "string";
     stringParam->type = TypeInfo::Pointer("NSString");
     printf->params[ stringParam->name] = stringParam;
-    functions[ printf->name] = printf;
+    defFuncClass->staticMethods[ printf->name] = printf;
+    
 
+    defFuncClass->table->addClass( defFuncClass);
 }
 
 /**
@@ -1147,7 +1221,7 @@ public:
 		RETURN_IF_NODE_NULL;
 		
         fillDefaultClasses();
-        //fillDefaultFunctions();
+        fillDefaultFunctions();
 
         classes[FUNCTIONS_CLASS] = new ClassInfo();
         classes[FUNCTIONS_CLASS]->parentName = defaultParentClass;
@@ -1157,6 +1231,7 @@ public:
 
 
         classes[FUNCTIONS_CLASS]->table->addClass( classes[FUNCTIONS_CLASS]);
+
 
         for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
 			auto classDecl = *iclassDecl;
@@ -1267,7 +1342,7 @@ class JVMTableFiller : public NodeVisiter {
 
         } else if( node->exprType == EXPR_FUNC_CALL) {
 
-            auto f = functions[ node->name];
+            auto f = findFunction( node->name);
             if( isClass)
                 node->constantNum = classes[this->curClass->name]->table->addFunction( f);
             else

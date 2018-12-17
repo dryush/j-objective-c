@@ -145,11 +145,13 @@ public:
         else if ( node->exprType == EXPR_OPERATION) {
             if( node->operationType == OP_VALUE) {
 				if (node->constType == TYPE_CUSTOM) {
-					VarType type = localVars[node->name].type;
+                    auto type = node->returnType;
 					int number = localVarsNumber[node->name];
-					if ( type == TYPE_INT) {
+                    if ( type->varType == TYPE_INT) {
 						addCommand( new ILOAD(number));
-					}
+                    } else if ( type->varType == TYPE_POINTER){
+                        addCommand( new ALOAD(number));
+                    }
 				} else if (node->constType == TYPE_INT) {
 					addCommand( new IConst(node->intVal));
                 } else if ( node->constType == TYPE_STRING) {

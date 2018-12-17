@@ -8,9 +8,10 @@ class FunctionCallChecker : public NodeVisiter {
     void visit( ExprNode* node) override {
         if( node->exprType == EXPR_FUNC_CALL) {
 
-            list<ExprNode*>& existArgs = node->funcArgs->exprs; 
+            list<MethodCallArgNode*>& existArgs = node->methodCallArgs; 
             auto iExistArg = existArgs.begin(); 
-            auto& params = functions[ node->name]->params;
+            FunctionInfo* func = findFunction( node->name);
+            auto& params = func->params;
             auto iParam = params.begin();
             int order = 0;
             for( ; iParam != params.end() && iExistArg != existArgs.end(); iParam++, iExistArg++){
