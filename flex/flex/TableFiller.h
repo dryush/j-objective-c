@@ -343,8 +343,12 @@ unordered_map<string, EnumInfo*> enums;
 */
 
 
-const string FUNCTIONS_CLASS = "#MAIN_CLASS#";
+const string FUNCTIONS_CLASS = "______________________FUNCTIONS_CLASS______________________";
+const string MAIN_CLASS = "______________________MAIN_CLASS______________________";
 
+string genClassDescriptor( const string& classname){
+    return string("L") + classname +";";
+}
 
 string genDescriptor( const TypeInfo& type){
     string descr = "";
@@ -357,7 +361,7 @@ string genDescriptor( const TypeInfo& type){
     } else if ( type.type == TYPE_CHAR) {
         descr = "I";
     } else if ( type.type == TYPE_STRING) {
-        descr = "LNString; (ВРЕМЕННО!!!)";
+        descr = "Ljava/lang/String;";
     } else if ( type.type == TYPE_CUSTOM) {
         descr = "I"; ///TODO::Дима, если не так - подумай, здесь CUSTOM == ENUM
     } else if ( type.type == TYPE_BOOL) {
@@ -601,6 +605,7 @@ public:
     
     ///
     int classconst;
+    unordered_map<string, int> constructors;
     int superclassconst;
     string classname;
 
@@ -615,6 +620,8 @@ public:
     ///
     unordered_map<pair<string,string>, int, pairhash> methodNumByName;
     unordered_map<pair<string,string>, int, pairhash> fieldNumByName;
+    
+    unordered_map< int, int> classByMethod;
 
     string to_csv_string(){
         string res;
@@ -690,7 +697,7 @@ public:
             //Константа для атрибута Code
             addUtf8( "Code");
             //Константа деффолтного конструктора
-           // addMethod(JavaLangObject, "<init>", "()V");
+            this->constructors[ classname] = addMethod(classname, "<init>", "()V");
         }
         );
 
@@ -740,9 +747,10 @@ public:
         { 
             records.push_back( JavaTableRecord( classmethod, CONSTANT_Methodref));
             num = this->methods[classmethod] = records.size()-1;
+            this->methodNumByName[ make_pair( classname, methodname)] = num;
+            this->classByMethod[ num] = classnum;
         }
         );
-        this->methodNumByName[ make_pair( classname, methodname)] = num;
         return num;
     }
 
@@ -882,6 +890,29 @@ void fillDefaultClasses() {
 
     classes[ NSScanner->name] = NSScanner;
 
+
+
+
+    ClassInfo* starter = new ClassInfo();
+    starter->name = MAIN_CLASS;
+    starter->parentName = JavaLangObject;
+    starter->isDefault = true;
+    //starter->staticMethods
+    MethodInfo* main = new MethodInfo();
+    main->isDefault = true;
+    main->name = "main";
+    main->access = ACCESS_PUBLIC;
+    main->methodType = METHOD_STATIC;
+    main->returnType.type = TYPE_VOID;
+
+    MethodParamInfo* mainParam = new MethodParamInfo();
+    mainParam->name = "args";
+    mainParam->type.type = TYPE_ARRAY;
+    mainParam->type.arrayType = TYPE_STRING;
+
+    main->addParam( mainParam);
+    
+
     FOR_EACH( cl, classes){
         if( cl->second->isDefault)
             cl->second->table->addClass( cl->second);
@@ -925,12 +956,14 @@ void fillDefaultFunctions() {
     FunctionInfo* printf = new FunctionInfo();
     printf->isDefault = true;
     printf->name = "printf";
+    printf->returnType.type = TYPE_VOID;
     
     FunctionParamInfo* stringParam = new FunctionParamInfo();
     stringParam->name = "string";
     stringParam->type = TypeInfo::Pointer("NSString");
     printf->params[ stringParam->name] = stringParam;
     functions[ printf->name] = printf;
+
 }
 
 /**
@@ -1061,8 +1094,10 @@ public:
 
         if( this->currentMethod->methodType == METHOD_LOCAL)
             this->currentClass->localMethods[ this->currentMethod->name] = this->currentMethod;
-        else if( this->currentMethod->methodType == METHOD_STATIC)
+        else if( this->currentMethod->methodType == METHOD_STATIC) 
             this->currentClass->staticMethods[ this->currentMethod->name ] = this->currentMethod;
+
+        
 	}
     
 	void visit( ClassFieldDeclarationNode * node) override {
@@ -1110,6 +1145,8 @@ public:
         classes[FUNCTIONS_CLASS]->name= FUNCTIONS_CLASS;
         classes[FUNCTIONS_CLASS]->table= new JavaConstantTable();
         
+
+
         classes[FUNCTIONS_CLASS]->table->addClass( classes[FUNCTIONS_CLASS]);
 
         for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
@@ -1196,6 +1233,9 @@ class JVMTableFiller : public NodeVisiter {
             if ( node->object->returnType->varType == TYPEE_CLASS){
                 c = classes[ node->object->returnType->name];
                 m = c->staticMethods[ node->name];
+                if ( node->name == "alloc" && m->params.size() == 0){
+                    node->isAlloc = true;
+                }
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
                 c = classes[ node->object->returnType->childType->name];
                 m = c->localMethods[node->name];

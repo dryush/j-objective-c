@@ -97,7 +97,7 @@ public:
 	/*!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 	/* ����� �������*/
 	ExprListNode* funcArgs;
-
+    bool isAlloc;
     int constantNum;
 
     void visit(NodeVisiter* visiter);
@@ -311,6 +311,8 @@ ExprNode::ExprNode(Expression_st* st) {
 	this->constType = st->const_type;
 
 	this->returnType = nullptr;
+
+    this->isAlloc = false;
 
 	if (st->exprType == EXPR_ARRAY_ELEM_CALL){
 		this->left = new ExprNode(st->left);

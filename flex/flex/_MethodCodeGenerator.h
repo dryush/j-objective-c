@@ -12,14 +12,19 @@ class MethodCodeGenerator : public NodeVisiter {
     vector<JVMCommand*> commands;
     unordered_map<string, TypeInfo> localVars;
     unordered_map<string, int> localVarsNumber;
+    
+    JavaConstantTable* table;
 
     void genCode( FunctionInfo* info){
+        
+
+
         localVarsCount = 0;
         localVarsCount += info->params.size();
 		localVars.clear();
 		localVars = info->localVars;
 		localVarsNumber.clear();
-		localVarsNumber = info->localVarsNumber;
+		//localVarsNumber = info->localVarsNumber;
 
         info->functionNode->body->visit(this);
     }
@@ -31,16 +36,17 @@ class MethodCodeGenerator : public NodeVisiter {
 		localVars.clear();
 		localVars = info->localVars;
 		localVarsNumber.clear();
-		localVarsNumber = info->localVarsNumber;
+		//localVarsNumber = info->localVarsNumber;
 
-        localVarsCount += info->params.size();
+        //localVarsCount += info->params.size();
     }
 
     
 
 public:
     unsigned short getLocalVarsCount(){
-        return this->localVarsCount;
+        //return this->localVarsCount;
+        return this->localVarsNumber.size(); 
     }
 
     void visit( StatementNode* node) override {
@@ -54,6 +60,7 @@ public:
 
 
         } else if( node->stmtType == STMT_VAR_DECL) {
+            this->localVarsNumber[ node->name] = localVars.size();
 
         } else if( node->stmtType == STMT_EXPR) {
             node->expr->visit( this);
@@ -84,9 +91,25 @@ public:
             FOR_EACH( methodNode, node->methodCallArgs){
                 VISIT_IF_NOT_NULL( (*methodNode));
             }
-            if ( node->object->returnType->varType = TYPEE_CLASS) {
-                commands.push_back( new INVOKE_STATIC( node->constantNum));
-            } else if ( node->object->returnType->varType = TYPE_POINTER) {
+            if ( node->object->returnType->varType == TYPEE_CLASS) {
+                if ( node->isAlloc) {
+                    int classid = table->classByMethod[ node->constantNum];
+                    commands.push_back( new NEW( classid));
+                    commands.push_back( new DUP());
+                    commands.push_back( new INVOKE_SPECIAL( table->constructors[node->object->returnType->name]));
+                }
+                else {
+                    commands.push_back( new INVOKE_STATIC( node->constantNum));
+                }
+            } else if ( node->object->returnType->varType == TYPE_POINTER) {
+                VISIT_IF_NOT_NULL( node->object);
+                
+                FOR_EACH( methodNode, node->methodCallArgs){
+                    VISIT_IF_NOT_NULL( (*methodNode));
+                }
+
+
+
                 commands.push_back( new INVOKE_VIRTUAL( node->constantNum));
             } else throw new runtime_error( "method call from not object (code gen)");
         }
@@ -162,13 +185,14 @@ public:
     }
 
 
-    string genCode( JavaMethodTableRecord& method){
+    string genCode( JavaMethodTableRecord& method, JavaConstantTable* table){
             
-        
+        this->table = table;
         if ( method.methodInfo)
             this->genCode( method.methodInfo);
         else 
-            this->genCode( method.funcInfo);
+            if( method.funcInfo->isDefault){}
+            else this->genCode( method.funcInfo);
         string methodCode;
         FOR_EACH( com, commands){
             methodCode += (*com)->toBytes();
