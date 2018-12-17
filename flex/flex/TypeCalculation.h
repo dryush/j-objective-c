@@ -188,7 +188,9 @@ public:
             return false;
         }
 
-        if( node->returnType->varType == TYPE_STRING && typeToCast->name == "NSString" ){
+        if( node->returnType->varType == TYPE_STRING 
+            && typeToCast->childType 
+            && typeToCast->childType->name == "NSString" ){
 
             ExprNode nssClassObject;
             nssClassObject.exprType = EXPR_OPERATION;
@@ -196,6 +198,8 @@ public:
             nssClassObject.constType = TYPEE_CLASS;
             nssClassObject.name = "NSString";
             nssClassObject.returnType = new TypeNode();
+            nssClassObject.returnType->varType = TYPEE_CLASS;
+            nssClassObject.returnType->name = "NSString";
             
             auto nsstringAlloc = new ExprNode();
             

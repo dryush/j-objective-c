@@ -62,14 +62,17 @@ int main(int argc, char *argv[]) {
 
 	visiters.push_back( new VariableTypeChecker());
 	visiters.push_back( new ReturnChecker());
-	visiters.push_back( new JVMTableFiller());
+	
+    //visiters.push_back( new TypeCalculation());
+    
+    visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
     //prog->visit( visiters.back());
     try{
         FOR_EACH( ivisiter, visiters){
 	        prog->visit(*ivisiter);
 	        //auto test = (*++prog->functions[0]->body->childs.begin())->expr;
-            auto test = (*++prog->functions[0]->body->childs.begin())->expr->right->returnType;
+            //auto test = (*++prog->functions[0]->body->childs.begin())->expr->right->returnType;
 	        delete*ivisiter;
         }
     
