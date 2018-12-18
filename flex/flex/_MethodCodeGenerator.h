@@ -115,7 +115,25 @@ public:
 
     void visit( ExprNode* node) override {
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
+            node->left->visit(this);
+            node->right->visit(this);
+            if( node->returnType->childType.varType == TYPE_POINTER){
+                addCommand( new AALOAD());
+            } else {
+                addCommand( new IALOAD());
+            }
             //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
+        }
+        else if ( node->exprType == EXPRE_ARRAY_ELEM_ASSIGN ) {
+            node->object->visit(this);
+            node->left->visit(this);
+            node->right->visit(this);
+
+            if( node->right->returnType.varType == TYPE_POINT){
+                addCommand( new AASTORE());
+            } else {
+                addCommand( new IASTORE());
+            }
         }
         else if ( node->exprType == EXPR_FUNC_CALL) {
             FOR_EACH( methodNode, node->methodCallArgs){
@@ -124,7 +142,13 @@ public:
             addCommand( new INVOKE_STATIC( node->constantNum));
         }
         else if ( node->exprType == EXPR_INVAR_CALL) {
-
+            node->object->visit(this);
+            addCommand( new GET_FILED(node->constantNum));
+        } 
+        else if ( node->exprType == EXPRE_CLASS_FIELD_ASSIGN ){
+            node->object->visit( this);
+            node->right->visit( this);
+            addCommand( new PUT_FILED(node->constantNum));
         }
         else if ( node->exprType == EXPR_METHOD_CALL) {
             
@@ -199,7 +223,8 @@ public:
 				node->right->visit(this);
 				// ���� ������� ����� ����� ����������
 				//commands.push_back( new ISTORE());
-            } else if( node->operationType == OP_LESS || 
+            } 
+            else if( node->operationType == OP_LESS || 
 						node->operationType == OP_LESS_OR_EQUAL ||
 						node->operationType == OP_GREATER ||
 						node->operationType == OP_GREATER_OR_EQUAL ||

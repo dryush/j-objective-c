@@ -28,34 +28,43 @@ public:
         this->funcName = node->name;
 		bool isOk = false;
         // Must be always
-        for( auto ichildStmt = node->body->childs.begin(); ichildStmt != node->body->childs.end(); ichildStmt++) {
-            auto childStmt = *ichildStmt;
-			if (childStmt->stmtType == STMT_RETURN) {
-				isOk = true;
-				break;
-			}
-        }
+		auto childStmt = * --node->body->childs.end();
+		if (childStmt->stmtType == STMT_RETURN) {
+			isOk = true;
+		}
+        if( !isOk && node->returnType.varType == TYPE_NODE){
+			auto retStmt = new StatementNode();
+			retStmt->stmtType = STMT_RETURN;
+			retStmt->expr = nullptr;
+			node->body.childs.push_back( retStmt);
+			isOk = true;
+		}
+
 		if (isOk == false) {
 			this->genError();
 		}
+
 	}
 
 	void visit(ClassMethodImplementationNode* node) override {
 		RETURN_IF_NODE_NULL;
 		
-		if (node->returnType->varType != TYPE_VOID) {
-			bool isOk = false;
-			for( auto ichildStmt = node->body->childs.begin(); ichildStmt != node->body->childs.end(); ichildStmt++) {
-				auto childStmt = *ichildStmt;
-				if (childStmt->stmtType == STMT_RETURN)  {
-					isOk = true;
-					break;
-				}
-			}
-			if (isOk == false) {
-				this->methodName = node->name;
-				this->genError();
-			}
+		bool isOk = false;
+        // Must be always
+		auto childStmt = * --node->body->childs.end();
+		if (childStmt->stmtType == STMT_RETURN) {
+			isOk = true;
+		}
+        if( !isOk && node->returnType.varType == TYPE_NODE){
+			auto retStmt = new StatementNode();
+			retStmt->stmtType = STMT_RETURN;
+			retStmt->expr = nullptr;
+			node->body.childs.push_back( retStmt);
+			isOk = true;
+		}
+
+		if (isOk == false) {
+			this->genError();
 		}	
 	}
 

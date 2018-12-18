@@ -1,16 +1,13 @@
 #include "TableFiller.h"
 
 /**
-* Проверяет вызов функций, типы аргумметов и их кол-во
+* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ
 */
 class FunctionCallChecker : public NodeVisiter {
-
-    void visit( ExprNode* node) override {
-        if( node->exprType == EXPR_FUNC_CALL) {
-
+public:
+    void checkTypesAndCount(FunctionInfo* func){
             list<MethodCallArgNode*>& existArgs = node->methodCallArgs; 
             auto iExistArg = existArgs.begin(); 
-            FunctionInfo* func = findFunction( node->name);
             auto& params = func->params;
             auto iParam = params.begin();
             int order = 0;
@@ -26,6 +23,17 @@ class FunctionCallChecker : public NodeVisiter {
             else if( iExistArg != existArgs.end()) 
                 addError(string("Not enought args in function call: ") + node->name + "()"); 
 
+    }
+    void visit( ExprNode* node) override {
+        if( node->exprType == EXPR_FUNC_CALL) {
+
+            FunctionInfo* func = findFunction( node->name);
+            this->checkTypesAndCount( func);
+        } else if ( node->exprType == EXPR_METHOD_CALL ){
+            MethodInfo* method; //******
+            /// replace args
+            this->checkTypesAndCount( method);
+        }
         } else if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             auto inttypenode = new TypeNode();
             inttypenode->varType = TYPE_INT;
