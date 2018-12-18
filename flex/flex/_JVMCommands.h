@@ -613,7 +613,7 @@ class GET_FILED : public JVMCommand {
         c += U2( index).toBytes();
         return c;
     }
-}
+};
 
 
 class PUT_FILED : public JVMCommand {
@@ -628,4 +628,4 @@ class PUT_FILED : public JVMCommand {
         c += U2( index).toBytes();
         return c;
     }
-}
+};

@@ -149,7 +149,8 @@ public:
     unordered_map<string, FunctionParamInfo*> params;
     unordered_map<string, TypeInfo> localVars;
     unordered_map<string, int> localVarsNumber;
-
+    vector< FunctionParamInfo*> paramsList;
+    unordered_map< FunctionParamInfo*, int> paramOrderNum;
     string descriptor;
 
     bool getVar( string& name, TypeInfo* type = nullptr){
@@ -173,6 +174,13 @@ public:
             return true;
         }
         return false;
+    }
+
+    void addParam( FunctionParamInfo* param) {
+        this->paramOrderNum[ param] = this->paramsList.size();
+        this->paramsList.push_back( param);
+        this->params[ param->name] = param;
+
     }
 };
 
@@ -210,7 +218,9 @@ public:
 
     
     void addParam( MethodParamInfo* param) {
-        this->params[ param->name] = param;
+        FunctionInfo::addParam( param);
+        //this->pa
+        //this->params[ param->name] = param;
         this->outerParams[ param->outerName] = param;
     }
 };
@@ -265,6 +275,17 @@ MethodInfo* getLocalMethod( string& classname, string& method) {
             return imethodinfo->second;
         } else {
             return getLocalMethod( classinfo->second->parentName, method);
+        }
+    }
+    return nullptr;
+}
+
+MethodInfo* getStaticMethod( const string& classname, const string& method){
+    auto classinfo = classes.find(classname);
+    if( classinfo != classes.end()){
+        auto imethodinfo = classinfo->second->staticMethods.find( method);
+        if ( imethodinfo != classinfo->second->staticMethods.end()){
+            return imethodinfo->second;
         }
     }
     return nullptr;
@@ -640,11 +661,14 @@ public:
     vector<JavaFieldTableRecord> fieldsTable;
     vector<JavaMethodTableRecord> methodsTable;
     
+
+
     ///
     unordered_map<pair<string,string>, int, pairhash> methodNumByName;
     unordered_map<pair<string,string>, int, pairhash> fieldNumByName;
     
     unordered_map< int, int> classByMethod;
+    unordered_map< string, int> classNumByName;
 
     string to_csv_string(){
         string res;
@@ -715,7 +739,7 @@ public:
         { num = elem->second;},
         {
             records.push_back( JavaTableRecord( numutf8, CONSTANT_Class));
-            num = this->classes[ numutf8] = (int)records.size()-1;
+            num = this->classNumByName[classname] = this->classes[ numutf8] = (int)records.size()-1;
             
             //Константа для атрибута Code
             addUtf8( "Code");
@@ -1130,7 +1154,7 @@ public:
 			auto param = *iparam;
             if( param){
                 auto p = new FunctionParamInfo( param);
-                this->currentFunction->params[p->name] = p;;
+                this->currentFunction->addParam( p);
             }
         }
 

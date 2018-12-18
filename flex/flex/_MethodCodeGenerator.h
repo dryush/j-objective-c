@@ -117,7 +117,7 @@ public:
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             node->left->visit(this);
             node->right->visit(this);
-            if( node->returnType->childType.varType == TYPE_POINTER){
+            if( node->returnType->varType == TYPE_POINTER){
                 addCommand( new AALOAD());
             } else {
                 addCommand( new IALOAD());
@@ -129,7 +129,7 @@ public:
             node->left->visit(this);
             node->right->visit(this);
 
-            if( node->right->returnType.varType == TYPE_POINT){
+            if( node->right->returnType->varType == TYPE_POINTER){
                 addCommand( new AASTORE());
             } else {
                 addCommand( new IASTORE());
@@ -180,7 +180,7 @@ public:
 					int number = localVarsNumber[node->name];
                     if ( type->varType == TYPE_INT) {
 						addCommand( new ILOAD(number));
-                    } else if ( type->varType == TYPE_POINTER){
+                    } else if ( type->varType == TYPE_POINTER || (type->varType == TYPE_ARRAY )){
                         addCommand( new ALOAD(number));
                     }
 				} else if (node->constType == TYPE_INT) {
@@ -220,8 +220,33 @@ public:
                 }
             } else if( node->operationType == OP_ASSIGN_ARRAY) {
                 // �������� ���-�� ��� �������� �����
-				node->right->visit(this);
-				// ���� ������� ����� ����� ����������
+				//node->left->visit(this);
+                addCommand( new SIPush( node->arrayElems->exprs.size()));
+                if( node->left->returnType->childType->varType == TYPE_POINTER){
+                    
+                    addCommand( new ANEW_ARRAY( table->classByMethod[ node->left->returnType->childType->childType->varType]));
+                    int index = 0;
+                    FOR_EACH( elem, node->arrayElems->exprs){
+                        addCommand( new DUP());
+                        addCommand( new SIPush( index));
+                        (*elem)->visit( this );
+                        index++;
+                        addCommand( new AASTORE());
+                    }
+                } else {
+                    addCommand( new NEW_ARRAY( node->left->returnType->childType->varType));
+                    int index = 0;
+                    FOR_EACH( elem, node->arrayElems->exprs){
+                        addCommand( new DUP());
+                        addCommand( new SIPush( index));
+                        (*elem)->visit( this );
+                        index++;
+                        addCommand( new IASTORE());
+                    }
+                }
+                int varNum = localVarsNumber[ node->left->name];
+                addCommand( new ASTORE( varNum));
+                // ���� ������� ����� ����� ����������
 				//commands.push_back( new ISTORE());
             } 
             else if( node->operationType == OP_LESS || 

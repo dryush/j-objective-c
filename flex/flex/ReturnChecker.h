@@ -32,11 +32,11 @@ public:
 		if (childStmt->stmtType == STMT_RETURN) {
 			isOk = true;
 		}
-        if( !isOk && node->returnType.varType == TYPE_NODE){
+        if( !isOk && node->returnType->varType == TYPE_VOID){
 			auto retStmt = new StatementNode();
 			retStmt->stmtType = STMT_RETURN;
 			retStmt->expr = nullptr;
-			node->body.childs.push_back( retStmt);
+			node->body->childs.push_back( retStmt);
 			isOk = true;
 		}
 
@@ -55,11 +55,11 @@ public:
 		if (childStmt->stmtType == STMT_RETURN) {
 			isOk = true;
 		}
-        if( !isOk && node->returnType.varType == TYPE_NODE){
+        if( !isOk && node->returnType->varType == TYPE_VOID){
 			auto retStmt = new StatementNode();
 			retStmt->stmtType = STMT_RETURN;
 			retStmt->expr = nullptr;
-			node->body.childs.push_back( retStmt);
+			node->body->childs.push_back( retStmt);
 			isOk = true;
 		}
 
@@ -84,7 +84,6 @@ public:
 		
 		for( auto ifunc = node->functions.begin(); ifunc != node->functions.end(); ifunc++){
 			auto func = *ifunc;
-			if (func->returnType->varType != TYPE_VOID)
 				VISIT_IF_NOT_NULL(func);
         }
         for( auto iClassImpl = node->classImplementations.begin(); iClassImpl != node->classImplementations.end(); iClassImpl++){
