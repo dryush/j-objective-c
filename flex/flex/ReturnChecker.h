@@ -31,7 +31,6 @@ public:
 		auto childStmt = * --node->body->childs.end();
 		if (childStmt->stmtType == STMT_RETURN) {
 			isOk = true;
-			break;
 		}
         if( !isOk && node->returnType.varType == TYPE_NODE){
 			auto retStmt = new StatementNode();
@@ -55,7 +54,6 @@ public:
 		auto childStmt = * --node->body->childs.end();
 		if (childStmt->stmtType == STMT_RETURN) {
 			isOk = true;
-			break;
 		}
         if( !isOk && node->returnType.varType == TYPE_NODE){
 			auto retStmt = new StatementNode();
