@@ -112,7 +112,7 @@ public:
 
     string toBytes() override {
         string c;
-        c += 0x10;
+        c += 0x11;
         c += S2( num).toBytes();
         return c;
     }
@@ -128,7 +128,7 @@ public:
 
     string toBytes() override {
         string c;
-        c += 0x11;
+        c += 0x10;
         c += S1( num).toBytes();
         return c;
     }
@@ -279,7 +279,7 @@ public:
 
     string toBytes() override {
         string c;
-        c += U1( 0x64).toBytes();
+        c += U1( 0x68).toBytes();
         return c;
     }
 };
@@ -289,7 +289,7 @@ public:
 
     string toBytes() override {
         string c;
-        c += U1( 0x68).toBytes();
+        c += U1( 0x64).toBytes();
         return c;
     }
 };
@@ -300,6 +300,16 @@ public:
     string toBytes() override {
         string c;
         c += U1( 0x6C).toBytes();
+        return c;
+    }
+};
+
+class IREM : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x70).toBytes();
         return c;
     }
 };

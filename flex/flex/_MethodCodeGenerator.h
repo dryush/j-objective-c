@@ -80,17 +80,24 @@ public:
 
 			node->truthStmt->visit(this);
 
+			int gotoLine = 0;
+			int numberGotoCommand = 0;
+			if (node->wrongStmt != NULL) {
+				gotoLine = numberCurrentRow;
+				numberGotoCommand = commands.size();
+				addCommand( new GOTO(0));
+			}
+			
+
 			int shift = numberCurrentRow - ifLine;
 			commands[numberIfCommand] = new IF_ICMP(node->condition->operationType, shift);
 
-			int gotoLine = numberCurrentRow;
-			int numberGotoCommand = commands.size();
-			addCommand( new GOTO(0));
+			if (node->wrongStmt != NULL) {
+				node->wrongStmt->visit(this);
 
-			node->wrongStmt->visit(this);
-
-			shift = numberCurrentRow - gotoLine;
-			commands[numberGotoCommand] = new GOTO(shift);
+				shift = numberCurrentRow - gotoLine;
+				commands[numberGotoCommand] = new GOTO(shift);
+			}
 			
         } else if( node->stmtType == STMT_RETURN) {
             VISIT_IF_NOT_NULL(node->expr);	
@@ -115,7 +122,7 @@ public:
             FOR_EACH( methodNode, node->methodCallArgs){
                 VISIT_IF_NOT_NULL( (*methodNode));
             }
-            commands.push_back( new INVOKE_STATIC( node->constantNum));
+            addCommand( new INVOKE_STATIC( node->constantNum));
         }
         else if ( node->exprType == EXPR_INVAR_CALL) {
 
@@ -130,17 +137,17 @@ public:
             if ( node->object->returnType->varType == TYPEE_CLASS) {
                 if ( node->isAlloc) {
                     int classid = table->classByMethod[ node->constantNum];
-                    commands.push_back( new NEW( classid));
-                    commands.push_back( new DUP());
-                    commands.push_back( new INVOKE_SPECIAL( table->constructors[node->object->returnType->name]));
+                    addCommand( new NEW( classid));
+                    addCommand( new DUP());
+                    addCommand( new INVOKE_SPECIAL( table->constructors[node->object->returnType->name]));
                 }
                 else {
-                    commands.push_back( new INVOKE_STATIC( node->constantNum));
+                    addCommand( new INVOKE_STATIC( node->constantNum));
                 }
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
                 
 
-                commands.push_back( new INVOKE_VIRTUAL( node->constantNum));
+                addCommand( new INVOKE_VIRTUAL( node->constantNum));
             } else throw new runtime_error( "method call from not object (code gen)");
         }
         else if ( node->exprType == EXPR_OPERATION) {
@@ -154,7 +161,7 @@ public:
                         addCommand( new ALOAD(number));
                     }
 				} else if (node->constType == TYPE_INT) {
-					addCommand( new IConst(node->intVal));
+					addCommand( new SIPush(node->intVal));
                 } else if ( node->constType == TYPE_STRING) {
                     addCommand( new LDC_W( table->strings[ node->strVal]));
                 }
@@ -179,9 +186,7 @@ public:
 				node->left->visit(this);
 				node->right->visit(this);
                 // a % b === a - (c * b), ��� c = a / b - ����� ����� �����
-				addCommand( new IDIV());
-				addCommand( new IMUL());
-				addCommand( new ISUB());
+				addCommand( new IREM());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
                 int number = localVarsNumber[node->left->name];
@@ -246,7 +251,7 @@ public:
             } else if( node->operationType == OP_UPLUS) {
                 node->left->visit(this);
             } else if( node->operationType == OP_UMINUS) {
-                addCommand( new IConst(-1));
+                addCommand( new SIPush(-1));
 				node->left->visit(this);
 				addCommand( new IMUL());
             } 
