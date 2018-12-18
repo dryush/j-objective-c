@@ -76,7 +76,7 @@ public:
 
 			int ifLine = numberCurrentRow;
 			int numberIfCommand = commands.size();
-			addCommand( new IF_ICMP(node->condition->operationType, 0));
+			addCommand( new IF_ICMP(node->condition->operationType, 0, false));
 
 			node->truthStmt->visit(this);
 
@@ -90,7 +90,7 @@ public:
 			
 
 			int shift = numberCurrentRow - ifLine;
-			commands[numberIfCommand] = new IF_ICMP(node->condition->operationType, shift);
+			commands[numberIfCommand] = new IF_ICMP(node->condition->operationType, shift, false);
 
 			if (node->wrongStmt != NULL) {
 				node->wrongStmt->visit(this);
@@ -109,8 +109,21 @@ public:
             else
                 addCommand( new IRETURN());
         } else if( node->stmtType == STMT_WHILE) {
-			node->condition->visit(this);
+			
+			int gotoLine = numberCurrentRow;
+			int numberGotoCommand = commands.size();
+			addCommand( new GOTO(0));
+
 			node->truthStmt->visit(this);
+
+			int shift = numberCurrentRow - gotoLine;
+			commands[numberGotoCommand] = (new GOTO(shift));
+
+			node->condition->left->visit(this);
+			node->condition->right->visit(this);
+
+			shift = gotoLine + 3 - numberCurrentRow;
+			addCommand( new IF_ICMP(node->condition->operationType, shift, true));
         }
     }
 
