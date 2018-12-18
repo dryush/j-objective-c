@@ -1,16 +1,21 @@
 #include "TableFiller.h"
 
 /**
-* Проверяет вызов функций, типы аргумметов и их кол-во
+* пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ
 */
 class FunctionCallChecker : public NodeVisiter {
+public:
+    void visit( FunctionNode* node){
+        int stop = 2;
+        stop = 2 + 2;
+        NodeVisiter::visit( node);
+    }
 
-    void visit( ExprNode* node) override {
-        if( node->exprType == EXPR_FUNC_CALL) {
+    void checkTypesAndCount(FunctionInfo* func, ExprNode* node){
+        
+            vector<MethodCallArgNode*>& existArgs = node->methodCallArgs;
 
-            list<MethodCallArgNode*>& existArgs = node->methodCallArgs; 
             auto iExistArg = existArgs.begin(); 
-            FunctionInfo* func = findFunction( node->name);
             auto& params = func->params;
             auto iParam = params.begin();
             int order = 0;
@@ -26,6 +31,39 @@ class FunctionCallChecker : public NodeVisiter {
             else if( iExistArg != existArgs.end()) 
                 addError(string("Not enought args in function call: ") + node->name + "()"); 
 
+    }
+    void visit( ExprNode* node) override {
+        if( node->exprType == EXPR_FUNC_CALL) { 
+
+            FunctionInfo* func = findFunction( node->name);
+            this->checkTypesAndCount( func, node);
+        } else if ( node->exprType == EXPR_METHOD_CALL ){
+            
+            MethodInfo* method; //******
+            if( node->object->returnType->varType == TYPE_POINTER){
+                method = getLocalMethod( node->object->returnType->childType->name, node->name);
+            } else if ( node->object->returnType->varType == TYPEE_CLASS){
+                method = getStaticMethod( node->object->returnType->name, node->name);
+            }
+
+            /// replace args
+            if( node->methodCallArgs.size() > 1 && !node->methodCallArgs[1]->outerName.empty() ){
+                vector< MethodCallArgNode*> replaced( node->methodCallArgs.size());
+                for( int i = 1; i < node->methodCallArgs.size(); i++){
+                    string outerName = node->methodCallArgs[i]->outerName;
+                    auto iparam = method->outerParams.find( outerName) ;
+                    if( iparam != method->outerParams.end()){
+                        int realOrder = method->paramOrderNum[ iparam->second];
+                        replaced[realOrder] = node->methodCallArgs[i]; 
+                    } else {
+                        addError("");
+                    }
+                }
+                node->methodCallArgs = replaced;
+            }
+            
+            this->checkTypesAndCount( method, node);
+        
         } else if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             auto inttypenode = new TypeNode();
             inttypenode->varType = TYPE_INT;
@@ -39,5 +77,7 @@ class FunctionCallChecker : public NodeVisiter {
                 addError(string("Index must be int array elem call: ") + node->left->name);
             }
         }
+
+        NodeVisiter::visit( node);
     }
 };

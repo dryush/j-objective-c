@@ -245,7 +245,7 @@ public:
     }
 
 
-    static void FillFrom( list<MethodCallArgNode*>& list, Method_call_arg_list_st* st){
+    static void FillFrom( vector<MethodCallArgNode*>& list, Method_call_arg_list_st* st){
         auto last = st;
         while ( last){
             list.push_back( new MethodCallArgNode(last->arg));
@@ -254,7 +254,7 @@ public:
     }
 
     
-    static void FillFrom( list<MethodCallArgNode*>& list, Expr_list_st* st){
+    static void FillFrom( vector<MethodCallArgNode*>& list, Expr_list_st* st){
         auto last = st;
         while ( last){
             list.push_back( new MethodCallArgNode(last->expr));

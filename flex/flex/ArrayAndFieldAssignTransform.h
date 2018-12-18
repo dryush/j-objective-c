@@ -13,9 +13,9 @@ public:
                 if ( node->left->exprType == EXPR_ARRAY_ELEM_CALL ){
                     auto newNode = new ExprNode();
                     newNode->exprType = EXPRE_ARRAY_ELEM_ASSIGN;
-                    newNode->object = node->left->left;
-                    newNode->left = node->left->right;
-                    newNode->right = node->right;
+                    newNode->object = node->left->left; //МАССИВ
+                    newNode->left = node->left->right; //индекс
+                    newNode->right = node->right; //Присваиваемое значение
                     *node = *newNode;
                 } else if ( node->left->exprType == EXPR_INVAR_CALL ){
                     auto newNode = new ExprNode();

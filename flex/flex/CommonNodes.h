@@ -35,7 +35,7 @@ public:
 
 	TypeNode() {
 		this->name = "";
-		this->childType = NULL;
+		this->childType = nullptr;
 		this->varType = TYPEE_UNSET;
 	}
 
@@ -44,7 +44,7 @@ public:
         this->varType = tn.varType;
         if( tn.childType){
             this->childType = new TypeNode( *tn.childType);
-        }
+        } else this->childType = nullptr;
     }
 
 	TypeNode(Type_st * st) {
@@ -93,7 +93,7 @@ public:
 	/// TODO:: struct Method_call_arg_list_st* method_args; 
 	//list<ExprNode*> methodArgs;
 	// TODO:: replace args and convert to exprNode
-	list<MethodCallArgNode*> methodCallArgs;
+	vector<MethodCallArgNode*> methodCallArgs;
 	/*!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 	/* ����� �������*/
 	ExprListNode* funcArgs;
