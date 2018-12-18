@@ -645,7 +645,8 @@ public:
     unordered_map<pair<string,string>, int, pairhash> fieldNumByName;
     
     unordered_map< int, int> classByMethod;
-
+    unordered_map<string, int> classNumByName;
+    
     string to_csv_string(){
         string res;
         for( int i =1; i < records.size(); i++){
@@ -715,12 +716,13 @@ public:
         { num = elem->second;},
         {
             records.push_back( JavaTableRecord( numutf8, CONSTANT_Class));
-            num = this->classes[ numutf8] = (int)records.size()-1;
+            num = this->classNumByName[ classname] = this->classes[ numutf8] = (int)records.size()-1;
             
             //Константа для атрибута Code
             addUtf8( "Code");
             //Константа деффолтного конструктора
             this->constructors[ classname] = addMethod(classname, "<init>", "()V");
+
         }
         );
 
