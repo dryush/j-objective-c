@@ -185,9 +185,7 @@ public:
 				node->left->visit(this);
 				node->right->visit(this);
                 // a % b === a - (c * b), ��� c = a / b - ����� ����� �����
-				addCommand( new IDIV());
-				addCommand( new IMUL());
-				addCommand( new ISUB());
+				addCommand( new IREM());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
                 int number = localVarsNumber[node->left->name];

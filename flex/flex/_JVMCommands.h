@@ -304,6 +304,16 @@ public:
     }
 };
 
+class IREM : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x70).toBytes();
+        return c;
+    }
+};
+
 class IINC : public JVMCommand {
 public:
 
