@@ -328,11 +328,12 @@ public:
 class IF_ICMP : public JVMCommand {
     OperationType compType;
     signed short int shift;
-
+	bool isWhile;
 public:
-    IF_ICMP( OperationType compareType, signed short int shift){
+    IF_ICMP( OperationType compareType, signed short int shift, bool isWhile){
         this->shift = shift;
         this->compType = compareType;
+		this->isWhile = isWhile;
     }
 	// ����� ������� - ������ ������� � �������
 	// 9F ==
@@ -344,19 +345,36 @@ public:
     string toBytes() override {
         
         string c;
-        if( this->compType == OP_EQUAL)
-            c += U1( 0xA0).toBytes();
-        else if( this->compType == OP_NOT_EQUAL)
-            c += U1( 0x9F).toBytes();
-        else if( this->compType == OP_LESS)
-            c += U1( 0xA2).toBytes();
-        else if( this->compType == OP_LESS_OR_EQUAL)
-            c += U1( 0xA3).toBytes();
-        else if( this->compType == OP_GREATER)
-            c += U1( 0xA4).toBytes();
-        else if( this->compType == OP_GREATER_OR_EQUAL)
-            c += U1( 0xA1).toBytes();
-        else throw new runtime_error("IF_ICMP must have compare OP_TYPE");
+		if (isWhile == false) {
+			if( this->compType == OP_EQUAL)
+				c += U1( 0xA0).toBytes();
+			else if( this->compType == OP_NOT_EQUAL)
+				c += U1( 0x9F).toBytes();
+			else if( this->compType == OP_LESS)
+				c += U1( 0xA2).toBytes();
+			else if( this->compType == OP_LESS_OR_EQUAL)
+				c += U1( 0xA3).toBytes();
+			else if( this->compType == OP_GREATER)
+				c += U1( 0xA4).toBytes();
+			else if( this->compType == OP_GREATER_OR_EQUAL)
+				c += U1( 0xA1).toBytes();
+			else throw new runtime_error("IF_ICMP must have compare OP_TYPE");
+		} 
+		else {
+			if( this->compType == OP_EQUAL)
+				c += U1( 0x9F).toBytes();
+			else if( this->compType == OP_NOT_EQUAL)
+				c += U1( 0xA0).toBytes();
+			else if( this->compType == OP_LESS)
+				c += U1( 0xA1).toBytes();
+			else if( this->compType == OP_LESS_OR_EQUAL)
+				c += U1( 0xA4).toBytes();
+			else if( this->compType == OP_GREATER)
+				c += U1( 0xA3).toBytes();
+			else if( this->compType == OP_GREATER_OR_EQUAL)
+				c += U1( 0xA2).toBytes();
+			else throw new runtime_error("IF_ICMP must have compare OP_TYPE");
+		}
         c+= S2( shift).toBytes();
         return c;
     }
