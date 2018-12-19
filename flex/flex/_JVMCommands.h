@@ -325,6 +325,62 @@ public:
 };
 
 
+class IF_0 : public JVMCommand {
+	OperationType compType;
+    signed short int shift;
+	bool isWhile;
+
+	public:
+    IF_0( OperationType compareType, signed short int shift, bool isWhile){
+        this->shift = shift;
+        this->compType = compareType;
+		this->isWhile = isWhile;
+    }
+
+	// 99 == 
+	// 9A !=
+	// 9B <
+	// 9E <=
+	// 9D >
+	// 9C >=
+    string toBytes() override {
+        
+        string c;
+		if (isWhile == false) {
+			if( this->compType == OP_EQUAL)
+				c += U1( 0x9A).toBytes();
+			else if( this->compType == OP_NOT_EQUAL)
+				c += U1( 0x99).toBytes();
+			else if( this->compType == OP_LESS)
+				c += U1( 0x9C).toBytes();
+			else if( this->compType == OP_LESS_OR_EQUAL)
+				c += U1( 0x9D).toBytes();
+			else if( this->compType == OP_GREATER)
+				c += U1( 0x9E).toBytes();
+			else if( this->compType == OP_GREATER_OR_EQUAL)
+				c += U1( 0x9B).toBytes();
+			else throw new runtime_error("IF_0 must have compare OP_TYPE");
+		} 
+		else {
+			if( this->compType == OP_EQUAL)
+				c += U1( 0x99).toBytes();
+			else if( this->compType == OP_NOT_EQUAL)
+				c += U1( 0x9A).toBytes();
+			else if( this->compType == OP_LESS)
+				c += U1( 0x9B).toBytes();
+			else if( this->compType == OP_LESS_OR_EQUAL)
+				c += U1( 0x9E).toBytes();
+			else if( this->compType == OP_GREATER)
+				c += U1( 0x9D).toBytes();
+			else if( this->compType == OP_GREATER_OR_EQUAL)
+				c += U1( 0x9C).toBytes();
+			else throw new runtime_error("IF_0 must have compare OP_TYPE");
+		}
+        c+= S2( shift).toBytes();
+        return c;
+    }
+};
+
 class IF_ICMP : public JVMCommand {
     OperationType compType;
     signed short int shift;
