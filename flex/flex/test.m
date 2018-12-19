@@ -1,10 +1,8 @@
 void main()
 {
-	int a;
 	NSScanner* in= [[NSScanner alloc] init];
-	a = [in scanInt];
-	printf([ NSString fromInt: a]);
-
-
+	int a = [in scanInt];
+	if (a > 0 && a < 5)
+		printf([ NSString fromInt: a]);
 
 }
