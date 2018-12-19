@@ -40,7 +40,7 @@ namespace Win {
 int main(int argc, char *argv[]) {
     
 	//freopen("output.txt", "w", stdout);
-	yyin = fopen("test.m", "r");
+ 	yyin = fopen("test.m", "r");
 	yyparse();
 	printf("\n\n");
 	print(root);

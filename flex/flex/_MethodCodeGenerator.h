@@ -7,21 +7,41 @@
 
 class MethodCodeGenerator : public NodeVisiter {
     
-    unsigned short localVarsCount;
     string code;
     vector<JVMCommand*> commands;
     unordered_map<string, TypeInfo> localVars;
     unordered_map<string, int> localVarsNumber;
+
+    
+    void addVar( const string& name, TypeInfo& type){
+        this->localVars[name] = type;
+        this->localVarsNumber[name] = this->localVarsNumber.size();
+    }
+
+    int getVarNumber(const string& varname){
+        return this->localVarsNumber[ varname];
+    }
+
+    TypeInfo getVarType( const string& varname){
+        return this->localVars[ varname];
+    }
+    
     
     JavaConstantTable* table;
     FunctionInfo* info;
 	int numberCurrentRow;
 
+    void startGen( FunctionInfo* inf){
+        this->info = inf;
+
+        FOR_EACH( p, inf->paramsList){
+            addVar((*p)->name, (*p)->type);
+        }
+    }
+
     void genCode( FunctionInfo* info){
         
-
-
-		this->info = info;
+        startGen( info);
 
 		if (info->functionNode->body != NULL)
 			info->functionNode->body->visit(this);
@@ -29,17 +49,11 @@ class MethodCodeGenerator : public NodeVisiter {
 
     void genCode( MethodInfo* info){
 
-        this->info = info;
-        
+        startGen( info);
 
         if( info->methodType == METHOD_LOCAL)
-            localVarsCount = 1;
-        else localVarsCount = 0;
-		localVars.clear();
-		localVarsNumber.clear();
-		//localVarsNumber = info->localVarsNumber;
-
-        //localVarsCount += info->params.size();
+            addVar("this", TypeInfo::Pointer(info->classname));
+        
     }
 
     void addCommand(JVMCommand* command) {
@@ -61,11 +75,10 @@ public:
 				 childStmt->visit(this);
 			}
         } else if( node->stmtType == STMT_ARRAY_DECL) {
-            this->localVarsNumber[ node->name] = localVarsNumber.size();
-
+            addVar( node->name, TypeInfo( node->varType));
 
         } else if( node->stmtType == STMT_VAR_DECL) {
-            this->localVarsNumber[ node->name] = localVarsNumber.size();
+            addVar( node->name, TypeInfo( node->varType));
 
         } else if( node->stmtType == STMT_EXPR) {
             node->expr->visit( this);
@@ -131,7 +144,7 @@ public:
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             node->left->visit(this);
             node->right->visit(this);
-            if( node->returnType->varType == TYPE_POINTER){
+            if( node->returnType->varType == TYPE_POINTER || node->returnType->varType == TYPE_ARRAY){
                 addCommand( new AALOAD());
             } else {
                 addCommand( new IALOAD());
@@ -150,7 +163,9 @@ public:
             }
         }
         else if ( node->exprType == EXPR_FUNC_CALL) {
-            FOR_EACH( methodNode, node->methodCallArgs){
+            auto args = node->methodCallArgs;
+
+            FOR_EACH_R( methodNode, node->methodCallArgs){
                 VISIT_IF_NOT_NULL( (*methodNode));
             }
             addCommand( new INVOKE_STATIC( node->constantNum));
@@ -191,7 +206,7 @@ public:
             if( node->operationType == OP_VALUE) {
 				if (node->constType == TYPE_CUSTOM) {
                     auto type = node->returnType;
-					int number = localVarsNumber[node->name];
+                    int number = getVarNumber( node->name);
                     if ( type->varType == TYPE_INT) {
 						addCommand( new ILOAD(number));
                     } else if ( type->varType == TYPE_POINTER || (type->varType == TYPE_ARRAY )){
@@ -226,7 +241,7 @@ public:
 				addCommand( new IREM());
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
-                int number = localVarsNumber[node->left->name];
+                int number = getVarNumber( node->left->name);
                 if ( node->right->returnType->varType == TYPE_INT){
 				    addCommand( new ISTORE(number));
                 } else if (node->right->returnType->varType == TYPE_POINTER){
@@ -245,7 +260,7 @@ public:
                             (*elem)->visit( this);
                             addCommand( new AASTORE());
                         }
-                        addCommand( new ALOAD( localVarsNumber[ node->left->name]));
+                        addCommand( new ALOAD( getVarNumber( node->left->name)));
                     }
                     else {
 
@@ -258,7 +273,7 @@ public:
                             (*elem)->visit( this);
                             addCommand( new IASTORE());
                         }
-                        addCommand( new ALOAD( localVarsNumber[ node->left->name]));
+                        addCommand( new ALOAD( getVarNumber( node->left->name)));
                     }
                     
                 }
@@ -288,7 +303,7 @@ public:
                         addCommand( new IASTORE());
                     }
                 }
-                int varNum = localVarsNumber[ node->left->name];
+                int varNum = getVarNumber( node->left->name);
                 addCommand( new ASTORE( varNum));
                 // ���� ������� ����� ����� ����������
 				//commands.push_back( new ISTORE());

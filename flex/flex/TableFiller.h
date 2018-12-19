@@ -42,6 +42,15 @@ public:
         this->type =vt;
         this->name = n;
     }
+
+    static TypeInfo Array(VarType arrayType, const string& str =""){
+        TypeInfo t;
+        t.type = TYPE_ARRAY;
+        t.name = str;
+        t.arrayType = arrayType;
+        return t;
+    }
+
     TypeInfo( TypeNode* node){
         this->type = node->varType;
         if( node->varType == TYPE_CUSTOM){
@@ -1075,10 +1084,10 @@ void fillDefaultFunctions() {
     printf->name = "printf";
     printf->returnType.type = TYPE_VOID;
     
-    FunctionParamInfo* stringParam = new FunctionParamInfo();
+    MethodParamInfo* stringParam = new MethodParamInfo();
     stringParam->name = "string";
     stringParam->type = TypeInfo::Pointer("NSString");
-    printf->params[ stringParam->name] = stringParam;
+    printf->addParam( stringParam);
     defFuncClass->staticMethods[ printf->name] = printf;
     
 
