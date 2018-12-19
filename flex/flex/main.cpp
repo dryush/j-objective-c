@@ -68,32 +68,31 @@ int main(int argc, char *argv[]) {
     visiters.push_back( new JVMTableFiller());
 	visiters.push_back( new PrintNodes());
     //prog->visit( visiters.back());
-    try{
-        FOR_EACH( ivisiter, visiters){
-	        prog->visit(*ivisiter);
-	        //auto test = (*++prog->functions[0]->body->childs.begin())->expr;
-            //auto test = (*++prog->functions[0]->body->childs.begin())->expr->right->returnType;
-	        delete*ivisiter;
-        }
-    
-	    freopen("CON","w", stdout);
-        if( errors.size() > 0){
-            for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
-                cout << *ierror << endl;
-            }
-        }
-    
-	    freopen("table.csv","w", stdout);
-        FOR_EACH( cl, classes){
-            cout << cl->second->name << endl;
-            cout << cl->second->table->to_csv_string() << endl;
-        }
-    
-    } catch ( ...) {
-        printf("COMPILATION STOPPED!!!\n");
-
+   
+    FOR_EACH( ivisiter, visiters){
+	    prog->visit(*ivisiter);
+	    //auto test = (*++prog->functions[0]->body->childs.begin())->expr;
+        //auto test = (*++prog->functions[0]->body->childs.begin())->expr->right->returnType;
+	    delete*ivisiter;
     }
+    
 
+
+	freopen("CON","w", stdout);
+    if( errors.size() > 0){
+        for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
+            cout << *ierror << endl;
+        }
+        getch();
+        return 0;
+    }
+	freopen("table.csv","w", stdout);
+    FOR_EACH( cl, classes){
+        cout << cl->second->name << endl;
+        cout << cl->second->table->to_csv_string() << endl;
+    }
+    
+    
     vector<JavaConstantTable*> tbls;
     FOR_EACH( cl, classes){
         tbls.push_back( cl->second->table);

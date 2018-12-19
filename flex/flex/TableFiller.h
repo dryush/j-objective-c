@@ -982,10 +982,15 @@ void fillDefaultClasses() {
         scan->methodType = METHOD_LOCAL;
         NSScanner->localMethods[ scan->name] = scan;
     }
-
+    auto nsscanerInit = new MethodInfo();
+    nsscanerInit->name ="init";
+    nsscanerInit->classname = "NSScanner";
+    nsscanerInit->isDefault = true;
+    nsscanerInit->returnType = TypeInfo::Pointer( nsscanerInit->classname);
+    nsscanerInit->access = ACCESS_PUBLIC;
+    nsscanerInit->methodType = METHOD_LOCAL;
     classes[ NSScanner->name] = NSScanner;
-
-
+    NSScanner->localMethods[ nsscanerInit->name] = nsscanerInit;
 
 
     ClassInfo* starter = new ClassInfo();
