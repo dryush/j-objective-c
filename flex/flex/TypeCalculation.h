@@ -88,6 +88,28 @@ public:
 
     }
 
+	string printTypeName(TypeNode * node) {
+		string name;
+		VarType type = node->varType;
+		if (type == TYPE_VOID)
+			name = "void";
+		else if (type == TYPE_INT)
+			name = "int";
+		else if (type == TYPE_FLOAT)
+			name = "float";
+		else if (type == TYPE_CHAR)
+			name = "char";
+		else if (type == TYPE_STRING)
+			name = "string";
+		else if (type == TYPE_BOOL)
+			name = "bool";
+		else if (type == TYPE_CUSTOM)
+			name = "custom";
+		else if (type == TYPE_POINTER)
+			name = printTypeName(node->childType);
+		return name;
+	}
+
     TypeNode* calcValueExprType(ExprNode* node){
         auto retType = new TypeNode();
 
@@ -366,8 +388,12 @@ public:
 					if (node->left->constType != TYPE_CUSTOM)
 						addError("lvalue required as left operand of assignment");
 					else if ( node->left->returnType->varType != node->right->returnType->varType ) {
-						if ( !(node->left->isNumberValue() && node->right->isNumberValue()) )
-							addError("operand types don't match of assign");
+						if ( !(node->left->isNumberValue() && node->right->isNumberValue()) ) {
+							//addError("operand types don't match of assign");
+							string leftType = printTypeName(node->left->returnType);
+							string rightType = printTypeName(node->right->returnType);
+							addError("invalid conversion from " + rightType + " to " + leftType);
+						}
 					}
 				}
 			}
