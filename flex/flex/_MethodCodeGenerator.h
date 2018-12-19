@@ -165,7 +165,7 @@ public:
         else if ( node->exprType == EXPR_FUNC_CALL) {
             auto args = node->methodCallArgs;
 
-            FOR_EACH_R( methodNode, node->methodCallArgs){
+            FOR_EACH( methodNode, node->methodCallArgs){
                 VISIT_IF_NOT_NULL( (*methodNode));
             }
             addCommand( new INVOKE_STATIC( node->constantNum));

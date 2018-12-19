@@ -428,8 +428,8 @@ string genDescriptor( const TypeInfo& type){
 }
 string genDescriptor( FunctionInfo* method) {
     string descr = "(";
-    FOR_EACH( param, method->params){
-        descr += genDescriptor(param->second->type);
+    FOR_EACH( param, method->paramsList){
+        descr += genDescriptor((*param)->type);
     }
     descr += ")";
     descr += genDescriptor( method->returnType);
@@ -439,8 +439,8 @@ string genDescriptor( FunctionInfo* method) {
 
 string genDescriptor( MethodInfo* method) {
     string descr = "(";
-    FOR_EACH( param, method->params){
-        descr += genDescriptor(param->second->type);
+    FOR_EACH( param, method->paramsList){
+        descr += genDescriptor((*param)->type);
     }
     descr += ")";
     descr += genDescriptor( method->returnType);
