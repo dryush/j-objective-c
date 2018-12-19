@@ -1,7 +1,7 @@
-
 void main()
 {
-	NSString* str = [[ [ [NSString alloc] init: "MURKA, NE HODI, TAM "] append: [NSString fromInt: 2] ] append: [[NSString alloc] init: " SYCHA"] ];
-	printf( str);
+	float 2 = 3;
+	NSString* str = [NSString fromInt: a];
+	printf(str);
 	return;
 }
