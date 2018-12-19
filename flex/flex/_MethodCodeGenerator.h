@@ -84,20 +84,11 @@ public:
             node->expr->visit( this);
         } else if( node->stmtType == STMT_IF) {
 
-			/*node->condition->left->visit(this);
-			node->condition->right->visit(this);*/
-
-			if (node->condition->isBinnaryComparer() || node->condition->isEqual()) {
-				node->condition->left->visit(this);
-				node->condition->right->visit(this);
-			}
-			else {
-				node->condition->visit(this);
-			}
+			node->condition->visit(this);
 
 			int ifLine = numberCurrentRow;
 			int numberIfCommand = commands.size();
-			addCommand( new IF_ICMP(node->condition->operationType, 0, false));
+			addCommand( new IF_0(OP_NOT_EQUAL, 0, false));
 
 			node->truthStmt->visit(this);
 
@@ -109,9 +100,8 @@ public:
 				addCommand( new GOTO(0));
 			}
 			
-
 			int shift = numberCurrentRow - ifLine;
-			commands[numberIfCommand] = new IF_ICMP(node->condition->operationType, shift, false);
+			commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, false);
 
 			if (node->wrongStmt != NULL) {
 				node->wrongStmt->visit(this);
@@ -140,11 +130,10 @@ public:
 			int shift = numberCurrentRow - gotoLine;
 			commands[numberGotoCommand] = (new GOTO(shift));
 
-			node->condition->left->visit(this);
-			node->condition->right->visit(this);
+			node->condition->visit(this);
 
 			shift = gotoLine + 3 - numberCurrentRow;
-			addCommand( new IF_ICMP(node->condition->operationType, shift, true));
+			addCommand( new IF_0(OP_NOT_EQUAL, shift, true));
         }
     }
 
@@ -336,10 +325,96 @@ public:
 
             } else if( node->operationType == OP_LOGICAL_NOT) {
                 
+				node->left->visit(this);
+
+				int ifLine = numberCurrentRow;
+				int numberIfCommand = commands.size();
+				addCommand( new IF_0(OP_NOT_EQUAL, 0, false));
+
+				addCommand( new SIPush(0));
+
+				int gotoLine = numberCurrentRow;
+				int numberGotoCommand = commands.size();
+				addCommand( new GOTO(0));
+				
+				int shift = numberCurrentRow - ifLine;
+				commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, false);
+
+				addCommand( new SIPush(1));
+
+				shift = numberCurrentRow - gotoLine;
+				commands[numberGotoCommand] = new GOTO(shift);
+
             } else if( node->operationType == OP_AND) {
                 
+				node->left->visit(this);
+				
+				int ifLine = numberCurrentRow;
+				int numberIfCommand = commands.size();
+				addCommand( new IF_0(OP_NOT_EQUAL, 0, true));
+				addCommand( new SIPush(0));
+				int gotoLine1 = numberCurrentRow;
+				int numberGotoCommand1 = commands.size();
+				addCommand( new GOTO(0));
+				int shift = numberCurrentRow - ifLine;
+				commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, true);
+
+				node->right->visit(this);
+
+				ifLine = numberCurrentRow;
+				numberIfCommand = commands.size();
+				addCommand( new IF_0(OP_NOT_EQUAL, 0, true));
+				addCommand( new SIPush(0));
+
+				int gotoLine2 = numberCurrentRow;
+				int numberGotoCommand2 = commands.size();
+				addCommand( new GOTO(0));
+				shift = numberCurrentRow - ifLine;
+				commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, true);
+
+				addCommand( new SIPush(1));
+				
+				shift = numberCurrentRow - gotoLine1;
+				commands[numberGotoCommand1] = new GOTO(shift);
+
+				shift = numberCurrentRow - gotoLine2;
+				commands[numberGotoCommand2] = new GOTO(shift);
+
             } else if( node->operationType == OP_OR) {
                 
+				node->left->visit(this);
+				
+				int ifLine = numberCurrentRow;
+				int numberIfCommand = commands.size();
+				addCommand( new IF_0(OP_NOT_EQUAL, 0, false));
+				addCommand( new SIPush(1));
+				int gotoLine1 = numberCurrentRow;
+				int numberGotoCommand1 = commands.size();
+				addCommand( new GOTO(0));
+				int shift = numberCurrentRow - ifLine;
+				commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, false);
+
+				node->right->visit(this);
+
+				ifLine = numberCurrentRow;
+				numberIfCommand = commands.size();
+				addCommand( new IF_0(OP_NOT_EQUAL, 0, false));
+				addCommand( new SIPush(1));
+
+				int gotoLine2 = numberCurrentRow;
+				int numberGotoCommand2 = commands.size();
+				addCommand( new GOTO(0));
+				shift = numberCurrentRow - ifLine;
+				commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, false);
+
+				addCommand( new SIPush(0));
+				
+				shift = numberCurrentRow - gotoLine1;
+				commands[numberGotoCommand1] = new GOTO(shift);
+
+				shift = numberCurrentRow - gotoLine2;
+				commands[numberGotoCommand2] = new GOTO(shift);
+
             } else if( node->operationType == OP_UPLUS) {
                 node->left->visit(this);
             } else if( node->operationType == OP_UMINUS) {
