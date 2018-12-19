@@ -336,9 +336,11 @@ ExprNode::ExprNode(Expression_st* st) {
 			}
 			else if (this->constType == TYPE_FLOAT) {
 				this->floatVal = st->float_value;
+				this->intVal = st->float_value;
 			}
 			else if (this->constType == TYPE_INT) {
 				this->intVal = st->int_value;
+				this->floatVal = st->float_value;
 			}
 			else if (this->constType == TYPE_STRING) {
 				this->strVal = st->string_value;
