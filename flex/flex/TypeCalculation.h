@@ -329,7 +329,7 @@ public:
 						addError("Not number with uplus or uminus");
 					}
 				} else if( node->isEqual()) {
-					retType->varType = TYPE_BOOL;
+					retType->varType = TYPE_INT;
 					if( node->left->returnType->varType == node->right->returnType->varType) {
                         
 
