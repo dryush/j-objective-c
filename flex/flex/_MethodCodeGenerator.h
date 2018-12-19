@@ -84,8 +84,16 @@ public:
             node->expr->visit( this);
         } else if( node->stmtType == STMT_IF) {
 
-			node->condition->left->visit(this);
-			node->condition->right->visit(this);
+			/*node->condition->left->visit(this);
+			node->condition->right->visit(this);*/
+
+			if (node->condition->isBinnaryComparer() || node->condition->isEqual()) {
+				node->condition->left->visit(this);
+				node->condition->right->visit(this);
+			}
+			else {
+				node->condition->visit(this);
+			}
 
 			int ifLine = numberCurrentRow;
 			int numberIfCommand = commands.size();
@@ -308,15 +316,24 @@ public:
                 // ���� ������� ����� ����� ����������
 				//commands.push_back( new ISTORE());
             } 
-            else if( node->operationType == OP_LESS || 
-						node->operationType == OP_LESS_OR_EQUAL ||
-						node->operationType == OP_GREATER ||
-						node->operationType == OP_GREATER_OR_EQUAL ||
-						node->operationType == OP_EQUAL ||
-						node->operationType == OP_NOT_EQUAL )
+			else if( node->isBinnaryComparer() || node->isEqual() )
 			{
-				/*node->left->visit(this);
-				node->right->visit(this);*/
+				node->left->visit(this);
+				node->right->visit(this);
+
+				int ifLine = numberCurrentRow;
+				int numberIfCommand = commands.size();
+				addCommand( new IF_ICMP(node->operationType, 0, false));
+				addCommand( new SIPush(1));
+				int gotoLine = numberCurrentRow;
+				int numberGotoCommand = commands.size();
+				addCommand( new GOTO(0));
+				int shift = numberCurrentRow - ifLine;
+				commands[numberIfCommand] = new IF_ICMP(node->operationType, shift, false);
+				addCommand( new SIPush(0));
+				shift = numberCurrentRow - gotoLine;
+				commands[numberGotoCommand] = new GOTO(shift);
+
             } else if( node->operationType == OP_LOGICAL_NOT) {
                 
             } else if( node->operationType == OP_AND) {
