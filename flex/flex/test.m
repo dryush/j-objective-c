@@ -1,8 +1,20 @@
+
+void printArray( int arr[], int size)
+{
+	NSString* elem;
+	elem = [[NSString alloc] init:""];
+	int i = 0;
+	while( i < size){
+		elem = [elem append: [NSString fromInt: arr[i]]];
+		i = i + 1;
+		printf( elem);
+	}
+}
+
 void main()
 {
-	NSScanner* in= [[NSScanner alloc] init];
-	int a = [in scanInt];
-	if (a > 0 && a < 5)
-		printf([ NSString fromInt: a]);
 
+	int s = 10;
+	int a[10] = {1,2,3,4,5,6,7,8,9,10};
+	printArray( a, s);
 }

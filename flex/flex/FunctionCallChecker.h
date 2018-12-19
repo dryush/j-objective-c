@@ -16,12 +16,12 @@ public:
             vector<MethodCallArgNode*>& existArgs = node->methodCallArgs;
 
             auto iExistArg = existArgs.begin(); 
-            auto& params = func->params;
+            auto& params = func->paramsList;
             auto iParam = params.begin();
             int order = 0;
             for( ; iParam != params.end() && iExistArg != existArgs.end(); iParam++, iExistArg++){
                 order++;
-                if( !TypeCalculation::castIfPossible(*iExistArg, iParam->second->type.toNode())) {
+                if( !TypeCalculation::castIfPossible(*iExistArg,(*iParam)->type.toNode())) {
                     addError(string("Uncorrect arg type in function call: ") + node->name + "()" + " arg number: " + to_string( order)); 
                 }
             }
