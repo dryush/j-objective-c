@@ -7,6 +7,8 @@
 
 using namespace std;
 
+const string NULL_VAL = "#NULL#";
+
 class MethodCallArgNode;
 
 class TypeNode : public Node {
@@ -227,12 +229,49 @@ public:
 			this->varType = new TypeNode(st->var_type);
 			this->arraySize = st->array_size;
 			auto last = st->array_elems;
-			
+            if( last == NULL && arraySize > 0){
+                auto defVal = new Expression_st();
+                defVal->exprType = EXPR_OPERATION;
+                defVal->operationType = OP_VALUE;
+                defVal->const_type = this->varType->childType->varType;
+                defVal->bool_value = defVal->char_value = defVal->float_value = defVal->int_value = 0;
+                defVal->array_elems = NULL; defVal->func_args = NULL; defVal->left = NULL; defVal->right = NULL;
+                defVal->object = NULL; 
+                defVal->string_value = "";
+                defVal->identifier = new char[ NULL_VAL.size()+1];
+                strcpy( defVal->identifier, NULL_VAL.c_str());
+                st->array_elems = new Expr_list_st();
+                st->array_elems->expr = NULL;
+                st->array_elems->next = NULL;
+                last = st->array_elems;
+                auto start = last;
+                last->expr = new Expression_st(*defVal);
+                for( int iae = 1; iae < this->arraySize; iae++){
+                    last->next = new Expr_list_st();
+                    last->next->expr = new Expression_st(*defVal);
+                    last->next->next = NULL;
+                    last = last->next;
+                }
+                //st->array_elems = start;
+            }
+            /*
+            if( last == NULL && arraySize > 0){
+                for( int ij = 0; ij < this->arraySize; ij++){
+                    ExprNode* defVal = new ExprNode();
+                    defVal->exprType = EXPR_OPERATION;
+                    defVal->operationType = OP_VALUE;
+                    defVal->constType = this->varType->childType->varType;
+                    defVal->intVal = defVal->boolVal = defVal->charVal = defVal->floatVal = 0;
+                    defVal->strVal = "";
+                    defVal->name = NULL_VAL;
+                    this->arrayElems.push_back( defVal);
+                }
+            }
 			while (last != NULL) {
 				auto arrayElem = new ExprNode(last->expr);
 				this->arrayElems.push_back(arrayElem);
 				last = last->next;
-			}
+			}*/
 		}
 		else if (this->stmtType == STMT_COMPOUND) {
 			auto last = st->stmt_list;

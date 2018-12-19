@@ -228,6 +228,11 @@ var_decl: type ID '=' expr ';'			{ $$ = CreateVarDeclWithInit($1, $2, $4); }
 	| ID '*' ID '[' INT_CONST ']' ';'	/*!*//*Массивы*/  { $$ = CreateArrayDeclWithInit(createType(TYPE_POINTER, 0, createType(TYPE_CUSTOM, $1, NULL)), $3, $5, NULL);}
 	| type ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'	/*Массивы*/ { $$ = CreateArrayDeclWithInit($1, $2, $4, $8);}
 	| ID '*' ID '[' INT_CONST ']' '=' '{' array_elems_or_empty '}' ';'	/*!*//*Массивы*/ { $$ = CreateArrayDeclWithInit(createType(TYPE_POINTER, 0, createType(TYPE_CUSTOM, $1, NULL)), $3, $5, $9);}
+	| type ID '[' ']' ';'	/*Массивы*/  { $$ = CreateArrayDeclWithInit($1, $2, -1, NULL);}
+	| ID '*' ID '[' ']' ';'	/*!*//*Массивы*/  { $$ = CreateArrayDeclWithInit(createType(TYPE_POINTER, 0, createType(TYPE_CUSTOM, $1, NULL)), $3, -1, NULL);}
+	| type ID '[' ']' '=' '{' array_elems_or_empty '}' ';'	/*Массивы*/ { $$ = CreateArrayDeclWithInit($1, $2, -1, $7);}
+	| ID '*' ID '[' ']' '=' '{' array_elems_or_empty '}' ';'	/*!*//*Массивы*/ { $$ = CreateArrayDeclWithInit(createType(TYPE_POINTER, 0, createType(TYPE_CUSTOM, $1, NULL)), $3, -1, $8);}
+	
 	;
 
 enum_type:
