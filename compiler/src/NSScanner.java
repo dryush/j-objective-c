@@ -15,6 +15,10 @@ import java.util.Scanner;
 
 public class NSScanner extends NSObject{
     Scanner in = new Scanner(System.in);
+
+    public NSScanner init(){
+        return this;
+    }
     
     public int scanInt(){
         return in.nextInt();
