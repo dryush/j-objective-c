@@ -343,7 +343,7 @@ public:
 
 				} else if( node->isBinnaryLogical() ) {
 					//TODO:: ���� �������� ��� (a != nil) && YES
-					retType->varType = TYPE_BOOL;
+					retType->varType = TYPE_INT;
 					if (node->left->returnType->varType == TYPE_BOOL && node->right->returnType->varType == TYPE_BOOL) {
 				
 					} else {
@@ -382,6 +382,7 @@ public:
 
 				} else if ( node->operationType == OperationType::OP_LOGICAL_NOT) {
 					//TODO:: ���� �������� ���
+					retType->varType = TYPE_INT;
 				} else if ( node->operationType == OperationType::OP_ASSIGN) {
 					retType = new TypeNode( *node->right->returnType);
 					//### L-VALUE CHECKER
