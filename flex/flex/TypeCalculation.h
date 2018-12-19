@@ -384,7 +384,7 @@ public:
 					//TODO:: ���� �������� ���
 				} else if ( node->operationType == OperationType::OP_ASSIGN) {
 					retType = new TypeNode( *node->right->returnType);
-					
+					//### L-VALUE CHECKER
 					if (node->left->constType != TYPE_CUSTOM)
 						addError("lvalue required as left operand of assignment");
 					else if ( node->left->returnType->varType != node->right->returnType->varType ) {
@@ -395,6 +395,7 @@ public:
 							addError("invalid conversion from " + rightType + " to " + leftType);
 						}
 					}
+                    
 				}
 			}
 

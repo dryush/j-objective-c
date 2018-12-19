@@ -968,16 +968,22 @@ void fillDefaultClasses() {
     NSScanner->parentName = defaultParentClass;
     NSScanner->table = new JavaConstantTable();
     vector<string> scanNames;
+    vector<TypeInfo> scanRetTypes(3);
     scanNames.push_back( "scanInt");
+    scanRetTypes[0].type = TYPE_INT;
     scanNames.push_back( "scanString");
+    scanRetTypes[1] = TypeInfo::Pointer(nssclassinfo->name);
     scanNames.push_back( "scanFloat");
+    scanRetTypes[2].type = TYPE_FLOAT; 
 
-    FOR_EACH( scanname, scanNames){
+    
+
+    for( int i = 0; i < scanNames.size(); i++){
         auto scan = new MethodInfo();
         scan->isDefault = true;
-        scan->name = *scanname;
+        scan->name = scanNames[i];
         scan->classname = NSScanner->name;
-        scan->returnType = TypeInfo::Pointer( nssclassinfo->name);
+        scan->returnType = scanRetTypes[i];
         scan->access = ACCESS_PUBLIC;
         scan->methodType = METHOD_LOCAL;
         NSScanner->localMethods[ scan->name] = scan;
