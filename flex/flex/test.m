@@ -1,20 +1,17 @@
-
-void printArray( int arr[], int size)
-{
-	NSString* elem;
-	elem = [[NSString alloc] init:""];
-	int i = 0;
-	while( i < size){
-		elem = [elem append: [NSString fromInt: arr[i]]];
-		i = i + 1;
-		printf( elem);
-	}
+void func(int a, int b) {
+	printf("this is func");
+	printf([ NSString fromInt: a]);
+	b = b / 2;
+	printf([ NSString fromInt: b]);
 }
 
 void main()
 {
-
-	int s = 10;
-	int a[10] = {1,2,3,4,5,6,7,8,9,10};
-	printArray( a, s);
+	int a = 0;
+	NSScanner* in= [[NSScanner alloc] init];
+	a = [in scanInt];
+	int b = 3;
+	func(a,b);
+	printf([ NSString fromInt: a]);
+	printf([ NSString fromInt: b]);
 }
