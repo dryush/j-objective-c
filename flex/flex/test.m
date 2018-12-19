@@ -1,7 +1,10 @@
 void main()
 {
-	float 2 = 3;
-	NSString* str = [NSString fromInt: a];
-	printf(str);
-	return;
+	int a;
+	NSScanner* in= [[NSScanner alloc] init];
+	a = [in scanInt];
+	printf([ NSString fromInt: a]);
+
+
+
 }

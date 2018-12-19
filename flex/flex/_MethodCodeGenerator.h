@@ -61,10 +61,11 @@ public:
 				 childStmt->visit(this);
 			}
         } else if( node->stmtType == STMT_ARRAY_DECL) {
+            this->localVarsNumber[ node->name] = localVarsNumber.size();
 
 
         } else if( node->stmtType == STMT_VAR_DECL) {
-            this->localVarsNumber[ node->name] = localVars.size();
+            this->localVarsNumber[ node->name] = localVarsNumber.size();
 
         } else if( node->stmtType == STMT_EXPR) {
             node->expr->visit( this);
@@ -128,7 +129,25 @@ public:
 
     void visit( ExprNode* node) override {
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
+            node->left->visit(this);
+            node->right->visit(this);
+            if( node->returnType->varType == TYPE_POINTER){
+                addCommand( new AALOAD());
+            } else {
+                addCommand( new IALOAD());
+            }
             //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
+        }
+        else if ( node->exprType == EXPRE_ARRAY_ELEM_ASSIGN ) {
+            node->object->visit(this);
+            node->left->visit(this);
+            node->right->visit(this);
+
+            if( node->right->returnType->varType == TYPE_POINTER){
+                addCommand( new AASTORE());
+            } else {
+                addCommand( new IASTORE());
+            }
         }
         else if ( node->exprType == EXPR_FUNC_CALL) {
             FOR_EACH( methodNode, node->methodCallArgs){
@@ -137,7 +156,13 @@ public:
             addCommand( new INVOKE_STATIC( node->constantNum));
         }
         else if ( node->exprType == EXPR_INVAR_CALL) {
-
+            node->object->visit(this);
+            addCommand( new GET_FILED(node->constantNum));
+        } 
+        else if ( node->exprType == EXPRE_CLASS_FIELD_ASSIGN ){
+            node->object->visit( this);
+            node->right->visit( this);
+            addCommand( new PUT_FILED(node->constantNum));
         }
         else if ( node->exprType == EXPR_METHOD_CALL) {
             
@@ -169,7 +194,7 @@ public:
 					int number = localVarsNumber[node->name];
                     if ( type->varType == TYPE_INT) {
 						addCommand( new ILOAD(number));
-                    } else if ( type->varType == TYPE_POINTER){
+                    } else if ( type->varType == TYPE_POINTER || (type->varType == TYPE_ARRAY )){
                         addCommand( new ALOAD(number));
                     }
 				} else if (node->constType == TYPE_INT) {
@@ -206,13 +231,69 @@ public:
 				    addCommand( new ISTORE(number));
                 } else if (node->right->returnType->varType == TYPE_POINTER){
                     addCommand( new ASTORE(number)); 
+                } else if ( node->right->returnType->varType == TYPE_ARRAY){
+                    addCommand( new LDC_W( table->ints[ node->right->arrayElems->exprs.size()]));
+                    
+                    if ( node->right->returnType->childType->varType == TYPE_POINTER){
+                        int classid =table->classNumByName[ node->right->returnType->childType->childType->name];
+                        addCommand( new ANEW_ARRAY( classid));
+                        int index = 0;
+                        FOR_EACH( elem, node->right->arrayElems->exprs){
+                            addCommand( new DUP());
+                            addCommand( new SIPush( index));
+                            index++;
+                            (*elem)->visit( this);
+                            addCommand( new AASTORE());
+                        }
+                        addCommand( new ALOAD( localVarsNumber[ node->left->name]));
+                    }
+                    else {
+
+                        addCommand( new NEW_ARRAY( node->right->returnType->childType->childType->varType));
+                        int index = 0;
+                        FOR_EACH( elem, node->right->arrayElems->exprs){
+                            addCommand( new DUP());
+                            addCommand( new SIPush( index));
+                            index++;
+                            (*elem)->visit( this);
+                            addCommand( new IASTORE());
+                        }
+                        addCommand( new ALOAD( localVarsNumber[ node->left->name]));
+                    }
+                    
                 }
             } else if( node->operationType == OP_ASSIGN_ARRAY) {
                 // �������� ���-�� ��� �������� �����
-				node->right->visit(this);
-				// ���� ������� ����� ����� ����������
+				//node->left->visit(this);
+                addCommand( new SIPush( node->arrayElems->exprs.size()));
+                if( node->left->returnType->childType->varType == TYPE_POINTER){
+                    
+                    addCommand( new ANEW_ARRAY( table->classByMethod[ node->left->returnType->childType->childType->varType]));
+                    int index = 0;
+                    FOR_EACH( elem, node->arrayElems->exprs){
+                        addCommand( new DUP());
+                        addCommand( new SIPush( index));
+                        (*elem)->visit( this );
+                        index++;
+                        addCommand( new AASTORE());
+                    }
+                } else {
+                    addCommand( new NEW_ARRAY( node->left->returnType->childType->varType));
+                    int index = 0;
+                    FOR_EACH( elem, node->arrayElems->exprs){
+                        addCommand( new DUP());
+                        addCommand( new SIPush( index));
+                        (*elem)->visit( this );
+                        index++;
+                        addCommand( new IASTORE());
+                    }
+                }
+                int varNum = localVarsNumber[ node->left->name];
+                addCommand( new ASTORE( varNum));
+                // ���� ������� ����� ����� ����������
 				//commands.push_back( new ISTORE());
-            } else if( node->operationType == OP_LESS || 
+            } 
+            else if( node->operationType == OP_LESS || 
 						node->operationType == OP_LESS_OR_EQUAL ||
 						node->operationType == OP_GREATER ||
 						node->operationType == OP_GREATER_OR_EQUAL ||
