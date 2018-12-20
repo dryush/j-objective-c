@@ -13,7 +13,7 @@ class UnsupportChecher : public NodeVisiter{
 		addError("Enums unsupported yet");
 	}
 
-	void visit( TypeNode* node) override {
+	/*void visit( TypeNode* node) override {
 		if( node->varType == TYPE_FLOAT)
 			addError("Float unsupported yet");
 
@@ -26,5 +26,5 @@ class UnsupportChecher : public NodeVisiter{
 			addError("Float unsupported yet");
 
 		NodeVisiter::visit(node);
-	}
+	}*/
 };
