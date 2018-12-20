@@ -19,6 +19,9 @@
     <None Include="test.m">
       <Filter>Файлы исходного кода</Filter>
     </None>
+    <None Include="objectivec.flex">
+      <Filter>Файлы исходного кода</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="struct_print.h">
@@ -85,6 +88,9 @@
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
     <ClInclude Include="_JVMCommands.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="UnsupportChecker.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>
