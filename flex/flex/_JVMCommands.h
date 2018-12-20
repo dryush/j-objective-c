@@ -712,3 +712,155 @@ class ACONST_NULL : public JVMCommand {
         return c;
     }
 };
+
+
+
+class I2F : public JVMCommand {
+    public:
+    string toBytes() override {
+        string c;
+        c += U1( 0x86).toBytes();
+        return c;
+    }
+};
+
+class F2I : public JVMCommand {
+    public:
+    string toBytes() override {
+        string c;
+        c += U1( 0x8B).toBytes();
+        return c;
+    }
+};
+
+class FADD : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x62).toBytes();
+        return c;
+    }
+};
+
+class FSUB : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x66).toBytes();
+        return c;
+    }
+};
+
+class FMUL : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x6A).toBytes();
+        return c;
+    }
+};
+
+class FDIV : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x6E).toBytes();
+        return c;
+    }
+};
+
+class FREM : public JVMCommand {
+public:
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x72).toBytes();
+        return c;
+    }
+};
+
+class FLOAD : public JVMCommand {
+    unsigned char constnum;
+public:
+    FLOAD( unsigned char constnum) {
+        this->constnum = constnum;
+    }
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x17).toBytes();
+        c += U1( constnum).toBytes();
+        return c;
+    }
+};
+
+class FALOAD : public JVMCommand {
+public:
+    
+    string toBytes() override {
+        string c;
+        c += U1( 0x30).toBytes();
+        return c;
+    }
+};
+
+class FSTORE : public JVMCommand {
+    unsigned char constnum;
+public:
+    FSTORE( unsigned char constnum) {
+        this->constnum = constnum;
+    }
+
+    string toBytes() override {
+        string c;
+        c += U1( 0x38).toBytes();
+        c += U1( constnum).toBytes();
+        return c;
+    }
+};
+
+class FASTORE : public JVMCommand {
+public:
+    
+    string toBytes() override {
+        string c;
+        c += U1( 0x51).toBytes();
+        return c;
+    }
+};
+
+class FCMP : public JVMCommand {
+    OperationType compType;
+public:
+    FCMP( OperationType compareType){
+        this->compType = compareType;
+    }
+
+	// 95 <
+	// 96 >
+    string toBytes() override {
+        
+        string c;
+
+		if( this->compType == OP_LESS)
+			c += U1( 0x95).toBytes();
+		else if( this->compType == OP_GREATER)
+			c += U1( 0x96).toBytes();
+		else throw new runtime_error("FCMP must have compare OP_TYPE");
+		
+        return c;
+    }
+};
+
+class FRETURN : public JVMCommand {
+public:
+    string toBytes() override {
+        string c;
+        c += U1( 0xAE).toBytes();
+        return c;
+    }
+};
