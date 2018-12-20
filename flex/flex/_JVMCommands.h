@@ -703,3 +703,12 @@ class PUT_FILED : public JVMCommand {
         return c;
     }
 };
+
+class ACONST_NULL : public JVMCommand {
+    public:
+    string toBytes() override {
+        string c;
+        c += U1( 0x01).toBytes();
+        return c;
+    }
+};

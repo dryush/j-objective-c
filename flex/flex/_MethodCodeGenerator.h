@@ -213,7 +213,9 @@ public:
 					addCommand( new SIPush(node->intVal));
                 } else if ( node->constType == TYPE_STRING) {
                     addCommand( new LDC_W( table->strings[ node->strVal]));
-                }
+                } else if ( node->constType == TYPE_POINTER){
+					addCommand( new ACONST_NULL());
+				}
                 
             } else if( node->operationType == OP_ADD) {
 				node->left->visit(this);
@@ -280,7 +282,7 @@ public:
                 addCommand( new SIPush( node->arrayElems->exprs.size()));
                 if( node->left->returnType->childType->varType == TYPE_POINTER){
                     
-                    addCommand( new ANEW_ARRAY( table->classByMethod[ node->left->returnType->childType->childType->varType]));
+					addCommand( new ANEW_ARRAY( table->classNumByName[ node->left->returnType->childType->childType->name]));
                     int index = 0;
                     FOR_EACH( elem, node->arrayElems->exprs){
                         addCommand( new DUP());

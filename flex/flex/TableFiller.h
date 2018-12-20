@@ -80,7 +80,11 @@ public:
         if( retType->varType == VarType::TYPE_ARRAY) {
             retType->childType = new TypeNode();
             retType->childType->varType = this->arrayType;
-            retType->childType->name = this->name;
+			if( this->arrayType == TYPE_POINTER) {
+				retType->childType->childType = new TypeNode();
+				retType->childType->childType->name = this->name;
+				retType->childType->childType->varType = TYPE_CUSTOM;
+			}
         } else if ( retType->varType == VarType::TYPE_POINTER) {
             retType->childType = new TypeNode();
             retType->childType->varType = VarType::TYPE_CUSTOM;
@@ -820,7 +824,19 @@ public:
                 else if ( valueNode->constType == VarType::TYPE_INT)  nm = addInt( valueNode->intVal);
                 else if ( valueNode->constType == VarType::TYPE_FLOAT) nm = addFloat( valueNode->floatVal);
                 else if ( valueNode->constType == VarType::TYPE_STRING) nm = addStr(valueNode->strVal);
-
+				else if ( valueNode->constType == VarType::TYPEE_CLASS) nm = addClass(valueNode->strVal);
+				else if ( valueNode->constType == VarType::TYPE_CUSTOM) {
+					if ( valueNode->returnType->varType == TYPE_ARRAY){
+						if( valueNode->returnType->childType->varType == TYPE_POINTER){
+							if( valueNode->returnType->childType->childType->varType == TYPE_CUSTOM)
+								nm = addClass( valueNode->returnType->childType->childType->name);
+						}
+					} else if ( valueNode->returnType->varType == TYPE_POINTER){
+						if ( valueNode->returnType->childType->varType == TYPE_CUSTOM){
+							nm = addClass( valueNode->returnType->childType->name);
+						}
+					}
+				}
             }
         }
         return nm;
@@ -950,6 +966,22 @@ void fillDefaultClasses() {
     fromInt ->access = ACCESS_PUBLIC;
     fromInt ->methodType = METHOD_STATIC;
     nssclassinfo->staticMethods[ fromInt->name] = fromInt;
+
+	
+    auto fromFloat = new MethodInfo();
+    fromFloat->isDefault = true;
+    fromFloat->name = "fromFloat";
+    auto floatParam = new MethodParamInfo();
+    floatParam ->name = "number";
+    floatParam ->outerName = "number";
+    floatParam ->type.type = TYPE_FLOAT;
+    fromFloat ->addParam( floatParam);
+
+    fromFloat ->returnType = TypeInfo::Pointer( nssclassinfo->name);
+    fromFloat ->classname = nssclassinfo->name;
+    fromFloat ->access = ACCESS_PUBLIC;
+    fromFloat ->methodType = METHOD_STATIC;
+    nssclassinfo->staticMethods[ fromFloat->name] = fromFloat;
 
     
     auto strAppnend = new MethodInfo();

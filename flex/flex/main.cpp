@@ -15,7 +15,7 @@
 
 #include "_ClassFileGenerator.h"
 
-
+#include "UnsupportChecker.h"
 #include "FunctionLocalVarChecker.h"
 #include "ArrayAndFieldAssignTransform.h"
 #include "TableFiller.h"
@@ -35,21 +35,34 @@ namespace Win {
 };
 
 
-
+void dprint( const string& str){
+	cout << str <<endl;
+}
 
 int main(int argc, char *argv[]) {
     
 	//freopen("output.txt", "w", stdout);
- 	yyin = fopen("test.m", "r");
+ 	
+	if( argc > 1){
+		yyin = fopen(argv[1], "r");
+		dprint(string("open file: ") + string(argv[1]));
+	}
+	else {
+		yyin = fopen("test.m", "r");
+		dprint(string("open file: ") + string("test.m"));
+	}
 	yyparse();
+	dprint(string("End parsing"));
 	printf("\n\n");
-	print(root);
+	//print(root);
+	dprint(string("Start semantic"));
 	ProgramNode* prog = new ProgramNode(root);
     //prog->visit( new PrintNodes()); 
     //system("graphSemantic.bat");
 
 	vector<NodeVisiter*> visiters;
 
+	visiters.push_back( new UnsupportChecher());
 	visiters.push_back( new FunctionAndMethodsLocalVarChecker());
 	visiters.push_back( new ArrayAndFieldAssignTransform());
     visiters.push_back( new ClassTableFiller());
@@ -74,24 +87,26 @@ int main(int argc, char *argv[]) {
 	    //auto test = (*++prog->functions[0]->body->childs.begin())->expr;
         //auto test = (*++prog->functions[0]->body->childs.begin())->expr->right->returnType;
 	    delete*ivisiter;
+		freopen("CON","w", stdout);
+		if( errors.size() > 0){
+			for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
+				cout << *ierror << endl;
+			}
+			dprint(string("Compilation stopped"));
+			getch();
+			return 0;
+		}
     }
     
 
 
-	freopen("CON","w", stdout);
-    if( errors.size() > 0){
-        for( auto ierror = errors.begin(); ierror != errors.end(); ierror++){
-            cout << *ierror << endl;
-        }
-        getch();
-        return 0;
-    }
+	/*
 	freopen("table.csv","w", stdout);
     FOR_EACH( cl, classes){
         cout << cl->second->name << endl;
         cout << cl->second->table->to_csv_string() << endl;
     }
-    
+    */
     
     vector<JavaConstantTable*> tbls;
     FOR_EACH( cl, classes){
@@ -105,7 +120,13 @@ int main(int argc, char *argv[]) {
     fileGen.genClassFiles( tbls);
     //execlpe("cmd", "/c", "graph.bat", "", 0,0,0);
     //execlpe("cmd", "/c", "graphSemantic.bat", "", 0,0,0);
-	system("graphSemantic.bat");
+//	execlpe("cmd", "/c", "./source/javaCompiler.bat", "", 0,0,0);
+	//system("graphSemantic.bat");
     //system("graph.bat");
+	//freopen("CON","w", stdout);
+	//freopen("CON","r", stdin);
+	//system("javaCompiler.bat");
+	
+	dprint(string("Compilation end"));
 	return 0;
 }
