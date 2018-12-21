@@ -293,9 +293,8 @@ public:
 				if (node->right)
 					node->right->visit(this);
 
-				if ( node->isBinnaryOnlyNumbers()) {
+				if ( node->isBinnaryMath()) {
 				
-					//calcVarType(node);
 					if( node->left->isNumberValue() && node->right->isNumberValue()) {
                     
 						VarType leftType = node->left->returnType->varType;
@@ -303,16 +302,8 @@ public:
 						if (leftType == rightType && leftType == TYPE_INT) {
 							 retType->varType = TYPE_INT;
 						}
-						else if (leftType == rightType && leftType == TYPE_FLOAT) {
+						else if (leftType == rightType || leftType == TYPE_FLOAT) {
 							retType->varType = TYPE_FLOAT;
-						}
-						else if (leftType == TYPE_FLOAT) {
-							retType->varType = TYPE_FLOAT;
-							node->right->floatVal = node->right->intVal;
-						}
-						else if (rightType == TYPE_FLOAT) {
-							retType->varType = TYPE_FLOAT;
-							node->left->floatVal = node->left->intVal;
 						}
 					} else {
 						if (node->left->isNumberValue() == node->right->isNumberValue() )
@@ -330,6 +321,16 @@ public:
 					}
 				} else if( node->isBinnaryComparer()) {
 					retType->varType = TYPE_INT;
+
+					if( node->left->isNumberValue() && node->right->isNumberValue()) {
+                    
+					} else {
+						if (node->left->isNumberValue() == node->right->isNumberValue() )
+							addError("This operation have not float and int operands");
+						else
+							addError("This operation have not float and int operand");
+					}
+
 				} else if( node->isEqual()) {
 					retType->varType = TYPE_INT;
 					if( node->left->returnType->varType == node->right->returnType->varType) {
