@@ -137,6 +137,60 @@ public:
         }
     }
 
+	void calcBinaryMath(ExprNode *node) {
+		VarType returnType = node->returnType->varType;
+		VarType leftType = node->left->returnType->varType;
+		VarType rightType = node->right->returnType->varType;
+
+		node->left->visit(this);
+
+		if (returnType == TYPE_FLOAT && leftType == TYPE_INT) {
+			addCommand( new I2F());
+		}
+
+		node->right->visit(this);
+
+		if (returnType == TYPE_FLOAT && rightType == TYPE_INT) {
+			addCommand( new I2F());
+		}
+
+		if( node->operationType == OP_ADD) {
+				
+			if (node->returnType->varType == TYPE_INT)
+				addCommand( new IADD());
+			else if (node->returnType->varType == TYPE_FLOAT)
+				addCommand( new FADD());
+
+		}  else if( node->operationType == OP_SUB) {
+			
+			if (node->returnType->varType == TYPE_INT)
+				addCommand( new ISUB());
+			else if (node->returnType->varType == TYPE_FLOAT)
+				addCommand( new FSUB());
+
+		} else if( node->operationType == OP_MUL) {
+			
+            if (node->returnType->varType == TYPE_INT)
+				addCommand( new IMUL());
+			else if (node->returnType->varType == TYPE_FLOAT)
+				addCommand( new FMUL());
+
+        } else if( node->operationType == OP_DIV) {
+			
+            if (node->returnType->varType == TYPE_INT)
+				addCommand( new IDIV());
+			else if (node->returnType->varType == TYPE_FLOAT)
+				addCommand( new FDIV());
+
+        } else if( node->operationType == OP_MOD) {
+			
+			if (node->returnType->varType == TYPE_INT)
+				addCommand( new IREM());
+			else if (node->returnType->varType == TYPE_FLOAT)
+				addCommand( new FREM());
+		}
+	}
+
     void visit( ExprNode* node) override {
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             node->left->visit(this);
@@ -206,44 +260,38 @@ public:
                     int number = getVarNumber( node->name);
                     if ( type->varType == TYPE_INT) {
 						addCommand( new ILOAD(number));
-                    } else if ( type->varType == TYPE_POINTER || (type->varType == TYPE_ARRAY )){
+                    } else if ( type->varType ==TYPE_FLOAT) {
+						addCommand( new FLOAD(number));
+					} else if ( type->varType == TYPE_POINTER || (type->varType == TYPE_ARRAY )){
                         addCommand( new ALOAD(number));
                     }
 				} else if (node->constType == TYPE_INT) {
 					addCommand( new SIPush(node->intVal));
-                } else if ( node->constType == TYPE_STRING) {
+					if (node->returnType->varType == TYPE_FLOAT)
+						addCommand( new I2F());
+                } else if ( node->constType == TYPE_FLOAT) {
+					addCommand( new LDC_W(table->floats[ node->floatVal]));
+					if (node->returnType->varType == TYPE_INT)
+						addCommand( new F2I());
+
+				} else if ( node->constType == TYPE_STRING) {
                     addCommand( new LDC_W( table->strings[ node->strVal]));
                 } else if ( node->constType == TYPE_POINTER){
 					addCommand( new ACONST_NULL());
 				}
                 
-            } else if( node->operationType == OP_ADD) {
-				node->left->visit(this);
-				node->right->visit(this);
-				addCommand( new IADD());
-			}  else if( node->operationType == OP_SUB) {
-				node->left->visit(this);
-				node->right->visit(this);
-				addCommand( new ISUB());
-			} else if( node->operationType == OP_MUL) {
-				node->left->visit(this);
-				node->right->visit(this);
-                addCommand( new IMUL());
-            } else if( node->operationType == OP_DIV) {
-				node->left->visit(this);
-				node->right->visit(this);
-                addCommand( new IDIV());
-            } else if( node->operationType == OP_MOD) {
-				node->left->visit(this);
-				node->right->visit(this);
-                // a % b === a - (c * b), ��� c = a / b - ����� ����� �����
-				addCommand( new IREM());
+            } else if (node->isBinnaryMath()) {
+				
+				calcBinaryMath(node);
+			
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
                 int number = getVarNumber( node->left->name);
                 if ( node->right->returnType->varType == TYPE_INT){
 				    addCommand( new ISTORE(number));
-                } else if (node->right->returnType->varType == TYPE_POINTER){
+                } else if (node->right->returnType->varType == TYPE_FLOAT) { 
+					addCommand( new FSTORE(number));
+				} else if (node->right->returnType->varType == TYPE_POINTER){
                     addCommand( new ASTORE(number)); 
                 } else if ( node->right->returnType->varType == TYPE_ARRAY){
                     addCommand( new LDC_W( table->ints[ node->right->arrayElems->exprs.size()]));
@@ -421,6 +469,8 @@ public:
                 node->left->visit(this);
             } else if( node->operationType == OP_UMINUS) {
                 addCommand( new SIPush(-1));
+				if (node->left->returnType->varType == TYPE_FLOAT)
+					addCommand( new I2F());
 				node->left->visit(this);
 				addCommand( new IMUL());
             } 
