@@ -137,6 +137,53 @@ public:
         }
     }
 
+	void calcBinaryComp(ExprNode *node) {
+		VarType leftType = node->left->returnType->varType;
+		VarType rightType = node->right->returnType->varType;
+		
+		if (leftType == TYPE_INT && rightType == TYPE_INT) {
+			node->left->visit(this);
+			node->right->visit(this);
+
+			int ifLine = numberCurrentRow;
+			int numberIfCommand = commands.size();
+			addCommand( new IF_ICMP(node->operationType, 0, false));
+			addCommand( new SIPush(1));
+			int gotoLine = numberCurrentRow;
+			int numberGotoCommand = commands.size();
+			addCommand( new GOTO(0));
+			int shift = numberCurrentRow - ifLine;
+			commands[numberIfCommand] = new IF_ICMP(node->operationType, shift, false);
+			addCommand( new SIPush(0));
+			shift = numberCurrentRow - gotoLine;
+			commands[numberGotoCommand] = new GOTO(shift);
+		}
+		else if (leftType == TYPE_FLOAT || rightType == TYPE_FLOAT) {
+			node->left->visit(this);
+			if (leftType == TYPE_INT)
+				addCommand( new I2F());
+
+			node->right->visit(this);
+			if (rightType == TYPE_INT)
+				addCommand( new I2F());
+				
+			addCommand( new FCMP(OP_GREATER));
+
+			int ifLine = numberCurrentRow;
+			int numberIfCommand = commands.size();
+			addCommand( new IF_0(node->operationType, 0, false));
+			addCommand( new SIPush(1));
+			int gotoLine = numberCurrentRow;
+			int numberGotoCommand = commands.size();
+			addCommand( new GOTO(0));
+			int shift = numberCurrentRow - ifLine;
+			commands[numberIfCommand] = new IF_0(node->operationType, shift, false);
+			addCommand( new SIPush(0));
+			shift = numberCurrentRow - gotoLine;
+			commands[numberGotoCommand] = new GOTO(shift);
+		}
+	}
+
 	void calcUnaryMath(ExprNode *node) {
 		
 		if( node->operationType == OP_UPLUS) {
@@ -308,10 +355,22 @@ public:
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
                 int number = getVarNumber( node->left->name);
-                if ( node->right->returnType->varType == TYPE_INT){
+
+				VarType leftType = node->left->returnType->varType;
+				VarType rightType = node->right->returnType->varType;
+
+                if ( leftType == TYPE_INT){
+
+					if (rightType == TYPE_FLOAT)
+						addCommand( new F2I());
 				    addCommand( new ISTORE(number));
-                } else if (node->right->returnType->varType == TYPE_FLOAT) { 
+
+                } else if (leftType == TYPE_FLOAT) {
+					
+					if (rightType == TYPE_INT)
+						addCommand( new I2F());
 					addCommand( new FSTORE(number));
+
 				} else if (node->right->returnType->varType == TYPE_POINTER){
                     addCommand( new ASTORE(number)); 
                 } else if ( node->right->returnType->varType == TYPE_ARRAY){
@@ -378,21 +437,7 @@ public:
             } 
 			else if( node->isBinnaryComparer() || node->isEqual() )
 			{
-				node->left->visit(this);
-				node->right->visit(this);
-
-				int ifLine = numberCurrentRow;
-				int numberIfCommand = commands.size();
-				addCommand( new IF_ICMP(node->operationType, 0, false));
-				addCommand( new SIPush(1));
-				int gotoLine = numberCurrentRow;
-				int numberGotoCommand = commands.size();
-				addCommand( new GOTO(0));
-				int shift = numberCurrentRow - ifLine;
-				commands[numberIfCommand] = new IF_ICMP(node->operationType, shift, false);
-				addCommand( new SIPush(0));
-				shift = numberCurrentRow - gotoLine;
-				commands[numberGotoCommand] = new GOTO(shift);
+				calcBinaryComp(node);
 
             } else if( node->operationType == OP_LOGICAL_NOT) {
                 
