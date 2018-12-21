@@ -722,7 +722,7 @@ public:
     }
 
     int addFloat( const float& number) {
-        IF_FIND_ELSE( ints, number,
+        IF_FIND_ELSE( floats, number,
         { return elem->second;},
         {
             records.push_back(JavaTableRecord(number, CONSTANT_Float));
