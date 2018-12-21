@@ -864,3 +864,18 @@ public:
         return c;
     }
 };
+
+class FCONST : public JVMCommand {
+    unsigned char number;
+public:
+    FCONST( unsigned char num){
+        if( num < 0 || num > 2)
+            throw new runtime_error("FConst > 2 || < 0");
+        this->number = num;
+    }
+    string toBytes() override {
+        string c = "";
+		c += U1( 0x0B + number).toBytes();
+        return c;
+    }
+};
