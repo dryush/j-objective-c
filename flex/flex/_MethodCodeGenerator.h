@@ -115,10 +115,13 @@ public:
 			
             if ( info->returnType.type == TYPE_VOID)
                 addCommand( new VRETURN());
+			else if (info->returnType.type == TYPE_INT)
+                addCommand( new IRETURN());
+			else if (info->returnType.type == TYPE_FLOAT)
+                addCommand( new FRETURN());
             else if ( info->returnType.type == TYPE_POINTER)
                 addCommand( new ARETURN());
-            else
-                addCommand( new IRETURN());
+            
         } else if( node->stmtType == STMT_WHILE) {
 			
 			int gotoLine = numberCurrentRow;
