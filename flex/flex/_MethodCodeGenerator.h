@@ -137,6 +137,23 @@ public:
         }
     }
 
+	void calcUnaryMath(ExprNode *node) {
+		
+		if( node->operationType == OP_UPLUS) {
+			node->left->visit(this);
+		} 
+		else if( node->operationType == OP_UMINUS) {
+			node->left->visit(this);
+			addCommand( new SIPush(-1));
+			if (node->left->returnType->varType == TYPE_FLOAT) {
+				addCommand( new I2F());
+				addCommand( new FMUL());
+			}
+			else
+				addCommand( new IMUL());
+		} 
+	}
+
 	void calcBinaryMath(ExprNode *node) {
 		VarType returnType = node->returnType->varType;
 		VarType leftType = node->left->returnType->varType;
@@ -284,6 +301,10 @@ public:
 				
 				calcBinaryMath(node);
 			
+			} else if (node->isUnnaryMath()) {
+
+				calcUnaryMath(node);
+
 			} else if( node->operationType == OP_ASSIGN) {
                 node->right->visit(this);
                 int number = getVarNumber( node->left->name);
@@ -377,6 +398,11 @@ public:
                 
 				node->left->visit(this);
 
+				if (node->left->returnType->varType == TYPE_FLOAT) {
+					addCommand( new FCONST(0));
+					addCommand( new FCMP(OP_GREATER));
+				}
+
 				int ifLine = numberCurrentRow;
 				int numberIfCommand = commands.size();
 				addCommand( new IF_0(OP_NOT_EQUAL, 0, false));
@@ -399,6 +425,11 @@ public:
                 
 				node->left->visit(this);
 				
+				if (node->left->returnType->varType == TYPE_FLOAT) {
+					addCommand( new FCONST(0));
+					addCommand( new FCMP(OP_GREATER));
+				}
+
 				int ifLine = numberCurrentRow;
 				int numberIfCommand = commands.size();
 				addCommand( new IF_0(OP_NOT_EQUAL, 0, true));
@@ -410,6 +441,11 @@ public:
 				commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, true);
 
 				node->right->visit(this);
+
+				if (node->right->returnType->varType == TYPE_FLOAT) {
+					addCommand( new FCONST(0));
+					addCommand( new FCMP(OP_GREATER));
+				}
 
 				ifLine = numberCurrentRow;
 				numberIfCommand = commands.size();
@@ -434,6 +470,11 @@ public:
                 
 				node->left->visit(this);
 				
+				if (node->left->returnType->varType == TYPE_FLOAT) {
+					addCommand( new FCONST(0));
+					addCommand( new FCMP(OP_GREATER));
+				}
+
 				int ifLine = numberCurrentRow;
 				int numberIfCommand = commands.size();
 				addCommand( new IF_0(OP_NOT_EQUAL, 0, false));
@@ -445,6 +486,11 @@ public:
 				commands[numberIfCommand] = new IF_0(OP_NOT_EQUAL, shift, false);
 
 				node->right->visit(this);
+
+				if (node->right->returnType->varType == TYPE_FLOAT) {
+					addCommand( new FCONST(0));
+					addCommand( new FCMP(OP_GREATER));
+				}
 
 				ifLine = numberCurrentRow;
 				numberIfCommand = commands.size();
@@ -465,15 +511,7 @@ public:
 				shift = numberCurrentRow - gotoLine2;
 				commands[numberGotoCommand2] = new GOTO(shift);
 
-            } else if( node->operationType == OP_UPLUS) {
-                node->left->visit(this);
-            } else if( node->operationType == OP_UMINUS) {
-                addCommand( new SIPush(-1));
-				if (node->left->returnType->varType == TYPE_FLOAT)
-					addCommand( new I2F());
-				node->left->visit(this);
-				addCommand( new IMUL());
-            } 
+            }
         }
     }
 
