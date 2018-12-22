@@ -262,11 +262,16 @@ public:
         if ( node->exprType == EXPR_ARRAY_ELEM_CALL) {
             node->left->visit(this);
             node->right->visit(this);
-            if( node->returnType->varType == TYPE_POINTER || node->returnType->varType == TYPE_ARRAY){
+			
+			VarType returnType = node->returnType->varType;
+
+            if( returnType == TYPE_POINTER || returnType == TYPE_ARRAY){
                 addCommand( new AALOAD());
-            } else {
+            } else if ( returnType == TYPE_INT) {
                 addCommand( new IALOAD());
-            }
+            } else if ( returnType == TYPE_FLOAT) {
+				addCommand( new FALOAD());
+			}
             //if( node->returnType->childType->varType == TYPE_POINTER) throw new runtime_error(" array of objects unsupported yet");
         }
         else if ( node->exprType == EXPRE_ARRAY_ELEM_ASSIGN ) {
@@ -274,11 +279,14 @@ public:
             node->left->visit(this);
             node->right->visit(this);
 
-            if( node->right->returnType->varType == TYPE_POINTER){
+			VarType rightType = node->right->returnType->varType;
+            if( rightType == TYPE_POINTER) {
                 addCommand( new AASTORE());
-            } else {
+            } else if ( rightType == TYPE_INT) {
                 addCommand( new IASTORE());
-            }
+            } else if ( rightType == TYPE_FLOAT) {
+				addCommand( new FASTORE());
+			}
         }
         else if ( node->exprType == EXPR_FUNC_CALL) {
             auto args = node->methodCallArgs;
