@@ -62,12 +62,13 @@ int main(int argc, char *argv[]) {
 
 	vector<NodeVisiter*> visiters;
 
-	visiters.push_back( new UnsupportChecher());
+	//visiters.push_back( new UnsupportChecher());
 	visiters.push_back( new FunctionAndMethodsLocalVarChecker());
 	visiters.push_back( new ArrayAndFieldAssignTransform());
     visiters.push_back( new ClassTableFiller());
 	visiters.push_back( new PointerChecker());
 	visiters.push_back( new TableFiller());
+	visiters.push_back(new                    ClassImplementationTableFiller());
     // ������� ����������� "������", ����������� �� ���������� ����������
 	visiters.push_back( new TypeCalculation());
     

@@ -460,7 +460,8 @@ string genDescriptor( FieldInfo* field) {
 
 #define IF_FIND_ELSE( from, what, then, another) { auto elem = from.find( what); if ( elem != from.end()) { then ;} else { another ;} } 
 #define IF_FIND( from, what, then)  IF_FIND_ELSE( from, what, then, {;}) 
-
+#define VCB 160
+#if VCB < 120
 string to_string( int number) {
     return std::to_string((long long) number);
 }
@@ -468,7 +469,7 @@ string to_string( int number) {
 string to_string( float number) {
     return std::to_string((long double) number);
 }
-
+#endif
 enum JavaTableRecordValueType {
     CONST_VAL_STR,
     CONST_VAL_INT,
@@ -1105,8 +1106,9 @@ void fillDefaultFunctions() {
         throw "why2";
     } else {
         defFuncClass->parentName = defaultParentClass;
-        defFuncClass->name= FUNCTIONS_CLASS;
+        defFuncClass->name= DEFAULT_FUNCTIONS_CLASS;
         defFuncClass->table= new JavaConstantTable();
+		defFuncClass->isDefault = true;
         classes[ DEFAULT_FUNCTIONS_CLASS] = defFuncClass;
     }
 
@@ -1175,6 +1177,64 @@ public:
 
 	}
 
+};
+
+class ClassImplementationTableFiller :public NodeVisiter {
+public:
+	void visit(ProgramNode* node) override {
+
+		for (auto iclassDecl = node->classImplementations.begin(); iclassDecl != node->classImplementations.end(); iclassDecl++) {
+			auto classDecl = *iclassDecl;
+			(classDecl)->visit(this);
+		}
+
+	}
+
+
+	ClassInfo* currentClass;
+	void visit(ClassImplementationNode* node) override {
+		RETURN_IF_NODE_NULL;
+
+		if (classes.find(node->name) == classes.end()) {
+			addError("Unknown Class: " + node->name + " implementation");
+			return;
+		}
+
+		this->currentClass = classes[node->name];
+
+		this->currentClass->classImlpNode = node;
+		NodeVisiter::visit(node);
+	}
+
+	MethodInfo     *m;
+	void visit(ClassMethodImplementationNode* node) {
+		RETURN_IF_NODE_NULL;
+		m = currentClass->getMethod(node);
+		if ( !m) {
+			addError("Unknown method  Implementation:" + currentClass->name + "::" + node->name);
+			return ;
+		}
+		///NodeVisiter::visit(node
+		auto idp = m->paramsList.begin();
+		auto   iipn = node->params.begin();
+		for(; idp != m->paramsList.end() && iipn != node->params.end(); idp++, iipn++)
+		{
+			if ((*idp)->name != (*iipn)->innerName)
+			{
+				addError(" method  Implementation:" + currentClass->name + "::" + node->name +" expetced param: " +(*idp)->name);
+				return;
+			}
+			if (!(*idp)->type.isEqual((*iipn)->type)) {
+				addError(" method  Implementation:" + currentClass->name + "::" + node->name + " uncorrected param " + (*idp)->name +" type: ");
+				return;
+
+			}
+		};
+		m->methodImplNode = node;
+	}
+
+	void visit(ClassMethodParamNode* node) {
+	}
 };
 
 class TableFiller : public NodeVisiter {
@@ -1365,8 +1425,8 @@ class JVMTableFiller : public NodeVisiter {
     }
 
     bool isMethod;
-    ClassMethodDeclarationNode* curMethod;
-    void visit( ClassMethodDeclarationNode* node) override {
+    ClassMethodImplementationNode* curMethod;
+    void visit(ClassMethodImplementationNode* node) override {
         isMethod = true;
         curMethod = node;
         NodeVisiter::visit( node);
@@ -1375,8 +1435,8 @@ class JVMTableFiller : public NodeVisiter {
     }
 
     bool isClass;
-    ClassDeclarationNode* curClass;
-    void visit( ClassDeclarationNode* node) override {
+    ClassImplementationNode* curClass;
+    void visit(ClassImplementationNode* node) override {
         isClass = true;
         curClass = node;
         auto c = classes[curClass->name];

@@ -54,6 +54,9 @@ class MethodCodeGenerator : public NodeVisiter {
         if( info->methodType == METHOD_LOCAL)
             addVar("this", TypeInfo::Pointer(info->classname));
         
+
+		if (!info->isDefault && info->methodImplNode != NULL && info->methodImplNode->body != NULL)
+			info->methodImplNode->body->visit(this);
     }
 
     void addCommand(JVMCommand* command) {

@@ -108,7 +108,11 @@ protected:
 #if MY_DEBUG
         return U2(0).toBytes();
 #endif
-        return U2( table->methodsTable.size()).toBytes();
+		int c = 0;
+		FOR_EACH(m, table->methodsTable) {
+			c += (m->methodInfo && !m->methodInfo->isDefault) || (m->funcInfo && !m->funcInfo->isDefault);
+		}
+        return U2( c).toBytes();
     }
 
     string genMethods() {
@@ -117,17 +121,17 @@ protected:
 #endif
         string ms;
         FOR_EACH( method, table->methodsTable) {
-            ms += U2( method->access).toBytes(); 
-            ms += U2( method->nameId).toBytes();
-            ms += U2( method->descriptorId).toBytes();
-            if( !method->methodInfo && !method->funcInfo)
-            //if( !method->methodInfo || method->methodInfo->isDefault) {
-                // Тут надо будет иначе
-                ms += U2( 0).toBytes();
-            //} 
+            if( (!method->methodInfo  || method->methodInfo->isDefault) && (!method->funcInfo || method->funcInfo->isDefault)){}
             else 
             {
-
+				ms += U2( method->access).toBytes(); 
+				ms += U2( method->nameId).toBytes();
+				ms += U2( method->descriptorId).toBytes();
+            //if( !method->methodInfo || method->methodInfo->isDefault) {
+                // Тут надо будет иначе
+                //ms += U2( 0).toBytes();
+            //} 
+            
                 //Говоорим, что у нас есть один атриут - код
                 ms += U2( 1).toBytes() + U2( table->addUtf8("Code")).toBytes();
 
