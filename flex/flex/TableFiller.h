@@ -6,6 +6,11 @@
 
 #include "NodeVisiter.h"
 
+
+
+#define IF_FIND_ELSE( from, what, then, another) { auto elem = from.find( what); if ( elem != from.end()) { then ;} else { another ;} } 
+#define IF_FIND( from, what, then)  IF_FIND_ELSE( from, what, then, {;}) 
+
 struct pairhash { 
 public: 
 template <typename T, typename U> 
@@ -172,10 +177,12 @@ public:
             auto param = params.find( name);
             if( param == params.end())
                 return false;
-            *type = param->second->type;
+			if( type)
+				*type = param->second->type;
             return true;
         }
-        *type = var->second;
+		if( type)
+			*type = var->second;
         return true;
     }
 
@@ -207,6 +214,11 @@ public:
     
     string descriptor;
     
+	FieldInfo() {
+		this->name = "";
+		//this->type.type = TYPE_N = nullptr;
+	}
+
     FieldInfo( ClassFieldDeclarationNode * node){
         this->name = node->name;
         this->type = TypeInfo( node->type);
@@ -241,9 +253,6 @@ public:
 class ClassInfo {
 public:
     bool isDefault;
-    ClassInfo(){
-        this->isDefault = false;
-    }
 
     string name;
     string parentName;
@@ -256,6 +265,12 @@ public:
 
     JavaConstantTable* table;
     
+    ClassInfo(){
+        this->isDefault = false;
+		this->classDeclNode = nullptr;
+		this->classImlpNode = nullptr;
+		this->table = nullptr;
+    }
     bool getMethod( string& name, MethodInfo* retMethod = nullptr){
         auto m = this->staticMethods.find( name);
         if ( m == this->staticMethods.end()) {
@@ -271,9 +286,9 @@ public:
 
     MethodInfo* getMethod( ClassMethodImplementationNode* method){
         if( method->methodType == MethodType::METHOD_LOCAL)
-            return localMethods[ method->name];
+			IF_FIND_ELSE(localMethods, method->name,  { return elem->second; }, { return nullptr; })
         else
-            return staticMethods[ method->name];
+			IF_FIND_ELSE(staticMethods, method->name, { return elem->second; }, { return nullptr; })
     }
 
 };
@@ -457,9 +472,6 @@ string genDescriptor( FieldInfo* field) {
 }
 
 
-
-#define IF_FIND_ELSE( from, what, then, another) { auto elem = from.find( what); if ( elem != from.end()) { then ;} else { another ;} } 
-#define IF_FIND( from, what, then)  IF_FIND_ELSE( from, what, then, {;}) 
 #define VCB 160
 #if VCB < 120
 string to_string( int number) {
@@ -825,7 +837,7 @@ public:
                 else if ( valueNode->constType == VarType::TYPE_INT)  nm = addInt( valueNode->intVal);
                 else if ( valueNode->constType == VarType::TYPE_FLOAT) nm = addFloat( valueNode->floatVal);
                 else if ( valueNode->constType == VarType::TYPE_STRING) nm = addStr(valueNode->strVal);
-				else if ( valueNode->constType == VarType::TYPEE_CLASS) nm = addClass(valueNode->strVal);
+				else if ( valueNode->constType == VarType::TYPEE_CLASS) nm = addClass(valueNode->name);
 				else if ( valueNode->constType == VarType::TYPE_CUSTOM) {
 					if ( valueNode->returnType->varType == TYPE_ARRAY){
 						if( valueNode->returnType->childType->varType == TYPE_POINTER){
@@ -870,6 +882,7 @@ public:
     int addMethod( MethodInfo* method){
         
         string typeDescr = genDescriptor( method);
+		method->descriptor = typeDescr;
         return addMethod( method->classname, method->name, typeDescr);
     }
 
@@ -885,6 +898,7 @@ public:
     int addField( FieldInfo* field) {
         
         string typeDescr = genDescriptor( field);
+		field->descriptor = typeDescr;
         return addField( field->classname, field->name, typeDescr);
         
     }
@@ -998,7 +1012,7 @@ void fillDefaultClasses() {
     strAppnend->returnType = TypeInfo::Pointer( nssclassinfo->name);
     strAppnend->classname = nssclassinfo->name;
     strAppnend->access = ACCESS_PUBLIC;
-    strAppnend->methodType = METHOD_STATIC;
+    strAppnend->methodType = METHOD_LOCAL;
     nssclassinfo->localMethods[ strAppnend->name] = strAppnend;
 
     classes[nsoclassinfo->name] = nsoclassinfo;
@@ -1066,23 +1080,72 @@ void fillDefaultClasses() {
             cl->second->table->addClass( cl->second);
     }
 }
+void fillDefaultConstructor() {
+
+	FOR_EACH(cl, classes) {
+
+		MethodInfo constructor;
+		constructor.name = "<init>";
+		constructor.access = ACCESS_PUBLIC;
+		constructor.methodType = MethodType::METHOD_LOCAL;
+		constructor.isDefault = false;
+		constructor.methodImplNode = new ClassMethodImplementationNode();
+		constructor.methodImplNode->name = constructor.name;
+		constructor.methodImplNode->methodType = METHOD_LOCAL;
+		constructor.methodImplNode->returnType = new TypeNode();
+		constructor.methodImplNode->returnType->varType = TYPE_VOID;
+		constructor.methodImplNode->body = new StatementNode();
+		constructor.methodImplNode->body->stmtType = STMT_COMPOUND;
+		auto body = new StatementNode();
+		body->stmtType = STMT_EXPR;
+		body->expr = new ExprNode();
+		body->expr->exprType = EXPR_METHOD_CALL;
+		body->expr->isSuper = true;
+		body->expr->name = constructor.name;
+		body->expr->object = new ExprNode();
+		body->expr->object->exprType = EXPR_OPERATION;
+		body->expr->object->operationType = OP_VALUE;
+		body->expr->object->constType = TYPE_CUSTOM;
+		body->expr->object->name = cl->second->parentName;
+		body->expr->object->returnType = TypeInfo::Pointer(cl->second->parentName).toNode();
+		body->expr->returnType = new TypeNode();
+		body->expr->returnType->varType = TYPE_VOID;
+
+		constructor.methodImplNode->body->childs.push_back(body);
+
+		constructor.classname = cl->second->name;
+
+		auto decl = new ClassMethodDeclarationNode();
+		decl->access = ACCESS_PUBLIC;
+		decl->methodType = METHOD_LOCAL;
+		decl->name = "<init>";
+		decl->returnType = new TypeNode();
+		decl->returnType->varType = TYPE_VOID;
+
+		constructor.methodDeclNode = decl;
+
+		TypeInfo cRetType;
+		cRetType.type = TYPE_VOID;
+		constructor.returnType = cRetType;
+
+		//cl->second->localMethods[constructor.name] = new MethodInfo(constructor);
+		
+		if (!cl->second->classDeclNode) {
+			cl->second->classDeclNode = new ClassDeclarationNode( cl->second->name, cl->second->parentName);
+		}
+		if ( !cl->second->classImlpNode)
+			cl->second->classImlpNode = new ClassImplementationNode(cl->second->name);
+		
+		cl->second->classImlpNode->methods.push_back(constructor.methodImplNode);
+		cl->second->classDeclNode->methods.push_back(decl);
+	}
+}
 void fillDefaultMethods() {
     MethodInfo alloc;
     alloc.name = "alloc";
     alloc.access = ACCESS_PUBLIC;
     alloc.methodType = MethodType::METHOD_STATIC;
     alloc.isDefault = true;
-
-    
-    MethodInfo constructor;
-    constructor.name = "<init>";
-    constructor.access = ACCESS_PUBLIC;
-    constructor.methodType = MethodType::METHOD_LOCAL;
-    constructor.isDefault = true;
-
-    TypeInfo cRetType;
-    cRetType.type = TYPE_VOID;
-    constructor.returnType = cRetType;
 
     FOR_EACH( cl, classes){
         alloc.classname = cl->second->name;
@@ -1093,9 +1156,6 @@ void fillDefaultMethods() {
         alloc.returnType = t;
         cl->second->staticMethods[ alloc.name] = new MethodInfo( alloc);
         //cl->second->staticMethods[ alloc.name]
-        
-        constructor.classname = cl->second->name;
-        //cl->second->localMethods[ constructor.classname] = new MethodInfo( constructor); 
     }
 }
 
@@ -1147,14 +1207,18 @@ void fillDefaultFunctions() {
  *
  * 
  */
-class ClassTableFiller : public NodeVisiter {
+class ClassDeclarationTableFiller : public NodeVisiter {
 public:
     void visit( ProgramNode* node) override {
-        
+
+
+
         for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
 			auto classDecl = *iclassDecl;
             (classDecl)->visit( this);
         }
+
+
 
     }
 
@@ -1179,7 +1243,37 @@ public:
 
 };
 
+
 class ClassImplementationTableFiller :public NodeVisiter {
+public:
+	void visit(ProgramNode* node) override {
+
+		for (auto iclassDecl = node->classImplementations.begin(); iclassDecl != node->classImplementations.end(); iclassDecl++) {
+			auto classDecl = *iclassDecl;
+			(classDecl)->visit(this);
+		}
+
+
+	}
+
+
+	ClassInfo* currentClass;
+	void visit(ClassImplementationNode* node) override {
+		RETURN_IF_NODE_NULL;
+
+		if (classes.find(node->name) == classes.end()) {
+			addError("Unknown Class: " + node->name + " implementation");
+			return;
+		}
+
+		this->currentClass = classes[node->name];
+
+		this->currentClass->classImlpNode = node;
+		NodeVisiter::visit(node);
+	}
+};
+
+class ClassImplementationTableChecker :public NodeVisiter {
 public:
 	void visit(ProgramNode* node) override {
 
@@ -1201,8 +1295,6 @@ public:
 		}
 
 		this->currentClass = classes[node->name];
-
-		this->currentClass->classImlpNode = node;
 		NodeVisiter::visit(node);
 	}
 
@@ -1221,15 +1313,21 @@ public:
 		{
 			if ((*idp)->name != (*iipn)->innerName)
 			{
-				addError(" method  Implementation:" + currentClass->name + "::" + node->name +" expetced param: " +(*idp)->name);
+				addError(" method  Implementation:" + currentClass->name + "::" + node->name +" expected param: " +(*idp)->name);
 				return;
 			}
 			if (!(*idp)->type.isEqual((*iipn)->type)) {
-				addError(" method  Implementation:" + currentClass->name + "::" + node->name + " uncorrected param " + (*idp)->name +" type: ");
+				addError(" method  Implementation:" + currentClass->name + "::" + node->name + " uncorrect param " + (*idp)->name +" type: ");
 				return;
 
 			}
 		};
+
+
+		if (!m->returnType.isEqual(node->returnType)) {
+			addError(" method  Implementation:" + currentClass->name + "::" + node->name + "expected other return type");
+		}
+
 		m->methodImplNode = node;
 	}
 
@@ -1359,20 +1457,28 @@ public:
 		
         fillDefaultClasses();
         fillDefaultFunctions();
+		fillDefaultConstructor();
+
+
+
+
+		for (auto iclassDecl =classes.begin(); iclassDecl !=classes.end(); iclassDecl++) {
+			
+				auto classDecl = iclassDecl->second->classDeclNode;
+				(classDecl)->visit(this);
+			
+		}
 
         classes[FUNCTIONS_CLASS] = new ClassInfo();
         classes[FUNCTIONS_CLASS]->parentName = defaultParentClass;
         classes[FUNCTIONS_CLASS]->name= FUNCTIONS_CLASS;
         classes[FUNCTIONS_CLASS]->table= new JavaConstantTable();
         
-
-
         classes[FUNCTIONS_CLASS]->table->addClass( classes[FUNCTIONS_CLASS]);
-
 
         for( auto iclassDecl = node->classDeclarations.begin(); iclassDecl != node->classDeclarations.end(); iclassDecl++){
 			auto classDecl = *iclassDecl;
-            (classDecl)->visit( this);
+            //(classDecl)->visit( this);
         }
 
 		for( auto ifunc = node->functions.begin(); ifunc != node->functions.end(); ifunc++ ){
@@ -1484,9 +1590,9 @@ class JVMTableFiller : public NodeVisiter {
                 node->constantNum = classes[this->curClass->name]->table->addFunction( f);
             else
                 node->constantNum = classes[ FUNCTIONS_CLASS]->table->addFunction( f);
-        } else if( node->exprType == EXPR_INVAR_CALL) {
+        } else if( node->exprType == EXPR_INVAR_CALL || node->exprType == EXPRE_CLASS_FIELD_ASSIGN) {
 
-            auto f = getField( node->object->returnType->childType->name, node->name);
+            auto f = getField( node->object->name == "this" ? this->curClass->name : node->object->returnType->childType->name, node->name);
             
             if( f){
                 if( isClass)

@@ -49,11 +49,11 @@ class MethodCodeGenerator : public NodeVisiter {
 
     void genCode( MethodInfo* info){
 
-        startGen( info);
 
         if( info->methodType == METHOD_LOCAL)
             addVar("this", TypeInfo::Pointer(info->classname));
         
+        startGen( info);
 
 		if (!info->isDefault && info->methodImplNode != NULL && info->methodImplNode->body != NULL)
 			info->methodImplNode->body->visit(this);
@@ -327,8 +327,10 @@ public:
                 }
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
                 
-
-                addCommand( new INVOKE_VIRTUAL( node->constantNum));
+				if( node->isSuper)
+					addCommand( new INVOKE_SPECIAL( node->constantNum));
+				else
+					addCommand( new INVOKE_VIRTUAL( node->constantNum));
             } else throw new runtime_error( "method call from not object (code gen)");
         }
         else if ( node->exprType == EXPR_OPERATION) {

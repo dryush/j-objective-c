@@ -67,7 +67,7 @@ public:
                 // NOTHING
             } 
             else {
-			    curstmt->expr->returnType = calcOperation(curstmt->expr);
+				curstmt->expr->visit(this);// = calcOperation(curstmt->expr);
 			    if( this->isMethod) {
 				    if (castIfPossible(curstmt->expr, curMethod->returnType) == false) {
 					    addError("Return type does not match type of method " + curMethod->name + "() in class " + curClass->name);
@@ -133,7 +133,7 @@ public:
 
                 TypeInfo typeInfo;
 
-                bool isExist = curFuncOrMethod->getVar( node->name, &typeInfo);
+                bool isExist = node->name=="this" || curFuncOrMethod->getVar( node->name, &typeInfo);
                 if( !isExist){
                     if ( isMethod) {
                         auto field = curClassInfo->fields[ node->name];
@@ -410,7 +410,7 @@ public:
     void visit( ExprNode* node) override {
         RETURN_IF_NODE_NULL;
         
-        if ( node->returnType){
+        if ( node->returnType && node->returnType->varType != TYPEE_UNSET){
             return;
         }
 
@@ -432,9 +432,8 @@ public:
             MethodInfo* meth = nullptr;
             if( node->object->returnType->varType == TYPEE_CLASS) {
                 ClassInfo* iclassinfo = classes[node->object->name]; 
-                auto imeth = iclassinfo->staticMethods.find( node->name);
-                if (imeth != iclassinfo->staticMethods.end()){
-                    meth = imeth->second;
+                if ( meth = getStaticMethod(node->object->name, node->name)){
+                    //meth = imeth->second;
                 } else {
                     addError(string("Unknown static method: ") + iclassinfo->name + "::" + node->name );
                 }
@@ -444,9 +443,9 @@ public:
             } else if(node->object->returnType->varType == TYPE_POINTER) {
                 string classname = node->object->returnType->childType->name;
                 ClassInfo* iclassinfo = classes[classname]; 
-                auto imeth = iclassinfo->localMethods.find( node->name);
-				if (imeth != iclassinfo->localMethods.end() && imeth->second){
-                    meth = imeth->second;
+               // auto imeth = iclassinfo->localMethods.find( node->name);
+				if ( meth = getLocalMethod( classname, node->name)){
+                 //   meth = imeth->second;
                 } else {
                     
                     //���������, ����� ���� �� �� ���� ����� �����
@@ -481,9 +480,9 @@ public:
 
                 string classname = node->object->returnType->childType->name;
                 ClassInfo* iclassinfo = classes[classname]; 
-                auto ifield = iclassinfo->fields.find( node->name);
-                if( ifield != iclassinfo->fields.end()){
-                    retType = ifield->second->type.toNode();
+				FieldInfo* ifield = new FieldInfo();// = iclassinfo->fields.find(node->name);
+                if( ifield = getField( classname, node->name)){
+                    retType = ifield->type.toNode();
                 } else {
                     addError("Unknown field: " + iclassinfo->name + "::" + node->name);
                 }
@@ -495,7 +494,7 @@ public:
             retType = new TypeNode(*node->right->returnType);
         } 
         else if ( node->exprType == ExprType::EXPRE_CLASS_FIELD_ASSIGN) {
-            retType = new TypeNode(*node->right->returnType->childType);
+            retType = new TypeNode(*node->right->returnType);
         }
         else if ( node->exprType == ExprType::EXPR_ARRAY_ELEM_CALL ) {
             if (node->left->returnType->childType)

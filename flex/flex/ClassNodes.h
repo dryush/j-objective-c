@@ -144,7 +144,10 @@ public:
     list<ClassMethodDeclarationNode*> methods;
     
     void visit(NodeVisiter*) override;
-
+	ClassDeclarationNode(const string& name, const string& pname) {
+		this->name = name;
+		this->parentName = pname;
+	}
     ClassDeclarationNode( Class_declaration_st* st ){
         this->name = st->name;
         this->parentName = st->parentName ? st->parentName : defaultParentClass;
@@ -197,7 +200,10 @@ public:
     list<ClassMethodImplementationNode*> methods;
     
     void visit(NodeVisiter*) override;
-    
+
+	ClassImplementationNode(const string& n) {
+		this->name = n;
+	}
     ClassImplementationNode( Class_impl_st* st){
         this->name = st->name;
 

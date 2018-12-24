@@ -26,6 +26,8 @@
 #include "ReturnChecker.h"
 #include "FunctionCallChecker.h"
 
+#include "Super.h"
+
 using namespace std;
 
 extern struct Program_st* root;
@@ -65,10 +67,14 @@ int main(int argc, char *argv[]) {
 	//visiters.push_back( new UnsupportChecher());
 	visiters.push_back( new FunctionAndMethodsLocalVarChecker());
 	visiters.push_back( new ArrayAndFieldAssignTransform());
-    visiters.push_back( new ClassTableFiller());
+    visiters.push_back( new ClassDeclarationTableFiller());
+    visiters.push_back( new ClassImplementationTableFiller());
 	visiters.push_back( new PointerChecker());
+	visiters.push_back( new ThisRetType());
 	visiters.push_back( new TableFiller());
-	visiters.push_back(new                    ClassImplementationTableFiller());
+	visiters.push_back( new SuperChecker());
+	visiters.push_back( new ThisMethodCallChecker());
+	visiters.push_back(new                    ClassImplementationTableChecker());
     // ������� ����������� "������", ����������� �� ���������� ����������
 	visiters.push_back( new TypeCalculation());
     

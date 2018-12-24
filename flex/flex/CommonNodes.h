@@ -101,7 +101,7 @@ public:
 	ExprListNode* funcArgs;
     bool isAlloc;
     int constantNum;
-
+	bool isSuper;
     void visit(NodeVisiter* visiter);
     
     TypeNode* returnType; // 
@@ -180,6 +180,7 @@ public:
 		this->object = nullptr;
 		this->funcArgs = nullptr;
 		this->returnType = nullptr;
+		this->isSuper = false;
 	}
 
 	ExprNode(Expression_st* st);
@@ -344,6 +345,8 @@ ExprNode::ExprNode(Expression_st* st) {
 	this->strVal = "";
 	this->object = nullptr;
 	this->funcArgs = nullptr;
+
+	this->isSuper = false;
 
 	this->exprType = st->exprType;
 	this->operationType = st->operationType;

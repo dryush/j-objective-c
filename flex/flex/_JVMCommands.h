@@ -698,7 +698,7 @@ class PUT_FILED : public JVMCommand {
     }
     string toBytes() override {
         string c;
-        c += U1( 0xB4).toBytes();
+        c += U1( 0xB5).toBytes();
         c += U2( index).toBytes();
         return c;
     }
