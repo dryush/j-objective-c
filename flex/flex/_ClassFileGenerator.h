@@ -67,7 +67,7 @@ protected:
     }
 
     string genAccessFlags(){
-        return U2( ACC_PUBLIC).toBytes();
+        return U2( ACC_PUBLIC | ACC_SUPER).toBytes();
     }
     string genThisClass(){
         return U2( table->classconst).toBytes();

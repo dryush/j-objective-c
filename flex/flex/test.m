@@ -26,6 +26,7 @@
 @end
 
 @interface AB : A {}
+@public
 	-(NSString*) formatStr;
 @end
 
@@ -37,6 +38,7 @@
 @end
 
 @interface ABC : AB {}
+@public
 	-(NSString*) formatStr;
 @end
 
@@ -49,12 +51,14 @@
 
 
 @interface AC : A {}
+@public
 	-(NSString*) formatStr;
 @end
 
 @implementation AC
 	-(NSString*) formatStr {
-		return [[base formatStr] append: [str append: " format from AC "]];
+	//	return [[base formatStr] append: [str append: " format from AC "]];
+		return [base formatStr] ;
 	}
 
 @end
@@ -63,29 +67,29 @@
 
 void main()
 {
-	A* a[4] = { 
-		[A alloc],
-		[AB alloc],
-		[ABC alloc],
-		[AC alloc]
-	};
+	A* a = [A alloc];
+	A* ab = [AB alloc];
+	A* abc = [ABC alloc];
+	A* ac =	[AC alloc];
+	
 
-	int i = 0;
-	while( i < 4){
-		i = i + 1;
-		[a[i] setStr: "return 2007"];
-	}
+	[a setStr: "return 2007"];
+	[ab setStr: "return 2007"];
+	[abc setStr: "return 2007"];
+	[ac setStr: "return 2007"];
+	
+	
+	printf( [a formatStr]);
+	printf( [ab formatStr]);
+	printf( [abc formatStr]);
+	printf( [ac formatStr]);
 
-	i = 0;
-	while( i < 4){
-		i = i + 1;
-		printf( [a[i] formatStr]);
-	}
-
-	i = 0;
-	while( i < 4){
-		i = i + 1;
-		printf( [a[i] formatStr2]);
-	}
+	printf( [a formatStr2]);
+	printf( [ab formatStr2]);
+	printf( [abc formatStr2]);
+	printf( [ac formatStr2]);
+	
+	a->str = [NSString fromInt: 2019];
+	printf( [a getStr]);
 
 }

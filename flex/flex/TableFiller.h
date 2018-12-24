@@ -591,6 +591,7 @@ enum JVMFieldAccess{
     ACC_TRANSIENT =	0x0080,//	Declared transient; not written or read by a persistent object manager.
     ACC_SYNTHETIC =	0x1000,//	Declared synthetic; not present in the source code.
     ACC_ENUM	  = 0x4000,//	Declared as an element of an enum.
+	ACC_SUPER     = 0x0020,
 };
 
 
@@ -886,14 +887,30 @@ public:
         return addMethod( method->classname, method->name, typeDescr);
     }
 
+
+	int addMethod(MethodInfo* method, const string& classname) {
+
+		string typeDescr = genDescriptor(method);
+		method->descriptor = typeDescr;
+		return addMethod(classname, method->name, typeDescr);
+	}
+
+
     void addClassMethod( MethodInfo* method){
         this->addMethod( method);
-        
         JavaMethodTableRecord methodRecord ( method, this->utf8s[ method->name], this->utf8s[method->descriptor]); 
         
         this->methodsTable.push_back( methodRecord);
 
     } 
+
+	void addClassMethod(MethodInfo* method, const string& classname ) {
+		this->addMethod(method,classname);
+		JavaMethodTableRecord methodRecord(method, this->utf8s[method->name], this->utf8s[method->descriptor]);
+
+		this->methodsTable.push_back(methodRecord);
+
+	}
 
     int addField( FieldInfo* field) {
         
@@ -1579,7 +1596,11 @@ class JVMTableFiller : public NodeVisiter {
 
             if( isOk)
                 if( isClass)
-                    node->constantNum = classes[this->curClass->name]->table->addMethod( m);
+						if( node->isSuper)
+							node->constantNum = classes[this->curClass->name]->table->addMethod( m, classes[this->curClass->name]->parentName);
+						else
+							node->constantNum = classes[this->curClass->name]->table->addMethod( m);
+					
                 else
                     node->constantNum = classes[ FUNCTIONS_CLASS]->table->addMethod( m);
 
