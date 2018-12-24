@@ -7,6 +7,7 @@
 	-(NSString*) getStr;
 	-(NSString*) formatStr;
 	-(NSString*) formatStr2;
+	+(void) print: (NSString*) str;
 @end
 
 @implementation A
@@ -22,7 +23,9 @@
 	-(NSString*) formatStr2 {
 		return [[this formatStr] append: " and from A"];
 	}
-
+	+(void) print: (NSString*) str {
+		printf( str);
+	}
 @end
 
 @interface AB : A {}
@@ -91,5 +94,6 @@ void main()
 	
 	a->str = [NSString fromInt: 2019];
 	printf( [a getStr]);
+	[A print: [a getStr]];
 
 }

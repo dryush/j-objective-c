@@ -94,7 +94,7 @@ class ThisMethodCallChecker : public NodeVisiter {
 		}
 		else if (node->exprType == EXPR_OPERATION && node->operationType == OP_VALUE && node->constType == TYPE_CUSTOM) {
 			auto mm = getLocalMethod(cc->name, m->name);
-			if (!mm->getVar(node->name)) {
+			if (mm && !mm->getVar(node->name)) {
 				auto cl = classes[cc->name];
 				if( getField(cc->name, node->name)) {
 
