@@ -34,6 +34,19 @@ public class NSString extends NSObject {
         return new NSString().init( String.valueOf(val));
     }
     
+    public static NSString fromChar( char val){
+        return new NSString().init( String.valueOf(val));
+    }
+    
+    
+    public static NSString fromChar( int val){
+        return new NSString().init( String.valueOf((char)val));
+    }
+    
+    public static NSString fromCharArray( char[] val){
+        return new NSString().init( new String(val));
+    }
+    
     public NSString append( NSString otherStr){
         return new NSString().init(this.str + otherStr.str);
     }

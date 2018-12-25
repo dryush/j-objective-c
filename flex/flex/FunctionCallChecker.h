@@ -27,9 +27,9 @@ public:
             }
 
             if( iParam != params.end() )
-                addError(string("Too many args in function call: ") + node->name + "()");
-            else if( iExistArg != existArgs.end()) 
-                addError(string("Not enought args in function call: ") + node->name + "()"); 
+                addError(string("Not enought args in function call: ") + node->name + "()");
+            else if( iExistArg != existArgs.end())
+                addError(string("Too many args in function call: ") + node->name + "()");  
 
     }
     void visit( ExprNode* node) override {

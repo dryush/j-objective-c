@@ -31,4 +31,5 @@ public class NSScanner extends NSObject{
     public float scanFloat(){
         return in.nextFloat();
     }
+    
 }

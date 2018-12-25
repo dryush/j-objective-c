@@ -983,6 +983,39 @@ void fillDefaultClasses() {
 
     nssclassinfo->localMethods[ nssinitm->name] = nssinitm;
 
+    auto fromCharArray = new MethodInfo();
+    fromCharArray->isDefault = true;
+    fromCharArray->name = "fromCharArray";
+    auto charArrayParam = new MethodParamInfo();
+    charArrayParam ->name = "chars";
+    charArrayParam ->outerName = "chars";
+    charArrayParam ->type.type = TYPE_ARRAY;
+    charArrayParam ->type.arrayType = TYPE_CHAR;
+
+    fromCharArray ->addParam( charArrayParam);
+
+    fromCharArray->returnType = TypeInfo::Pointer( nssclassinfo->name);
+    fromCharArray->classname = nssclassinfo->name;
+    fromCharArray->access = ACCESS_PUBLIC;
+    fromCharArray->methodType = METHOD_STATIC;
+    nssclassinfo->staticMethods[ fromCharArray->name] = fromCharArray;
+
+
+    auto fromChar = new MethodInfo();
+    fromChar->isDefault = true;
+    fromChar->name = "fromChar";
+    auto charParam = new MethodParamInfo();
+    charParam->name = "char";
+    charParam->outerName = "char";
+    charParam->type.type = TYPE_CHAR;
+    fromChar ->addParam( charParam);
+
+    fromChar ->returnType = TypeInfo::Pointer( nssclassinfo->name);
+    fromChar ->classname = nssclassinfo->name;
+    fromChar ->access = ACCESS_PUBLIC;
+    fromChar ->methodType = METHOD_STATIC;
+    nssclassinfo->staticMethods[ fromChar->name] = fromChar;
+
 
     auto fromInt = new MethodInfo();
     fromInt->isDefault = true;
@@ -1000,6 +1033,8 @@ void fillDefaultClasses() {
     nssclassinfo->staticMethods[ fromInt->name] = fromInt;
 
 	
+
+
     auto fromFloat = new MethodInfo();
     fromFloat->isDefault = true;
     fromFloat->name = "fromFloat";
