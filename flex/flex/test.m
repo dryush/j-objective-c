@@ -1,4 +1,8 @@
-void dfs(int v) {
+@interface A 
+{
+	@public
+	NSString * str;
+	float f;
 }
 @public
 	-(void) setStr: (NSString*) str;
@@ -55,7 +59,7 @@ void dfs(int v) {
 
 @implementation ABC
 	-(NSString*) formatStr {
-		return [str append: " format from ABC"];
+		return [[base formatStr] append:[str append: " format from ABC"]];
 	}
 
 @end
@@ -80,28 +84,38 @@ void dfs(int v) {
 @end
 
 
-void main()
-{
-
-	A* array[5] = { [A alloc], [AB alloc], [ABC alloc], [AC alloc], [AD alloc]};
+void func(A *obj, float number, A *array[] ) {
+	printf("This is func()");
+	number = number * 1000;
+	obj->str = [[NSString alloc] init: "From func string"];
 	int i = 0;
 	while( i < 5){
-		printf( [NSString fromInt: i]);
-		[array[i] setStr: "return 2007"];
+		[array[i] setStr: "From func World"];
 		printf( [array[i] formatStr]);
-		printf( [array[i] formatStr2]);
 		i = i + 1;
 	}
-	
-	printf("lolkek\n");
+	//[obj setStr: "Bye World"];
+	//[obj setF: number];
+}
 
-	NSScanner * in = [[NSScanner alloc] init];
-	float x = [in scanFloat];
-	while (x < 0 || x > 4.345) {
-		if (x < 0)
-			x = x + 1.5;
-		else if (x > 4.345)
-			x = x - 1;
-		printf([NSString fromFloat: x]);
-	}
+void main()
+{
+	A* array[5] = { [A alloc], [AB alloc], [ABC alloc], [AC alloc], [AD alloc]};
+	
+	A* obj = [A alloc];
+	//obj->str = [[NSString alloc] init: "someStr"];
+	obj->str = "someStr";
+	
+
+
+	float f = 0.5;
+	printf( [[NSString alloc] init: "Before func: "] );
+	printf( obj->str);
+	printf( [NSString fromFloat: f]);
+
+	func( obj, f, array);
+	
+	printf( [[NSString alloc] init: "After func: "] );
+	printf( obj->str);
+	printf( [NSString fromFloat: f]);
 }

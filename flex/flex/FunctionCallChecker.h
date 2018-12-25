@@ -76,7 +76,11 @@ public:
             if( ! TypeCalculation::castIfPossible( node->left, inttypenode)){
                 addError(string("Index must be int array elem call: ") + node->left->name);
             }
-        }
+		} else if ( node->exprType == EXPRE_CLASS_FIELD_ASSIGN) {
+			if( !TypeCalculation::castIfPossible( node->right, getField(node->object->returnType->childType->name, node->name)->type.toNode())){
+				addError(string("Cant cast field"));
+			}
+		}
 
         NodeVisiter::visit( node);
     }
