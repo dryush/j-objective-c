@@ -62,8 +62,8 @@ ONE_LINE_COMMENT \/\/.*\n
 {WS} 	{}
 
 "/*"					{ BEGIN(MULTILINE_COMMENT); start = yylineno; }
-<MULTILINE_COMMENT>[^*]*		{ /*addToBuffer(buffer, yytext); */}
-<MULTILINE_COMMENT>"*"+[^*/]* 	{ /*addToBuffer(buffer, yytext); */}
+<MULTILINE_COMMENT>[^*]*		{ /*addToBuffer(buffer, yytext);*/ }
+<MULTILINE_COMMENT>"*"+[^*/]* 	{ /*addToBuffer(buffer, yytext);*/ }
 <MULTILINE_COMMENT>"*"+"/" 		{ BEGIN(INITIAL);}
 <MULTILINE_COMMENT><<EOF>> 		{ BEGIN(INITIAL); handleError("unterminated multiline_comment", start);}
 
