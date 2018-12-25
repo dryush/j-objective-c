@@ -1582,13 +1582,13 @@ class JVMTableFiller : public NodeVisiter {
             bool isOk = true;
             if ( node->object->returnType->varType == TYPEE_CLASS){
                 c = classes[ node->object->returnType->name];
-                m = c->staticMethods[ node->name];
+                m = getStaticMethod( c->name,  node->name);
                 if ( node->name == "alloc" && m->params.size() == 0){
                     node->isAlloc = true;
                 }
             } else if ( node->object->returnType->varType == TYPE_POINTER) {
                 c = classes[ node->object->returnType->childType->name];
-                m = c->localMethods[node->name];
+                m = getLocalMethod(c->name, node->name);
             } else {
                 addError("Need Test Why this Error");
                 isOk = false;

@@ -75,6 +75,7 @@ void main()
 	A* abc = [ABC alloc];
 	A* ac =	[AC alloc];
 	
+	AC* ac2 = ac;
 
 	[a setStr: "return 2007"];
 	[ab setStr: "return 2007"];
@@ -86,11 +87,13 @@ void main()
 	printf( [ab formatStr]);
 	printf( [abc formatStr]);
 	printf( [ac formatStr]);
+	printf( [ac2 formatStr]);
 
 	printf( [a formatStr2]);
 	printf( [ab formatStr2]);
 	printf( [abc formatStr2]);
 	printf( [ac formatStr2]);
+	printf( [ac2 formatStr2]);
 	
 	a->str = [NSString fromInt: 2019];
 	printf( [a getStr]);
