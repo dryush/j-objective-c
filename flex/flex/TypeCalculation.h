@@ -324,13 +324,14 @@ public:
 
 					if( node->left->isNumberValue() && node->right->isNumberValue()) {
                     
+					} else if (node->left->returnType->varType == TYPE_CHAR && node->right->returnType->varType == TYPE_CHAR) { 
+
 					} else {
 						if (node->left->isNumberValue() == node->right->isNumberValue() )
 							addError("This operation have not float and int operands");
 						else
 							addError("This operation have not float and int operand");
 					}
-
 				} else if( node->isEqual()) {
 					retType->varType = TYPE_INT;
 					if( node->left->returnType->varType == node->right->returnType->varType) {

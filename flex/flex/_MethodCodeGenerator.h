@@ -147,7 +147,8 @@ public:
 		VarType leftType = node->left->returnType->varType;
 		VarType rightType = node->right->returnType->varType;
 		
-		if (leftType == TYPE_INT && rightType == TYPE_INT) {
+		if (leftType == TYPE_INT && rightType == TYPE_INT || 
+			leftType == TYPE_CHAR && rightType == TYPE_CHAR) {
 			node->left->visit(this);
 			node->right->visit(this);
 
@@ -356,6 +357,8 @@ public:
 
 				} else if ( node->constType == TYPE_STRING) {
                     addCommand( new LDC_W( table->strings[ node->strVal]));
+				} else if ( node->constType == TYPE_CHAR) {
+					addCommand( new SIPush(node->charVal));
                 } else if ( node->constType == TYPE_POINTER){
 					addCommand( new ACONST_NULL());
 				}
@@ -387,6 +390,8 @@ public:
 						addCommand( new I2F());
 					addCommand( new FSTORE(number));
 
+				} else if (leftType == TYPE_CHAR){
+					addCommand( new ISTORE(number));
 				} else if (node->right->returnType->varType == TYPE_POINTER){
                     addCommand( new ASTORE(number)); 
                 } else if ( node->right->returnType->varType == TYPE_ARRAY){

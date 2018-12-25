@@ -22,7 +22,7 @@ public:
             for( ; iParam != params.end() && iExistArg != existArgs.end(); iParam++, iExistArg++){
                 order++;
                 if( !TypeCalculation::castIfPossible(*iExistArg,(*iParam)->type.toNode())) {
-                    addError(string("Uncorrect arg type in function call: ") + node->name + "()" + " arg number: " + to_string( order)); 
+                    addError(string("Uncorrect arg type in function call: ") + node->name + "()" + " arg number: " + to_string( (ll)order)); 
                 }
             }
 
