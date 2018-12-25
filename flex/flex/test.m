@@ -24,7 +24,7 @@
 		return str;
 	}
 	-(NSString*) formatStr {
-		return [str append: " format from A"];
+		return [str append: " format from A "];
 	}
 	-(NSString*) formatStr2 {
 		return [[this formatStr] append: " and from A"];
@@ -73,58 +73,40 @@
 
 @implementation AC
 	-(NSString*) formatStr {
-	//	return [[base formatStr] append: [str append: " format from AC "]];
-		return [base formatStr] ;
+		return [[base formatStr] append: [str append: "\t format from AC "]];
+	//	return [base formatStr] ;
 	}
-
 @end
 
+@interface AD : A {}
+@end
+
+@implementation AD
+@end
 
 
 void main()
 {
 
-
-	/*
-	A* a = [A alloc];
-	A* ab = [AB alloc];
-	A* abc = [ABC alloc];
-	A* ac =	[AC alloc];
- 
-	
-	A* array[4] = {a, ab, abc, ac};	
-	a[0] = a;
-	a[1] = ab;
-	a[2] = abc;
-	a[3] = ac;
-
-	[a setStr: "return 2007"];
-	[ab setStr: "return 2007"];
-	[abc setStr: "return 2007"];
-	[ac setStr: "return 2007"];
-	
-	
-	printf( [a formatStr]);
-	printf( [ab formatStr]);
-	printf( [abc formatStr]);
-	printf( [ac formatStr]);
-	
-	printf( [a formatStr2]);
-	printf( [ab formatStr2]);
-	printf( [abc formatStr2]);
-	printf( [ac formatStr2]);
-	
-	a->str = [NSString fromInt: 2019];
-	printf( [a getStr]);
-	[A print: [a getStr]];
-	*/
-	
-	A* array = { [A alloc], [AB alloc], [ABC alloc], [AC alloc]};
+	A* array[5] = { [A alloc], [AB alloc], [ABC alloc], [AC alloc], [AD alloc]};
 	int i = 0;
-	while( i < 4){
+	while( i < 5){
+		printf( [NSString fromInt: i]);
 		[array[i] setStr: "return 2007"];
 		printf( [array[i] formatStr]);
 		printf( [array[i] formatStr2]);
 		i = i + 1;
+	}
+	
+	printf("lolkek\n");
+
+	NSScanner * in = [[NSScanner alloc] init];
+	float x = [in scanFloat];
+	while (x < 0 || x > 4.345) {
+		if (x < 0)
+			x = x + 1.5;
+		else if (x > 4.345)
+			x = x - 1;
+		printf([NSString fromFloat: x]);
 	}
 }

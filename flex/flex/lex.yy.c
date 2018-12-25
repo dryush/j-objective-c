@@ -944,13 +944,13 @@ case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
 #line 66 "objectivec.flex"
-{ addToBuffer(buffer, yytext); }
+{ /*addToBuffer(buffer, yytext); */}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
 #line 67 "objectivec.flex"
-{ addToBuffer(buffer, yytext); }
+{ /*addToBuffer(buffer, yytext); */}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
