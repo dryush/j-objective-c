@@ -1,6 +1,9 @@
 @interface A {
 @public
 	NSString* str;
+//@private
+	float f;
+
 }
 @public
 	-(void) setStr: (NSString*) str;
@@ -8,6 +11,9 @@
 	-(NSString*) formatStr;
 	-(NSString*) formatStr2;
 	+(void) print: (NSString*) str;
+	-(void) setF: (float) v;
+	-(float) getF;
+
 @end
 
 @implementation A
@@ -26,6 +32,13 @@
 	+(void) print: (NSString*) str {
 		printf( str);
 	}
+	-(void) setF: (float) v {
+		this->f = v;
+	}
+	-(float) getF {
+		return this->f;
+	}
+
 @end
 
 @interface AB : A {}
@@ -70,12 +83,20 @@
 
 void main()
 {
+
+
+	/*
 	A* a = [A alloc];
 	A* ab = [AB alloc];
 	A* abc = [ABC alloc];
 	A* ac =	[AC alloc];
+ 
 	
-	AC* ac2 = ac;
+	A* array[4] = {a, ab, abc, ac};	
+	a[0] = a;
+	a[1] = ab;
+	a[2] = abc;
+	a[3] = ac;
 
 	[a setStr: "return 2007"];
 	[ab setStr: "return 2007"];
@@ -87,16 +108,23 @@ void main()
 	printf( [ab formatStr]);
 	printf( [abc formatStr]);
 	printf( [ac formatStr]);
-	printf( [ac2 formatStr]);
-
+	
 	printf( [a formatStr2]);
 	printf( [ab formatStr2]);
 	printf( [abc formatStr2]);
 	printf( [ac formatStr2]);
-	printf( [ac2 formatStr2]);
 	
 	a->str = [NSString fromInt: 2019];
 	printf( [a getStr]);
 	[A print: [a getStr]];
-
+	*/
+	
+	A* array = { [A alloc], [AB alloc], [ABC alloc], [AC alloc]};
+	int i = 0;
+	while( i < 4){
+		[array[i] setStr: "return 2007"];
+		printf( [array[i] formatStr]);
+		printf( [array[i] formatStr2]);
+		i = i + 1;
+	}
 }
