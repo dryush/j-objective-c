@@ -472,7 +472,7 @@ string genDescriptor( FieldInfo* field) {
 }
 
 
-#define VCB 160
+#define VCB 100
 #if VCB < 120
 string to_string( int number) {
     return std::to_string((long long) number);
