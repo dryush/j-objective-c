@@ -23,6 +23,7 @@ public:
                     newNode->object = node->left->object;
                     newNode->name = node->left->name;
                     newNode->right = node->right;
+					newNode->returnType = node->returnType;
                     *node = *newNode;
                 }
             }

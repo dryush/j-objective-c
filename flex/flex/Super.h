@@ -45,9 +45,14 @@ class ThisRetType : public NodeVisiter {
 			(classImpl)->visit(this);
 		}
 	}
+
+	void visit( ClassMethodImplementationNode* node){
+		this->m = node;
+		NodeVisiter::visit( node);
+	}
 	void visit(ExprNode* node) override {
 
-		if (node->exprType == EXPR_OPERATION && node->operationType == OP_VALUE && node->constType == TYPE_CUSTOM && node->name == "this") {
+		if (node->exprType == EXPR_OPERATION && node->operationType == OP_VALUE && node->constType == TYPE_CUSTOM && m->methodType == METHOD_LOCAL && node->name == "this") {
 			node->returnType = TypeInfo::Pointer(cc->name).toNode();
 		}
 		NodeVisiter::visit(node);
@@ -55,6 +60,7 @@ class ThisRetType : public NodeVisiter {
 };
 
 class ThisMethodCallChecker : public NodeVisiter {
+public:
 
 	ClassImplementationNode* cc;
 	ClassMethodImplementationNode* m;
@@ -73,16 +79,16 @@ class ThisMethodCallChecker : public NodeVisiter {
 		VISIT_IF_NOT_NULL(node->body);
 
 	}
-
+	ExprNode* p;
 	void visit(ExprNode* node) override {
 
 		if (node->exprType == EXPR_FUNC_CALL) {
-			if( !findFunction(node->name)) {
+			if( !findFunction(node->name) && m->methodType == METHOD_LOCAL) {
 				auto cl = getLocalMethod(cc->name, node->name);
 				if (cl) {
 					node->exprType = EXPR_METHOD_CALL;
 					node->operationType = (OperationType) -1;
-					node->constType = (VarType) -1;
+					node->constType = TYPE_CUSTOM;
 					node->object = new ExprNode();
 					node->object->exprType = EXPR_OPERATION;
 					node->object->operationType = OP_VALUE;
@@ -100,7 +106,7 @@ class ThisMethodCallChecker : public NodeVisiter {
 
 					node->exprType = EXPR_INVAR_CALL;
 					node->operationType = (OperationType)-1;
-					node->constType = (VarType)-1;
+					node->constType = TYPE_CUSTOM;
 					node->object = new ExprNode();
 					node->object->exprType = EXPR_OPERATION;
 					node->object->operationType = OP_VALUE;
@@ -111,6 +117,37 @@ class ThisMethodCallChecker : public NodeVisiter {
 				};
 			}
 		}
+		
+		/*else if(node->exprType == EXPR_OPERATION && node->operationType == OP_ASSIGN && node->left->exprType == EXPR_OPERATION && node->left->operationType == OP_VALUE && node->left->constType == TYPE_CUSTOM)
+		{
+			auto mm = getLocalMethod(cc->name, m->name);
+			if (mm && !mm->getVar(node->left->name)) {
+				auto cl = classes[cc->name];
+				if( getField(cc->name, node->left->name)) {
+
+					node->exprType = EXPRE_CLASS_FIELD_ASSIGN;
+					node->object = node->left;
+
+					
+                    node->name = node->left->name;
+                    node->right = node->right;
+					node->returnType = node->returnType;
+
+
+					node->operationType = (OperationType)-1;
+					node->constType = TYPE_CUSTOM;
+					
+					node->object = new ExprNode();
+					node->object->exprType = EXPR_OPERATION;
+					node->object->operationType = OP_VALUE;
+					node->object->constType = TYPE_CUSTOM;
+					node->object->name = "this";
+					node->object->returnType = TypeInfo::Pointer(cc->name).toNode(); 
+					
+				};
+			}
+		}*/
+		p = node;
 		NodeVisiter::visit(node);
 	}
 };

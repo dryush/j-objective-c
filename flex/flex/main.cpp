@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
 	visiters.push_back( new SuperChecker());
 	visiters.push_back( new ThisMethodCallChecker());
 	visiters.push_back(new                    ClassImplementationTableChecker());
+	visiters.push_back( new ArrayAndFieldAssignTransform());
     // ������� ����������� "������", ����������� �� ���������� ����������
 	visiters.push_back( new TypeCalculation());
     

@@ -279,3 +279,27 @@ int main() {
     return 0;
 }
 
+39.Поле
+
+
+@interface A 
+{
+	@public
+	int a;
+}
+
+@end
+
+@implementation A 
+@end
+
+void main()
+{
+	A* a = [A alloc];
+	a->a = 5;
+	printf("-------");
+	printf( [NSString fromInt: a->a]);
+	printf("-------");
+}
+
+

@@ -95,6 +95,7 @@
     <ClInclude Include="ReturnChecker.h" />
     <ClInclude Include="ReturnTypeVarCalc.h" />
     <ClInclude Include="struct_print.h" />
+    <ClInclude Include="Super.h" />
     <ClInclude Include="TableFiller.h" />
     <ClInclude Include="TreeClass.h" />
     <ClInclude Include="tree_structs.h" />

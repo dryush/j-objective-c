@@ -120,22 +120,25 @@ public:
             {
                 FunctionInfo* curFuncOrMethod;
                 ClassInfo*  curClassInfo;
+				bool isLocalM = false;
                 if( isFunc) { 
                     curFuncOrMethod =  functions[ curFunc->name]; 
                 }
                 else if ( isMethod) {
                     curClassInfo = classes[ curClass->name];
-                    if( curMethod->methodType == MethodType::METHOD_LOCAL)
-                        curFuncOrMethod = curClassInfo->localMethods[ curMethod->name];
-                    else
+                    if( curMethod->methodType == MethodType::METHOD_LOCAL){
+						curFuncOrMethod = getLocalMethod( curClassInfo->name, curMethod->name);
+						isLocalM = true;
+					} else{
                         curFuncOrMethod = curClassInfo->staticMethods[ curMethod->name];
+					}
                 }
 
                 TypeInfo typeInfo;
 
-                bool isExist = node->name=="this" || curFuncOrMethod->getVar( node->name, &typeInfo);
+				bool isExist = (node->name=="this" && isLocalM ) || curFuncOrMethod->getVar( node->name, &typeInfo);
                 if( !isExist){
-                    if ( isMethod) {
+                    if ( isMethod && isLocalM) {
                         auto field = curClassInfo->fields[ node->name];
                         if( field) {
                             isExist = true;
@@ -302,7 +305,7 @@ public:
 						if (leftType == rightType && leftType == TYPE_INT) {
 							 retType->varType = TYPE_INT;
 						}
-						else if (leftType == rightType || leftType == TYPE_FLOAT) {
+						else if (leftType == TYPE_FLOAT || rightType == TYPE_FLOAT) {
 							retType->varType = TYPE_FLOAT;
 						}
 					} else {
