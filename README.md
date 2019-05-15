@@ -14,6 +14,7 @@
 Выражения с использованием локальных переменных, арифметических операций, операций сравнения и присваивания | Дмитрий Донцов ([@DimaDontsov](https://github.com/DimaDontsov))
 Одномерные статические массивы | Курносов Андрей ([@dryush](https://github.com/dryush))
 Константы (числовые и строковые, с поддержкой спец.символов) | Курносов Андрей ([@dryush](https://github.com/dryush))
+Циклы | Донцов Дмитрий ([@DimaDontsov](https://github.com/DimaDontsov))
 Развилки | Донцов Дмитрий ([@DimaDontsov](https://github.com/DimaDontsov))
 Функции( Без заголовков, порядок объявления функций не важен ) | Курносов Андрей ([@dryush](https://github.com/dryush))
 Работа с консолью ( класс NSScanner для ввода и print для вывода) | Курносов Андрей ([@dryush](https://github.com/dryush))
